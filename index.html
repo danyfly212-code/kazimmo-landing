@@ -1,0 +1,1627 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>kazImmo — Trouvez des biens rentables aux Antilles</title>
+<meta name="description" content="Le seul outil pour analyser le marché immobilier antillais, trouver des biens rentables et calculer votre fiscalité DOM-TOM sans sacrifier votre temps libre.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ─────────────────────────────────────────
+   TOKENS
+───────────────────────────────────────── */
+:root {
+  --kaz-blue:    #1A3C6E;   /* bleu marine Antilles */
+  --kaz-teal:    #00A896;   /* turquoise caribéen   */
+  --kaz-gold:    #F4A623;   /* soleil tropical      */
+  --kaz-light:   #E8F4F1;   /* fond clair           */
+  --kaz-bg:      #F7FAFA;
+  --kaz-white:   #FFFFFF;
+  --kaz-dark:    #0D1F35;
+  --kaz-text:    #1A2B3C;
+  --kaz-muted:   #6B7F93;
+  --kaz-border:  #D8E8E5;
+  --radius:      10px;
+  --radius-lg:   16px;
+  --shadow:      0 2px 16px rgba(0,168,150,0.10);
+  --shadow-lg:   0 8px 40px rgba(26,60,110,0.13);
+  --font:        'Inter', system-ui, sans-serif;
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; font-size:16px; }
+body { font-family:var(--font); color:var(--kaz-text); background:var(--kaz-white); overflow-x:hidden; line-height:1.6; }
+
+/* ─── HELPERS ─── */
+.container { max-width:1160px; margin:0 auto; padding:0 24px; }
+.tag {
+  display:inline-flex; align-items:center; gap:6px;
+  font-size:12px; font-weight:600; letter-spacing:.6px; text-transform:uppercase;
+  padding:5px 14px; border-radius:50px;
+}
+.tag-teal { background:rgba(0,168,150,.1); color:var(--kaz-teal); border:1px solid rgba(0,168,150,.25); }
+.tag-blue { background:rgba(26,60,110,.08); color:var(--kaz-blue); border:1px solid rgba(26,60,110,.18); }
+
+/* ─────────────────────────────────────────
+   NAV
+───────────────────────────────────────── */
+nav {
+  position:sticky; top:0; z-index:100;
+  background:rgba(255,255,255,.96); backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--kaz-border);
+  padding:0 24px; height:64px;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.nav-logo {
+  font-size:1.55rem; font-weight:800; letter-spacing:-1px;
+  color:var(--kaz-blue); text-decoration:none;
+}
+.nav-logo span { color:var(--kaz-teal); }
+.nav-links { display:flex; gap:32px; list-style:none; align-items:center; }
+.nav-links a { font-size:.9rem; font-weight:500; color:var(--kaz-muted); text-decoration:none; transition:color .15s; }
+.nav-links a:hover { color:var(--kaz-blue); }
+.nav-links a.cta-nav {
+  background:var(--kaz-teal); color:#fff !important;
+  padding:9px 22px; border-radius:50px; font-weight:600;
+  transition:background .2s, transform .15s;
+}
+.nav-links a.cta-nav:hover { background:#008f7e; transform:translateY(-1px); }
+
+/* ─────────────────────────────────────────
+   HERO  (même structure que LyBox)
+   H1 + sous-titre + CTA primaire + image/screen mockup
+───────────────────────────────────────── */
+.hero {
+  padding:80px 0 60px;
+  background:linear-gradient(150deg, #F0FAF8 0%, #EBF4FF 50%, #F7FAFA 100%);
+  overflow:hidden;
+}
+.hero-inner {
+  display:grid; grid-template-columns:1fr 0.85fr;
+  gap:48px; align-items:center;
+  max-width:1160px; margin:0 auto; padding:0 24px;
+}
+.hero-eyebrow { margin-bottom:18px; }
+.hero h1 {
+  font-size:clamp(2.2rem,4vw,3.2rem); font-weight:800;
+  line-height:1.1; letter-spacing:-1.5px;
+  color:var(--kaz-blue); margin-bottom:20px;
+}
+.hero h1 em { font-style:normal; color:var(--kaz-teal); }
+.hero-sub {
+  font-size:1.08rem; color:var(--kaz-muted); font-weight:400;
+  line-height:1.7; max-width:440px; margin-bottom:36px;
+}
+.hero-cta { display:flex; gap:14px; flex-wrap:wrap; align-items:center; }
+.btn {
+  display:inline-flex; align-items:center; gap:8px;
+  padding:13px 26px; border-radius:50px; font-weight:600;
+  font-size:.95rem; text-decoration:none; font-family:var(--font);
+  transition:all .2s; cursor:pointer; border:none;
+}
+.btn-primary { background:var(--kaz-teal); color:#fff; }
+.btn-primary:hover { background:#008f7e; transform:translateY(-2px); box-shadow:0 6px 24px rgba(0,168,150,.3); }
+.btn-ghost { background:transparent; color:var(--kaz-blue); border:1.5px solid var(--kaz-blue); }
+.btn-ghost:hover { background:var(--kaz-blue); color:#fff; }
+
+.hero-note { margin-top:16px; font-size:.78rem; color:var(--kaz-muted); display:flex; align-items:center; gap:6px; }
+.hero-note::before { content:'✓'; color:var(--kaz-teal); font-weight:700; }
+
+/* Badges sous le CTA */
+.hero-badges {
+  display:flex; flex-wrap:wrap; gap:18px; margin-top:14px;
+}
+.hero-badge-item {
+  display:flex; align-items:center; gap:7px;
+  font-size:.82rem; color:var(--kaz-muted); font-weight:500;
+}
+.hb-check {
+  display:inline-flex; align-items:center; justify-content:center;
+  width:20px; height:20px; border-radius:50%;
+  background:rgba(34,197,94,.15); color:#16A34A;
+  font-size:.75rem; font-weight:800; flex-shrink:0;
+  border:1.5px solid rgba(34,197,94,.3);
+}
+
+/* Lien texte "Commencer gratuitement" sous les badges */
+.btn-text-link {
+  font-size:.9rem; font-weight:600; color:var(--kaz-blue);
+  text-decoration:none; border-bottom:2px solid rgba(26,60,110,.25);
+  padding-bottom:2px; transition:border-color .2s, color .2s;
+}
+.btn-text-link:hover { color:var(--kaz-teal); border-color:var(--kaz-teal); }
+
+/* HERO SCREEN — dashboard mockup */
+.hero-screen {
+  background:#fff; border-radius:20px;
+  box-shadow:0 20px 60px rgba(26,60,110,.14), 0 2px 8px rgba(0,0,0,.06);
+  overflow:hidden; border:1px solid var(--kaz-border);
+  position:relative;
+}
+.screen-bar {
+  background:var(--kaz-blue); padding:12px 18px;
+  display:flex; align-items:center; gap:8px;
+}
+.screen-bar span { font-size:.75rem; color:rgba(255,255,255,.7); font-weight:500; }
+.screen-dots { display:flex; gap:5px; margin-right:auto; }
+.screen-dots i { width:9px; height:9px; border-radius:50%; }
+.screen-dots i:nth-child(1) { background:#ff5f57; }
+.screen-dots i:nth-child(2) { background:#febc2e; }
+.screen-dots i:nth-child(3) { background:#28c840; }
+.screen-body { padding:18px; }
+.screen-search {
+  display:flex; gap:8px; align-items:center;
+  background:var(--kaz-bg); border:1px solid var(--kaz-border);
+  border-radius:10px; padding:10px 14px; margin-bottom:14px;
+}
+.screen-search input {
+  flex:1; border:none; background:transparent; font-size:.85rem;
+  color:var(--kaz-text); font-family:var(--font); outline:none;
+}
+.screen-search .sfilter {
+  background:var(--kaz-teal); color:#fff; border:none; border-radius:7px;
+  padding:6px 14px; font-size:.75rem; font-weight:600; cursor:pointer; font-family:var(--font);
+}
+.screen-results { display:flex; flex-direction:column; gap:8px; }
+.result-row {
+  display:flex; align-items:center; gap:12px;
+  padding:10px 12px; border-radius:10px; border:1px solid var(--kaz-border);
+  background:#fff; transition:box-shadow .2s;
+}
+.result-row:hover { box-shadow:var(--shadow); }
+.result-thumb {
+  width:40px; height:40px; border-radius:8px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center; font-size:1.3rem;
+}
+.result-info { flex:1; }
+.result-name { font-size:.82rem; font-weight:600; color:var(--kaz-text); margin-bottom:2px; }
+.result-meta { font-size:.72rem; color:var(--kaz-muted); }
+.result-yield { text-align:right; flex-shrink:0; }
+.yield-val { font-size:1.05rem; font-weight:800; color:var(--kaz-teal); display:block; }
+.yield-lbl { font-size:.68rem; color:var(--kaz-muted); }
+.result-badge {
+  font-size:.68rem; font-weight:600; padding:2px 8px; border-radius:50px;
+  background:rgba(0,168,150,.1); color:var(--kaz-teal);
+}
+
+/* ─────────────────────────────────────────
+   SOCIAL PROOF BAR  (logos / chiffres)
+   LyBox a une barre "utilisateurs + avis"
+───────────────────────────────────────── */
+.proof-bar {
+  background:#fff; border-top:1px solid var(--kaz-border);
+  border-bottom:1px solid var(--kaz-border);
+  padding:22px 0;
+}
+.proof-inner {
+  display:flex; align-items:center; justify-content:center;
+  gap:48px; flex-wrap:wrap;
+}
+.proof-stat { text-align:center; }
+.proof-stat .num {
+  font-size:1.6rem; font-weight:800; color:var(--kaz-blue); display:block; line-height:1;
+}
+.proof-stat .num em { color:var(--kaz-teal); font-style:normal; }
+.proof-stat .lbl { font-size:.75rem; color:var(--kaz-muted); margin-top:3px; }
+.proof-divider { width:1px; height:40px; background:var(--kaz-border); }
+.proof-rating { display:flex; flex-direction:column; align-items:center; gap:4px; }
+.stars { color:#F4A623; font-size:1.1rem; letter-spacing:1px; }
+.proof-rating .lbl { font-size:.75rem; color:var(--kaz-muted); }
+
+/* Badge essai gratuit sous la liste features */
+.feat-trial-badge {
+  display:flex; align-items:center; gap:12px;
+  margin-top:8px; padding:16px 18px;
+  background:linear-gradient(135deg,rgba(34,197,94,.07),rgba(0,168,150,.07));
+  border:1.5px solid rgba(34,197,94,.25);
+  border-radius:14px;
+}
+.feat-trial-ico {
+  width:36px; height:36px; border-radius:50%; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  background:#16A34A; color:#fff; font-size:.95rem; font-weight:800;
+  box-shadow:0 2px 10px rgba(22,163,74,.3);
+}
+.feat-trial-text { flex:1; min-width:0; }
+.feat-trial-text strong {
+  display:block; font-size:.9rem; font-weight:700;
+  color:#15803D; margin-bottom:2px;
+}
+.feat-trial-text span { font-size:.75rem; color:var(--kaz-muted); }
+.feat-trial-cta {
+  display:inline-flex; align-items:center;
+  background:var(--kaz-teal); color:#fff;
+  font-size:.78rem; font-weight:700; white-space:nowrap;
+  padding:8px 14px; border-radius:50px;
+  text-decoration:none; transition:background .2s, transform .15s;
+  flex-shrink:0;
+}
+.feat-trial-cta:hover { background:#008f7e; transform:translateY(-1px); }
+.compare-section { padding:80px 0; background:#fff; }
+.compare-title { text-align:center; margin-bottom:52px; }
+.compare-title h2 {
+  font-size:clamp(1.9rem,3.5vw,2.8rem); font-weight:800;
+  letter-spacing:-1.2px; color:var(--kaz-blue); line-height:1.12; margin:12px 0 14px;
+}
+.compare-title h2 em { font-style:normal; color:var(--kaz-teal); }
+.compare-title p { font-size:1rem; color:var(--kaz-muted); max-width:540px; margin:0 auto; line-height:1.7; }
+
+.compare-grid { display:grid; grid-template-columns:1fr 1fr; gap:24px; align-items:start; }
+.compare-card { border-radius:20px; padding:36px 32px; }
+.compare-card.without { background:#F3F6FA; border:1.5px solid #E2E8F0; }
+.compare-card.with {
+  background:linear-gradient(145deg,var(--kaz-blue) 0%,#1A5276 100%);
+  border:1.5px solid transparent;
+  box-shadow:0 12px 48px rgba(26,60,110,.25);
+}
+.compare-card-title { font-size:1.5rem; font-weight:800; letter-spacing:-.5px; margin-bottom:28px; line-height:1.2; }
+.compare-card.without .compare-card-title { color:var(--kaz-blue); }
+.compare-card.with .compare-card-title { color:#fff; }
+
+.compare-list { display:flex; flex-direction:column; gap:16px; margin-bottom:32px; }
+.compare-item { display:flex; align-items:flex-start; gap:14px; }
+.compare-ico {
+  width:34px; height:34px; border-radius:50%; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  font-size:.9rem; font-weight:800; margin-top:2px;
+}
+.compare-card.without .compare-ico { background:rgba(220,38,38,.12); color:#DC2626; }
+.compare-card.with .compare-ico { background:rgba(255,255,255,.18); color:#fff; }
+.compare-item-text { font-size:.95rem; line-height:1.55; font-weight:500; }
+.compare-card.without .compare-item-text { color:#374151; }
+.compare-card.with .compare-item-text { color:rgba(255,255,255,.92); }
+
+.compare-metrics { border-radius:14px; padding:20px 22px; }
+.compare-card.without .compare-metrics { background:#fff; border:1px solid #E2E8F0; }
+.compare-card.with .compare-metrics { background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.18); }
+
+.metric-row { margin-bottom:16px; }
+.metric-row:last-child { margin-bottom:0; }
+.metric-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+.metric-label { font-size:.8rem; font-weight:500; }
+.compare-card.without .metric-label { color:#6B7F93; }
+.compare-card.with .metric-label { color:rgba(255,255,255,.75); }
+.metric-value { font-size:.9rem; font-weight:800; }
+.compare-card.without .metric-value { color:#DC2626; }
+.compare-card.with .metric-value { color:#4ADE80; }
+.metric-bar-track { height:8px; border-radius:50px; overflow:hidden; }
+.compare-card.without .metric-bar-track { background:#F0F0F0; }
+.compare-card.with .metric-bar-track { background:rgba(255,255,255,.15); }
+.metric-bar-fill { height:100%; border-radius:50px; width:0; transition:width 1.3s cubic-bezier(.4,0,.2,1); }
+.compare-card.without .metric-bar-fill { background:linear-gradient(90deg,#F87171,#DC2626); }
+.compare-card.with .metric-bar-fill { background:linear-gradient(90deg,#4ADE80,#22C55E); }
+
+@media(max-width:680px){
+  .compare-grid { grid-template-columns:1fr; }
+  .compare-card { padding:26px 20px; }
+  .compare-card-title { font-size:1.3rem; }
+}
+
+/* ─────────────────────────────────────────
+   SECTIONS GENERIQUES
+───────────────────────────────────────── */
+.section { padding:80px 0; }
+.section-header { text-align:center; margin-bottom:56px; }
+.section-header h2 {
+  font-size:clamp(1.8rem,3.2vw,2.6rem); font-weight:800;
+  letter-spacing:-1px; color:var(--kaz-blue); line-height:1.15; margin:12px 0 14px;
+}
+.section-header h2 em { font-style:normal; color:var(--kaz-teal); }
+.section-header p { font-size:1rem; color:var(--kaz-muted); max-width:520px; margin:0 auto; line-height:1.7; }
+
+.problem-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
+.problem-card {
+  background:var(--kaz-bg); border:1px solid var(--kaz-border);
+  border-radius:var(--radius-lg); padding:28px 24px;
+  transition:box-shadow .2s, border-color .2s;
+}
+.problem-card:hover { box-shadow:var(--shadow); border-color:var(--kaz-teal); }
+.problem-icon { font-size:2rem; margin-bottom:14px; display:block; }
+.problem-card h3 { font-size:1rem; font-weight:700; color:var(--kaz-blue); margin-bottom:8px; }
+.problem-card p { font-size:.88rem; color:var(--kaz-muted); line-height:1.65; }
+
+/* ─────────────────────────────────────────
+   SECTION FONCTIONNALITÉS PRINCIPALE
+   LyBox : tabs gauche + screen droite
+───────────────────────────────────────── */
+.features-section { background:var(--kaz-bg); }
+.features-layout {
+  display:grid; grid-template-columns:1fr 1.3fr; gap:64px; align-items:start;
+}
+.feature-list { display:flex; flex-direction:column; gap:6px; }
+.feature-item {
+  display:flex; gap:16px; padding:20px; border-radius:var(--radius-lg);
+  border:1.5px solid transparent; cursor:pointer;
+  transition:all .2s; background:transparent;
+}
+.feature-item.active {
+  background:#fff; border-color:var(--kaz-teal);
+  box-shadow:var(--shadow);
+}
+.feat-ico {
+  width:44px; height:44px; border-radius:10px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  font-size:1.3rem; background:rgba(0,168,150,.1);
+}
+.feature-item.active .feat-ico { background:var(--kaz-teal); }
+.feat-body {}
+.feat-body h3 { font-size:.95rem; font-weight:700; color:var(--kaz-blue); margin-bottom:5px; }
+.feat-body p { font-size:.83rem; color:var(--kaz-muted); line-height:1.6; }
+
+.feature-display {
+  position:sticky; top:80px;
+  background:#fff; border-radius:20px;
+  box-shadow:var(--shadow-lg); border:1px solid var(--kaz-border);
+  overflow:hidden;
+}
+.feat-screen-header {
+  background:linear-gradient(135deg,var(--kaz-blue),#2563a8);
+  padding:16px 20px; display:flex; align-items:center; gap:10px;
+}
+.feat-screen-header .dots { display:flex; gap:5px; }
+.feat-screen-header .dots i { width:9px; height:9px; border-radius:50%; background:rgba(255,255,255,.3); }
+.feat-screen-header span { font-size:.75rem; color:rgba(255,255,255,.7); margin-left:auto; }
+.feat-screen-body { padding:20px; }
+
+/* Map mock */
+.map-area {
+  background:linear-gradient(135deg,#E8F4F1,#D6EEF6);
+  border-radius:12px; height:200px; position:relative;
+  overflow:hidden; margin-bottom:14px;
+  display:flex; align-items:center; justify-content:center;
+}
+.map-area::before {
+  content:''; position:absolute; inset:0;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30'%3E%3Ccircle cx='15' cy='15' r='1' fill='rgba(0,168,150,.2)'/%3E%3C/svg%3E");
+}
+.map-pin {
+  position:absolute;
+  background:var(--kaz-teal); color:#fff;
+  font-size:.7rem; font-weight:700; padding:4px 10px; border-radius:8px;
+  white-space:nowrap;
+  box-shadow:0 2px 8px rgba(0,168,150,.4);
+}
+.map-pin::after {
+  content:''; position:absolute; bottom:-5px; left:50%; transform:translateX(-50%);
+  border:5px solid transparent; border-top-color:var(--kaz-teal); border-bottom:none;
+}
+.map-island-label {
+  position:absolute; bottom:10px; left:50%; transform:translateX(-50%);
+  background:rgba(255,255,255,.92); color:var(--kaz-blue); font-size:.72rem;
+  font-weight:600; padding:4px 12px; border-radius:50px;
+  border:1px solid var(--kaz-border); white-space:nowrap;
+}
+.mini-stat-row { display:flex; gap:8px; }
+.mini-stat {
+  flex:1; background:var(--kaz-bg); border:1px solid var(--kaz-border);
+  border-radius:10px; padding:10px 12px; text-align:center;
+}
+.mini-stat .v { font-size:1.15rem; font-weight:800; color:var(--kaz-teal); display:block; }
+.mini-stat .l { font-size:.68rem; color:var(--kaz-muted); }
+
+/* Fiscal mock */
+.fiscal-rows { display:flex; flex-direction:column; gap:10px; }
+.fiscal-row {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:12px 14px; background:var(--kaz-bg); border-radius:10px;
+  border:1px solid var(--kaz-border);
+}
+.fiscal-row .regime { font-size:.83rem; font-weight:600; color:var(--kaz-blue); }
+.fiscal-row .impot { font-size:.83rem; font-weight:700; color:var(--kaz-teal); }
+.fiscal-row .gain {
+  font-size:.72rem; font-weight:600; padding:3px 9px;
+  border-radius:50px; background:rgba(0,168,150,.12); color:var(--kaz-teal);
+}
+
+/* ─────────────────────────────────────────
+   SECTION TERRITOIRE ANTILLES
+   (spécifique kazImmo, absente de LyBox)
+   Insérée après les fonctionnalités,
+   avant les témoignages — comme LyBox
+   insère une section "Comment ça marche"
+───────────────────────────────────────── */
+.territories-section { background:#fff; }
+.territories-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
+.territory-card {
+  border:1.5px solid var(--kaz-border); border-radius:var(--radius-lg);
+  padding:28px 22px; text-align:center;
+  transition:all .25s; position:relative; overflow:hidden;
+}
+.territory-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:4px;
+  background:var(--kaz-teal);
+}
+.territory-card:hover { box-shadow:var(--shadow-lg); border-color:var(--kaz-teal); transform:translateY(-3px); }
+.terr-flag { font-size:2.5rem; margin-bottom:12px; display:block; }
+.territory-card h3 { font-size:1.1rem; font-weight:800; color:var(--kaz-blue); margin-bottom:6px; }
+.territory-card .terr-desc { font-size:.83rem; color:var(--kaz-muted); line-height:1.6; margin-bottom:18px; }
+.terr-stats { display:flex; justify-content:center; gap:20px; }
+.terr-stat .tv { font-size:1.2rem; font-weight:800; color:var(--kaz-teal); display:block; }
+.terr-stat .tl { font-size:.7rem; color:var(--kaz-muted); }
+
+/* ─────────────────────────────────────────
+   TÉMOIGNAGES
+   LyBox : 3 quotes + auteur + étoiles
+───────────────────────────────────────── */
+.testi-section { background:var(--kaz-bg); }
+.testi-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
+.testi-card {
+  background:#fff; border:1px solid var(--kaz-border); border-radius:var(--radius-lg);
+  padding:28px; position:relative; transition:box-shadow .2s;
+}
+.testi-card:hover { box-shadow:var(--shadow-lg); }
+.testi-card::before {
+  content:'"'; font-size:4rem; line-height:1; color:var(--kaz-teal);
+  opacity:.15; position:absolute; top:12px; right:20px;
+  font-family:Georgia, serif; font-weight:700;
+}
+.testi-stars { color:var(--kaz-gold); font-size:.95rem; margin-bottom:14px; }
+.testi-quote {
+  font-size:.9rem; color:var(--kaz-text); line-height:1.75;
+  margin-bottom:20px; font-style:italic;
+}
+.testi-author { display:flex; align-items:center; gap:12px; }
+.testi-avatar {
+  width:40px; height:40px; border-radius:50%;
+  background:linear-gradient(135deg,var(--kaz-teal),var(--kaz-blue));
+  display:flex; align-items:center; justify-content:center;
+  font-size:.8rem; font-weight:700; color:#fff; flex-shrink:0;
+}
+.testi-name { font-size:.85rem; font-weight:700; color:var(--kaz-blue); }
+.testi-role { font-size:.73rem; color:var(--kaz-muted); }
+.testi-location { display:flex; align-items:center; gap:4px; font-size:.72rem; color:var(--kaz-teal); margin-top:4px; font-weight:500; }
+
+/* ─────────────────────────────────────────
+   PRICING
+   LyBox : 3 plans Basique / Essentiel / Expert
+───────────────────────────────────────── */
+.pricing-section { background:#fff; }
+.pricing-toggle {
+  display:flex; align-items:center; justify-content:center;
+  gap:14px; margin-bottom:48px;
+}
+.pricing-toggle span { font-size:.9rem; color:var(--kaz-muted); font-weight:500; }
+.pricing-toggle .active-period { color:var(--kaz-blue); font-weight:700; }
+.toggle-switch {
+  width:44px; height:24px; background:var(--kaz-teal); border-radius:50px;
+  position:relative; cursor:pointer;
+}
+.toggle-switch::after {
+  content:''; position:absolute; top:3px; right:3px;
+  width:18px; height:18px; border-radius:50%; background:#fff;
+  transition:transform .2s;
+}
+.pricing-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
+.price-card {
+  border:1.5px solid var(--kaz-border); border-radius:var(--radius-lg);
+  padding:32px 26px; position:relative; transition:all .25s;
+}
+.price-card:hover { box-shadow:var(--shadow-lg); }
+.price-card.popular {
+  border-color:var(--kaz-teal);
+  box-shadow:0 0 0 3px rgba(0,168,150,.12);
+}
+.popular-badge {
+  position:absolute; top:-13px; left:50%; transform:translateX(-50%);
+  background:var(--kaz-teal); color:#fff;
+  font-size:.72rem; font-weight:700; letter-spacing:.5px;
+  padding:4px 16px; border-radius:50px; white-space:nowrap;
+}
+.plan-name { font-size:1rem; font-weight:700; color:var(--kaz-blue); margin-bottom:6px; }
+.plan-sub { font-size:.82rem; color:var(--kaz-muted); margin-bottom:22px; line-height:1.5; }
+.plan-price { margin-bottom:4px; display:flex; align-items:baseline; gap:4px; }
+.plan-price .amount {
+  font-size:2.8rem; font-weight:800; color:var(--kaz-blue); line-height:1;
+}
+.plan-price .curr { font-size:1.1rem; color:var(--kaz-muted); margin-top:6px; }
+.plan-price .per { font-size:.82rem; color:var(--kaz-muted); }
+.plan-billing { font-size:.75rem; color:var(--kaz-muted); margin-bottom:26px; }
+.plan-billing .save { color:var(--kaz-teal); font-weight:600; }
+.plan-features { list-style:none; display:flex; flex-direction:column; gap:11px; margin-bottom:28px; }
+.plan-features li { display:flex; align-items:flex-start; gap:9px; font-size:.87rem; color:var(--kaz-text); }
+.plan-features li .chk { color:var(--kaz-teal); font-size:1rem; flex-shrink:0; margin-top:1px; }
+.plan-features li .no { color:#D1D5DB; font-size:1rem; flex-shrink:0; margin-top:1px; }
+.plan-cta {
+  display:block; text-align:center; padding:12px; border-radius:50px;
+  font-weight:700; font-size:.9rem; text-decoration:none;
+  transition:all .2s; font-family:var(--font);
+}
+.plan-cta.outline {
+  border:1.5px solid var(--kaz-blue); color:var(--kaz-blue);
+}
+.plan-cta.outline:hover { background:var(--kaz-blue); color:#fff; }
+.plan-cta.filled { background:var(--kaz-teal); color:#fff; }
+.plan-cta.filled:hover { background:#008f7e; box-shadow:0 4px 16px rgba(0,168,150,.3); }
+.plan-trial { text-align:center; font-size:.75rem; color:var(--kaz-muted); margin-top:10px; }
+
+/* ─────────────────────────────────────────
+   FAQ
+───────────────────────────────────────── */
+.faq-section { background:var(--kaz-bg); }
+.faq-list { display:flex; flex-direction:column; gap:10px; max-width:720px; margin:0 auto; }
+.faq-item {
+  background:#fff; border:1px solid var(--kaz-border); border-radius:var(--radius);
+  overflow:hidden;
+}
+.faq-q {
+  padding:18px 22px; font-size:.93rem; font-weight:600; color:var(--kaz-blue);
+  cursor:pointer; display:flex; justify-content:space-between; align-items:center;
+  transition:background .15s;
+}
+.faq-q:hover { background:var(--kaz-bg); }
+.faq-q .icon { font-size:1.2rem; color:var(--kaz-teal); transition:transform .25s; }
+.faq-q.open .icon { transform:rotate(45deg); }
+.faq-a {
+  padding:0 22px; max-height:0; overflow:hidden;
+  transition:max-height .3s ease, padding .3s;
+  font-size:.88rem; color:var(--kaz-muted); line-height:1.7;
+}
+.faq-a.open { max-height:300px; padding:0 22px 18px; }
+
+/* ─────────────────────────────────────────
+   CTA FINAL
+   LyBox : grande bannière + CTA + note "essai 7j"
+───────────────────────────────────────── */
+.cta-section {
+  background:linear-gradient(135deg, var(--kaz-blue) 0%, #1A5276 100%);
+  padding:90px 0;
+}
+.cta-inner { text-align:center; max-width:620px; margin:0 auto; padding:0 24px; }
+.cta-inner h2 {
+  font-size:clamp(2rem,4vw,2.9rem); font-weight:800; color:#fff;
+  letter-spacing:-1px; line-height:1.15; margin-bottom:18px;
+}
+.cta-inner h2 em { font-style:normal; color:var(--kaz-teal); }
+.cta-inner p { font-size:1rem; color:rgba(255,255,255,.7); margin-bottom:36px; line-height:1.7; }
+.cta-btns { display:flex; justify-content:center; gap:14px; flex-wrap:wrap; margin-bottom:20px; }
+.btn-white { background:#fff; color:var(--kaz-blue); font-weight:700; }
+.btn-white:hover { background:var(--kaz-light); transform:translateY(-2px); }
+.btn-outline-white { background:transparent; border:1.5px solid rgba(255,255,255,.4); color:#fff; }
+.btn-outline-white:hover { background:rgba(255,255,255,.1); }
+.cta-reassurance { font-size:.78rem; color:rgba(255,255,255,.5); display:flex; justify-content:center; gap:20px; flex-wrap:wrap; }
+.cta-reassurance span::before { content:'✓ '; color:var(--kaz-teal); }
+
+/* ─────────────────────────────────────────
+   FOOTER
+───────────────────────────────────────── */
+footer {
+  background:var(--kaz-dark); padding:52px 0 28px;
+}
+.footer-grid { display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:40px; margin-bottom:44px; }
+.footer-brand .nav-logo { color:#fff; display:inline-block; margin-bottom:12px; }
+.footer-brand .nav-logo span { color:var(--kaz-teal); }
+.footer-brand p { font-size:.82rem; color:rgba(255,255,255,.4); line-height:1.7; max-width:240px; }
+.footer-brand .footer-social { display:flex; gap:10px; margin-top:16px; }
+.footer-social a {
+  width:34px; height:34px; border-radius:8px; background:rgba(255,255,255,.07);
+  display:flex; align-items:center; justify-content:center;
+  color:rgba(255,255,255,.5); text-decoration:none; font-size:.85rem;
+  transition:background .2s;
+}
+.footer-social a:hover { background:var(--kaz-teal); color:#fff; }
+.footer-col h5 {
+  font-size:.75rem; font-weight:700; text-transform:uppercase;
+  letter-spacing:.8px; color:rgba(255,255,255,.45); margin-bottom:14px;
+}
+.footer-col ul { list-style:none; display:flex; flex-direction:column; gap:9px; }
+.footer-col ul a { font-size:.84rem; color:rgba(255,255,255,.45); text-decoration:none; transition:color .15s; }
+.footer-col ul a:hover { color:#fff; }
+.footer-bottom {
+  border-top:1px solid rgba(255,255,255,.08); padding-top:24px;
+  display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;
+}
+.footer-bottom p { font-size:.75rem; color:rgba(255,255,255,.3); }
+.footer-badges { display:flex; gap:10px; align-items:center; }
+.fbadge {
+  display:inline-flex; align-items:center; gap:5px;
+  font-size:.72rem; color:rgba(255,255,255,.35);
+  border:1px solid rgba(255,255,255,.1); border-radius:50px; padding:4px 10px;
+}
+
+/* ─────────────────────────────────────────
+   ANIMATIONS / SCROLL REVEAL
+───────────────────────────────────────── */
+.reveal { opacity:0; transform:translateY(28px); transition:opacity .65s ease, transform .65s ease; }
+.reveal.in { opacity:1; transform:none; }
+
+@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+
+/* ─────────────────────────────────────────
+   RESPONSIVE
+───────────────────────────────────────── */
+@media(max-width:1024px){
+  .hero-inner { grid-template-columns:1fr; }
+  .hero-screen { display:none; }
+  .features-layout { grid-template-columns:1fr; }
+  .feature-display { position:static; }
+  .problem-grid,.territories-grid,.testi-grid,.pricing-grid { grid-template-columns:1fr 1fr; }
+  .footer-grid { grid-template-columns:1fr 1fr; gap:28px; }
+}
+@media(max-width:640px){
+  nav { padding:0 16px; }
+  .nav-links { display:none; }
+  .section { padding:52px 0; }
+  .hero { padding:52px 0 40px; }
+  .problem-grid,.territories-grid,.testi-grid,.pricing-grid { grid-template-columns:1fr; }
+  .proof-inner { gap:24px; }
+  .proof-divider { display:none; }
+  .footer-grid { grid-template-columns:1fr; }
+  .cta-reassurance { flex-direction:column; align-items:center; gap:8px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════
+     NAV
+═══════════════════════════════════════ -->
+<nav>
+  <a href="#" class="nav-logo">kaz<span>Immo</span></a>
+  <ul class="nav-links">
+    <li><a href="#fonctionnalites">Fonctionnalités</a></li>
+    <li><a href="#territoires">Territoires</a></li>
+    <li><a href="#tarifs">Tarifs</a></li>
+    <li><a href="#faq">FAQ</a></li>
+    <li><a href="#" class="cta-nav">Essai gratuit 7 jours</a></li>
+  </ul>
+</nav>
+
+<!-- ═══════════════════════════════════════
+     HERO
+     LyBox : H1 percutant + sous-titre + CTA
+     + image de l'outil à droite
+═══════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-text">
+      <div class="hero-eyebrow">
+        <span class="tag tag-teal">🌴 N°1 de l'investissement immobilier aux Antilles</span>
+      </div>
+      <h1>Trouvez des biens rentables<br>aux <em>Antilles</em></h1>
+      <p class="hero-sub">
+        Le seul outil qui centralise les annonces des 3 territoires, calcule le rendement locatif réel et simule votre fiscalité DOM-TOM.
+      </p>
+      <div class="hero-cta">
+        <a href="#" class="btn btn-primary">Essai gratuit 7 jours →</a>
+        <a href="#fonctionnalites" class="btn btn-ghost">Voir comment ça marche</a>
+      </div>
+      <div class="hero-badges">
+        <span class="hero-badge-item"><span class="hb-check">✓</span> Sans carte bancaire</span>
+        <span class="hero-badge-item"><span class="hb-check">✓</span> Résiliable à tout moment</span>
+      </div>
+    </div>
+
+    <!-- DASHBOARD MOCKUP — légèrement réduit pour aérer le titre -->
+    <div class="hero-screen" style="animation:float 5s ease-in-out infinite; max-width:420px; width:100%;">
+      <div class="screen-bar">
+        <div class="screen-dots"><i></i><i></i><i></i></div>
+        <span>kazImmo · Moteur de recherche Antilles</span>
+      </div>
+      <div class="screen-body">
+        <div class="screen-search">
+          <input value="T3 Martinique · Rendement > 7%" readonly>
+          <button class="sfilter">Filtrer</button>
+        </div>
+        <div class="screen-results">
+          <div class="result-row">
+            <div class="result-thumb" style="background:rgba(0,168,150,.1)">🏠</div>
+            <div class="result-info">
+              <div class="result-name">T3 meublé · Le Lamentin</div>
+              <div class="result-meta">72 m² · 149 000 € · LMNP éligible</div>
+            </div>
+            <div class="result-yield">
+              <span class="yield-val">8,4%</span>
+              <span class="yield-lbl">brut</span>
+            </div>
+          </div>
+          <div class="result-row">
+            <div class="result-thumb" style="background:rgba(26,60,110,.08)">🏢</div>
+            <div class="result-info">
+              <div class="result-name">Appt · Fort-de-France Centre</div>
+              <div class="result-meta">55 m² · 128 000 € · Girardin éligible</div>
+            </div>
+            <div class="result-yield">
+              <span class="yield-val">9,1%</span>
+              <span class="yield-lbl">brut</span>
+            </div>
+          </div>
+          <div class="result-row">
+            <div class="result-thumb" style="background:rgba(244,166,35,.1)">🌿</div>
+            <div class="result-info">
+              <div class="result-name">T2 · Marigot (Saint-Martin)</div>
+              <div class="result-meta">48 m² · 95 000 € · Forte tension locative</div>
+            </div>
+            <div class="result-yield">
+              <span class="yield-val">11,2%</span>
+              <span class="yield-lbl">brut</span>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding-top:12px;border-top:1px solid var(--kaz-border)">
+          <span style="font-size:.72rem;color:var(--kaz-muted)">4 200 annonces analysées · Mise à jour en temps réel</span>
+          <span class="result-badge">+127 nouvelles aujourd'hui</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     BARRE SOCIAL PROOF
+     LyBox : chiffres utilisateurs, note Trustpilot
+═══════════════════════════════════════ -->
+<div class="proof-bar">
+  <div class="proof-inner">
+    <div class="proof-stat">
+      <span class="num">4 200<em>+</em></span>
+      <span class="lbl">Annonces analysées</span>
+    </div>
+    <div class="proof-divider"></div>
+    <div class="proof-stat">
+      <span class="num">3</span>
+      <span class="lbl">Territoires couverts</span>
+    </div>
+    <div class="proof-divider"></div>
+    <div class="proof-stat">
+      <span class="num">8<em>%</em></span>
+      <span class="lbl">Rendement moyen trouvé</span>
+    </div>
+    <div class="proof-divider"></div>
+    <div class="proof-rating">
+      <div class="stars">★★★★★</div>
+      <span class="lbl">4,9 / 5 · 200+ avis</span>
+    </div>
+    <div class="proof-divider"></div>
+    <div class="proof-stat">
+      <span class="num">7<em>×</em></span>
+      <span class="lbl">Plus rapide qu'une recherche classique</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     COMPARATIF SANS / AVEC kazImmo
+     Inspiré LyBox : 2 blocs côte à côte + sliders métriques
+═══════════════════════════════════════ -->
+<section class="compare-section">
+  <div class="container">
+    <div class="compare-title reveal">
+      <span class="tag tag-blue">La différence kazImmo</span>
+      <h2>Ne passez plus à côté des meilleures<br><em>opportunités immobilières aux Antilles</em></h2>
+      <p>Chaque jour, des biens rentables se vendent aux Antilles avant que vous ne les ayez vus. kazImmo vous donne l'avance décisive.</p>
+    </div>
+
+    <div class="compare-grid reveal">
+
+      <!-- ── SANS KAZIMMO ── -->
+      <div class="compare-card without">
+        <div class="compare-card-title">Sans kazImmo</div>
+        <div class="compare-list">
+          <div class="compare-item">
+            <div class="compare-ico">✕</div>
+            <span class="compare-item-text">Recherche manuelle sur Leboncoin, PAP, annonces locales… sans jamais tout couvrir</span>
+          </div>
+          <div class="compare-item">
+            <div class="compare-ico">✕</div>
+            <span class="compare-item-text">Analyse du marché antillais impossible — pas de données loyers, prix m² ou tension locative DOM</span>
+          </div>
+          <div class="compare-item">
+            <div class="compare-ico">✕</div>
+            <span class="compare-item-text">Calcul du rendement et du cash-flow à la main sur Excel — avec le risque d'erreur que ça implique</span>
+          </div>
+          <div class="compare-item">
+            <div class="compare-ico">✕</div>
+            <span class="compare-item-text">Fiscalité Girardin, LMNP DOM, SCI à l'IS : vous naviguez à vue sans simulation fiable</span>
+          </div>
+        </div>
+        <!-- Métriques "sans" -->
+        <div class="compare-metrics">
+          <div class="metric-row">
+            <div class="metric-head">
+              <span class="metric-label">Temps passé par annonce</span>
+              <span class="metric-value" data-target="72" data-unit=" min">72 min</span>
+            </div>
+            <div class="metric-bar-track">
+              <div class="metric-bar-fill" data-width="80"></div>
+            </div>
+          </div>
+          <div class="metric-row">
+            <div class="metric-head">
+              <span class="metric-label">Rentabilité moyenne trouvée</span>
+              <span class="metric-value" data-target="5.9" data-unit=" %">5,9 %</span>
+            </div>
+            <div class="metric-bar-track">
+              <div class="metric-bar-fill" data-width="30"></div>
+            </div>
+          </div>
+          <div class="metric-row">
+            <div class="metric-head">
+              <span class="metric-label">Risque d'erreur de calcul</span>
+              <span class="metric-value">50 %</span>
+            </div>
+            <div class="metric-bar-track">
+              <div class="metric-bar-fill" data-width="50"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── AVEC KAZIMMO ── -->
+      <div class="compare-card with">
+        <div class="compare-card-title">Avec kazImmo</div>
+        <div class="compare-list">
+          <div class="compare-item">
+            <div class="compare-ico">✓</div>
+            <span class="compare-item-text">Toutes les annonces de Martinique, Guadeloupe et Guyane centralisées — filtrées par rendement cible</span>
+          </div>
+          <div class="compare-item">
+            <div class="compare-ico">✓</div>
+            <span class="compare-item-text">Analyse automatique du marché local : prix/m², loyers réels, tension locative par commune antillaise</span>
+          </div>
+          <div class="compare-item">
+            <div class="compare-ico">✓</div>
+            <span class="compare-item-text">Rendement brut, net et cash-flow calculés instantanément — sans Excel, sans erreur</span>
+          </div>
+          <div class="compare-item">
+            <div class="compare-ico">✓</div>
+            <span class="compare-item-text">Simulateur Girardin, LMNP DOM, SCI intégré — choisissez le meilleur régime en 2 clics</span>
+          </div>
+        </div>
+        <!-- Métriques "avec" -->
+        <div class="compare-metrics">
+          <div class="metric-row">
+            <div class="metric-head">
+              <span class="metric-label">Temps passé par annonce</span>
+              <span class="metric-value">2 min</span>
+            </div>
+            <div class="metric-bar-track">
+              <div class="metric-bar-fill" data-width="12"></div>
+            </div>
+          </div>
+          <div class="metric-row">
+            <div class="metric-head">
+              <span class="metric-label">Rentabilité moyenne trouvée</span>
+              <span class="metric-value">8,9 %</span>
+            </div>
+            <div class="metric-bar-track">
+              <div class="metric-bar-fill" data-width="89"></div>
+            </div>
+          </div>
+          <div class="metric-row">
+            <div class="metric-head">
+              <span class="metric-label">Risque d'erreur de calcul</span>
+              <span class="metric-value">0 %</span>
+            </div>
+            <div class="metric-bar-track">
+              <div class="metric-bar-fill" data-width="2"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     SECTION FONCTIONNALITÉS — VERSION PREMIUM
+     Inspiration : Apple / Tesla / Alex Hormozi
+     Structure : titre choc · sous-titre bénéfice
+     5 features en progression narrative
+     Onglet actif = écran vivant à droite
+═══════════════════════════════════════ -->
+<section class="section features-section" id="fonctionnalites">
+  <div class="container">
+
+    <!-- Header style Apple : petit label + titre choc + accroche bénéfice -->
+    <div class="section-header reveal" style="max-width:680px;margin-left:auto;margin-right:auto;margin-bottom:64px;">
+      <span class="tag tag-teal" style="margin-bottom:14px;display:inline-flex">La plateforme</span>
+      <h2 style="font-size:clamp(2rem,3.8vw,3rem);letter-spacing:-1.5px;margin-bottom:16px;">
+        L'immobilier rentable,<br><em>enfin simplifié. Avec kazImmo.</em>
+      </h2>
+      <p style="font-size:1.05rem;color:var(--kaz-muted);line-height:1.75;max-width:520px;margin:0 auto;">
+        5 outils. 1 seule plateforme. Tout ce qu'un investisseur sérieux aux Antilles a besoin — et rien de superflu.
+      </p>
+    </div>
+
+    <!-- Layout : TABS gauche · SCREEN droite -->
+    <div class="features-layout reveal">
+
+      <!-- ── LISTE ONGLETS ── -->
+      <div class="feature-list" id="feat-tabs">
+
+        <!-- 1 · Analyse du marché -->
+        <div class="feature-item active" data-feat="market">
+          <div class="feat-ico">📊</div>
+          <div class="feat-body">
+            <h3>Analyse du marché local</h3>
+            <p>Prix au m², loyers réels, tension locative par commune. Martinique, Guadeloupe, Saint-Martin — toutes les données DVF locales dans une seule interface.</p>
+          </div>
+        </div>
+
+        <!-- 2 · Moteur -->
+        <div class="feature-item" data-feat="search">
+          <div class="feat-ico">🔍</div>
+          <div class="feat-body">
+            <h3>Moteur de recherche</h3>
+            <p>Toutes les annonces des 3 territoires centralisées et filtrées par rendement cible, loyer estimé et fiscalité éligible. Fini les onglets en pagaille.</p>
+          </div>
+        </div>
+
+        <!-- 3 · Alertes -->
+        <div class="feature-item" data-feat="alert">
+          <div class="feat-ico">🔔</div>
+          <div class="feat-body">
+            <h3>Alertes rentabilité en temps réel</h3>
+            <p>Seuil de rendement, zone, type de bien : recevez une alerte instantanée dès qu'une opportunité correspond. Soyez toujours premier.</p>
+          </div>
+        </div>
+
+        <!-- 4 · Fiscalité -->
+        <div class="feature-item" data-feat="fiscal">
+          <div class="feat-ico">⚖️</div>
+          <div class="feat-body">
+            <h3>Simulateur de fiscalité DOM-TOM</h3>
+            <p>Girardin IS/IR, LMNP, SCI, déficit foncier : simulez l'impact réel de chaque régime sur votre cash-flow. Choisissez le régime optimal en 2 clics.</p>
+          </div>
+        </div>
+
+        <!-- 5 · Marketplace -->
+        <div class="feature-item" data-feat="marketplace">
+          <div class="feat-ico">🏪</div>
+          <div class="feat-body">
+            <h3>Marketplace de transactions</h3>
+            <p>Achetez, vendez, cédez directement sur kazImmo. Mise en relation avec des agents, notaires et investisseurs locaux vérifiés.</p>
+          </div>
+        </div>
+
+        <!-- Badge essai gratuit — identique au hero -->
+        <div style="margin-top:12px;">
+          <a href="#tarifs" class="btn btn-primary" style="display:inline-flex;font-size:.88rem;padding:11px 22px;">Essai gratuit 7 jours →</a>
+          <div class="hero-badges" style="margin-top:10px;">
+            <span class="hero-badge-item"><span class="hb-check">✓</span> Sans carte bancaire</span>
+            <span class="hero-badge-item"><span class="hb-check">✓</span> Résiliable à tout moment</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ── ÉCRAN DEMO (sticky) ── -->
+      <div class="feature-display" id="feat-display">
+        <div class="feat-screen-header">
+          <div class="dots"><i></i><i></i><i></i></div>
+          <span id="feat-title">Analyse du marché · Martinique</span>
+        </div>
+        <div class="feat-screen-body" id="feat-body">
+          <!-- Écran par défaut : Analyse marché -->
+          <div class="mini-stat-row" style="margin-bottom:12px">
+            <div class="mini-stat"><span class="v">2 850€</span><span class="l">Prix / m² médian</span></div>
+            <div class="mini-stat"><span class="v">14 €</span><span class="l">Loyer / m² moyen</span></div>
+            <div class="mini-stat"><span class="v">96%</span><span class="l">Taux d'occupation</span></div>
+          </div>
+          <div style="background:var(--kaz-bg);border:1px solid var(--kaz-border);border-radius:10px;padding:14px">
+            <div style="font-size:.75rem;font-weight:600;color:var(--kaz-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Évolution des prix · 12 mois</div>
+            <div style="display:flex;align-items:flex-end;gap:5px;height:70px">
+              <div style="flex:1;height:55%;background:rgba(0,168,150,.25);border-radius:3px 3px 0 0"></div>
+              <div style="flex:1;height:60%;background:rgba(0,168,150,.25);border-radius:3px 3px 0 0"></div>
+              <div style="flex:1;height:58%;background:rgba(0,168,150,.25);border-radius:3px 3px 0 0"></div>
+              <div style="flex:1;height:64%;background:rgba(0,168,150,.25);border-radius:3px 3px 0 0"></div>
+              <div style="flex:1;height:62%;background:rgba(0,168,150,.25);border-radius:3px 3px 0 0"></div>
+              <div style="flex:1;height:70%;background:rgba(0,168,150,.25);border-radius:3px 3px 0 0"></div>
+              <div style="flex:1;height:68%;background:rgba(0,168,150,.25);border-radius:3px 3px 0 0"></div>
+              <div style="flex:1;height:74%;background:rgba(0,168,150,.25);border-radius:3px 3px 0 0"></div>
+              <div style="flex:1;height:72%;background:rgba(0,168,150,.25);border-radius:3px 3px 0 0"></div>
+              <div style="flex:1;height:78%;background:rgba(0,168,150,.25);border-radius:3px 3px 0 0"></div>
+              <div style="flex:1;height:80%;background:rgba(0,168,150,.25);border-radius:3px 3px 0 0"></div>
+              <div style="flex:1;height:88%;background:var(--kaz-teal);border-radius:3px 3px 0 0"></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-top:6px">
+              <span style="font-size:.68rem;color:var(--kaz-muted)">Jan 24</span>
+              <span style="font-size:.68rem;color:var(--kaz-teal);font-weight:700">+12% sur 12 mois</span>
+              <span style="font-size:.68rem;color:var(--kaz-muted)">Déc 24</span>
+            </div>
+          </div>
+          <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+            <span style="background:rgba(0,168,150,.1);color:var(--kaz-teal);font-size:.72rem;font-weight:600;padding:4px 12px;border-radius:50px;border:1px solid rgba(0,168,150,.2)">Fort-de-France</span>
+            <span style="background:rgba(26,60,110,.07);color:var(--kaz-blue);font-size:.72rem;font-weight:600;padding:4px 12px;border-radius:50px;border:1px solid rgba(26,60,110,.15)">Le Lamentin</span>
+            <span style="background:rgba(26,60,110,.07);color:var(--kaz-blue);font-size:.72rem;font-weight:600;padding:4px 12px;border-radius:50px;border:1px solid rgba(26,60,110,.15)">Schoelcher</span>
+            <span style="background:rgba(244,166,35,.1);color:#B45309;font-size:.72rem;font-weight:600;padding:4px 12px;border-radius:50px;border:1px solid rgba(244,166,35,.3)">Le Robert</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     TERRITOIRES
+     (Spécifique kazImmo — remplace la section
+      "Comment LyBox fonctionne" de LyBox)
+═══════════════════════════════════════ -->
+<section class="section territories-section" id="territoires">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="tag tag-teal">3 territoires. 1 plateforme.</span>
+      <h2>Le seul outil adapté<br><em>pour les Antilles françaises</em></h2>
+      <p>Chaque territoire a ses règles, ses données, sa fiscalité. kazImmo les maîtrise toutes — pour que vous investissiez avec les bons chiffres.</p>
+    </div>
+    <div class="territories-grid reveal">
+      <div class="territory-card">
+        <span class="terr-flag">🇲🇶</span>
+        <h3>Martinique</h3>
+        <p class="terr-desc">Marché mature et liquide. Fort-de-France et Le Lamentin concentrent la demande locative. Idéal pour les T2/T3 en LMNP avec un cashflow positif dès la 1re année.</p>
+        <div class="terr-stats">
+          <div class="terr-stat"><span class="tv">7–9%</span><span class="tl">Rendement</span></div>
+          <div class="terr-stat"><span class="tv">2 100+</span><span class="tl">Annonces</span></div>
+          <div class="terr-stat"><span class="tv">96%</span><span class="tl">Taux occupation</span></div>
+        </div>
+      </div>
+      <div class="territory-card">
+        <span class="terr-flag">🇬🇵</span>
+        <h3>Guadeloupe</h3>
+        <p class="terr-desc">Archipel dynamique, demande mixte résidentielle et saisonnière. Pointe-à-Pitre et Le Gosier offrent des rendements records. Saint-Martin idéal pour la location touristique.</p>
+        <div class="terr-stats">
+          <div class="terr-stat"><span class="tv">8–11%</span><span class="tl">Rendement</span></div>
+          <div class="terr-stat"><span class="tv">1 600+</span><span class="tl">Annonces</span></div>
+          <div class="terr-stat"><span class="tv">+14%</span><span class="tl">Demande locative</span></div>
+        </div>
+      </div>
+      <div class="territory-card">
+        <span class="terr-flag">🇸🇽</span>
+        <h3>Saint-Martin</h3>
+        <p class="terr-desc">Île franco-néerlandaise à fort potentiel touristique. Marché de la location saisonnière en plein essor, prix d'achat attractifs et rendements parmi les plus élevés des Caraïbes.</p>
+        <div class="terr-stats">
+          <div class="terr-stat"><span class="tv">9–13%</span><span class="tl">Rendement</span></div>
+          <div class="terr-stat"><span class="tv">500+</span><span class="tl">Annonces</span></div>
+          <div class="terr-stat"><span class="tv">+18%</span><span class="tl">Tourisme / an</span></div>
+        </div>
+      </div>
+    </div>
+    <!-- Avantages fiscaux DOM -->
+    <div style="margin-top:40px;background:linear-gradient(135deg,rgba(0,168,150,.07),rgba(26,60,110,.06));border:1px solid var(--kaz-border);border-radius:var(--radius-lg);padding:32px 36px;" class="reveal">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:center;">
+        <div>
+          <span class="tag tag-teal" style="margin-bottom:14px;display:inline-flex">⚖️ Fiscalité exclusive DOM-TOM</span>
+          <h3 style="font-size:1.25rem;font-weight:800;color:var(--kaz-blue);margin-bottom:10px;line-height:1.25">Des avantages fiscaux<br>spécifiques aux Antilles</h3>
+          <p style="font-size:.88rem;color:var(--kaz-muted);line-height:1.7">Les DOM offrent des dispositifs fiscaux exceptionnels inaccessibles en France hexagonale. kazImmo les intègre tous dans ses simulateurs pour que vous ayez l'image réelle de votre investissement.</p>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div style="background:#fff;border:1px solid var(--kaz-border);border-radius:10px;padding:16px 14px;">
+            <div style="font-size:1rem;font-weight:800;color:var(--kaz-teal);margin-bottom:4px">Loi Girardin</div>
+            <div style="font-size:.78rem;color:var(--kaz-muted);line-height:1.5">Jusqu'à 110% de réduction sur l'IS. Accessible dès 50 000€ investis.</div>
+          </div>
+          <div style="background:#fff;border:1px solid var(--kaz-border);border-radius:10px;padding:16px 14px;">
+            <div style="font-size:1rem;font-weight:800;color:var(--kaz-teal);margin-bottom:4px">LMNP DOM</div>
+            <div style="font-size:.78rem;color:var(--kaz-muted);line-height:1.5">Amortissements renforcés, régime micro-BIC favorable, niches sociales.</div>
+          </div>
+          <div style="background:#fff;border:1px solid var(--kaz-border);border-radius:10px;padding:16px 14px;">
+            <div style="font-size:1rem;font-weight:800;color:var(--kaz-teal);margin-bottom:4px">Déficit foncier</div>
+            <div style="font-size:.78rem;color:var(--kaz-muted);line-height:1.5">Plafond majoré pour les DOM. Déduisez vos travaux de vos revenus globaux.</div>
+          </div>
+          <div style="background:#fff;border:1px solid var(--kaz-border);border-radius:10px;padding:16px 14px;">
+            <div style="font-size:1rem;font-weight:800;color:var(--kaz-teal);margin-bottom:4px">SCI à l'IS</div>
+            <div style="font-size:.78rem;color:var(--kaz-muted);line-height:1.5">Structurer votre patrimoine antillais avec des charges déductibles maximisées.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     TÉMOIGNAGES
+     LyBox : 3 avis avec étoiles + profil
+═══════════════════════════════════════ -->
+<section class="section testi-section">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="tag tag-blue">Ils nous font confiance</span>
+      <h2>Des investisseurs qui ont<br><em>trouvé leur bien rentable</em></h2>
+      <p>Débutant ou confirmé, investisseur métropolitain ou local — kazImmo a transformé leur façon de chercher aux Antilles.</p>
+    </div>
+    <div class="testi-grid reveal">
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-quote">« J'investissais en aveugle depuis Paris. En 3 semaines sur kazImmo, j'ai identifié un T3 au Lamentin à 8,4% de rendement brut avec une simulation Girardin complète. Le gain fiscal dépasse 12 000€. »</p>
+        <div class="testi-author">
+          <div class="testi-avatar">JF</div>
+          <div>
+            <div class="testi-name">Jean-François M.</div>
+            <div class="testi-role">Investisseur · 2 biens en Martinique</div>
+            <div class="testi-location">📍 Paris → Martinique</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-quote">« Le simulateur de fiscalité DOM est une révolution. Pour la première fois j'ai pu comparer LMNP vs Girardin vs SCI avec les vrais chiffres antillais. J'ai évité une erreur à 18 000€ d'impôts. »</p>
+        <div class="testi-author">
+          <div class="testi-avatar">SK</div>
+          <div>
+            <div class="testi-name">Sandra K.</div>
+            <div class="testi-role">Investisseuse · 4 biens en portefeuille</div>
+            <div class="testi-location">📍 Fort-de-France, Martinique</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-quote">« Vaut plus que son prix. Application innovante avec des outils qui permettent d'étudier le marché antillais et d'estimer la rentabilité facilement. Je ne l'aurais pas trouvé sans kazImmo. »</p>
+        <div class="testi-author">
+          <div class="testi-avatar">RC</div>
+          <div>
+            <div class="testi-name">Rodrigue C.</div>
+            <div class="testi-role">Agent immobilier · Guadeloupe</div>
+            <div class="testi-location">📍 Pointe-à-Pitre, Guadeloupe</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     PRICING
+     LyBox : toggle mensuel/annuel + 3 plans
+     Basique 9€ / Essentiel 29€ / Expert 59€
+═══════════════════════════════════════ -->
+<section class="section pricing-section" id="tarifs">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="tag tag-teal">Nos forfaits et tarifs</span>
+      <h2>Nos forfaits et tarifs</h2>
+      <p>Tous les outils pour investir intelligemment, sans perdre des heures à chercher.</p>
+    </div>
+    <!-- Toggle mensuel / annuel -->
+    <div class="pricing-toggle reveal">
+      <span>Mensuel</span>
+      <div class="toggle-switch" id="billing-toggle" title="Basculer facturation"></div>
+      <span class="active-period">Annuel <span style="background:rgba(0,168,150,.12);color:var(--kaz-teal);font-size:.72rem;padding:2px 8px;border-radius:50px;font-weight:700;margin-left:4px">−2 mois offerts</span></span>
+    </div>
+    <div class="pricing-grid reveal">
+
+      <!-- PLAN 1 : Découverte -->
+      <div class="price-card">
+        <div class="plan-name">Découverte</div>
+        <p class="plan-sub">Pour explorer le marché antillais et comprendre les bases de la rentabilité DOM.</p>
+        <div class="plan-price">
+          <span class="curr">€</span>
+          <span class="amount" id="p1">9</span>
+          <span class="per">/mois</span>
+        </div>
+        <div class="plan-billing">Soit <span class="save" id="p1y">96€/an</span> en annuel · 2 mois offerts</div>
+        <ul class="plan-features">
+          <li><span class="chk">✓</span> 30 annonces analysées / jour</li>
+          <li><span class="chk">✓</span> Simulateur rendement basique</li>
+          <li><span class="chk">✓</span> Données marchés Martinique</li>
+          <li><span class="chk">✓</span> 3 alertes configurables</li>
+          <li><span class="no">—</span> Fiscalité DOM avancée</li>
+          <li><span class="no">—</span> Accès marketplace</li>
+          <li><span class="no">—</span> Données Guadeloupe &amp; Saint-Martin</li>
+        </ul>
+        <a href="#" class="plan-cta outline">Commencer l'essai gratuit</a>
+        <p class="plan-trial">7 jours gratuits · Sans engagement</p>
+      </div>
+
+      <!-- PLAN 2 : Investisseur (populaire) -->
+      <div class="price-card popular">
+        <div class="popular-badge">⭐ Le plus populaire</div>
+        <div class="plan-name" style="color:var(--kaz-teal)">Investisseur</div>
+        <p class="plan-sub">Pour les investisseurs actifs qui veulent trouver des biens rentables avant tout le monde.</p>
+        <div class="plan-price">
+          <span class="curr">€</span>
+          <span class="amount" id="p2">19</span>
+          <span class="per">/mois</span>
+        </div>
+        <div class="plan-billing">Soit <span class="save" id="p2y">192€/an</span> en annuel · <span class="save">Économisez 36€</span></div>
+        <ul class="plan-features">
+          <li><span class="chk">✓</span> Annonces illimitées · 3 territoires</li>
+          <li><span class="chk">✓</span> Alertes rentabilité temps réel</li>
+          <li><span class="chk">✓</span> Simulateur fiscalité DOM complet</li>
+          <li><span class="chk">✓</span> Analyse marché par commune</li>
+          <li><span class="chk">✓</span> Accès marketplace transactions</li>
+          <li><span class="chk">✓</span> Extension navigateur kazImmo</li>
+          <li><span class="chk">✓</span> Historique et suivi des annonces</li>
+        </ul>
+        <a href="#" class="plan-cta filled">Essai gratuit 7 jours →</a>
+        <p class="plan-trial">Carte bancaire non requise</p>
+      </div>
+
+      <!-- PLAN 3 : Expert -->
+      <div class="price-card">
+        <div class="plan-name">Expert &amp; Agence</div>
+        <p class="plan-sub">Pour les professionnels de l'immobilier DOM et les multi-investisseurs exigeants.</p>
+        <div class="plan-price">
+          <span class="curr">€</span>
+          <span class="amount" id="p3">39</span>
+          <span class="per">/mois</span>
+        </div>
+        <div class="plan-billing">Soit <span class="save" id="p3y">396€/an</span> en annuel · <span class="save">Économisez 72€</span></div>
+        <ul class="plan-features">
+          <li><span class="chk">✓</span> Tout Investisseur inclus</li>
+          <li><span class="chk">✓</span> Simulation LMP, SASU, EURL</li>
+          <li><span class="chk">✓</span> API données marchés Antilles</li>
+          <li><span class="chk">✓</span> Rapports PDF personnalisés</li>
+          <li><span class="chk">✓</span> 5 comptes collaborateurs</li>
+          <li><span class="chk">✓</span> Vitrine agence sur la marketplace</li>
+          <li><span class="chk">✓</span> Support prioritaire 7j/7</li>
+        </ul>
+        <a href="#" class="plan-cta outline">Essai gratuit 7 jours</a>
+        <p class="plan-trial">Contactez-nous pour un devis sur mesure</p>
+      </div>
+    </div>
+
+    <!-- Note de réassurance sous le pricing -->
+    <div style="text-align:center;margin-top:32px;padding:22px;background:var(--kaz-bg);border-radius:var(--radius);border:1px solid var(--kaz-border);" class="reveal">
+      <p style="font-size:.88rem;color:var(--kaz-muted);line-height:1.6">
+        <strong style="color:var(--kaz-blue)">Si vous êtes débutant :</strong> kazImmo vous permettra de définir votre stratégie et de vous lancer en évitant les erreurs classiques des marchés DOM.<br>
+        <strong style="color:var(--kaz-blue)">Si vous êtes confirmé :</strong> kazImmo vous fera économiser des dizaines d'heures de recherche et vous donnera accès à un flux d'annonces introuvable ailleurs.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     FAQ
+     LyBox : questions fréquentes en accordéon
+═══════════════════════════════════════ -->
+<section class="section faq-section" id="faq">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="tag tag-blue">Questions fréquentes</span>
+      <h2>Tout ce que vous voulez savoir<br>avant de vous lancer</h2>
+    </div>
+    <div class="faq-list reveal">
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          kazImmo fonctionne-t-il pour investir depuis la métropole ?
+          <span class="icon">+</span>
+        </div>
+        <div class="faq-a">
+          Absolument. La majorité de nos utilisateurs investissent aux Antilles depuis la France hexagonale. kazImmo vous donne toutes les données locales (prix du marché, loyers, tension locative, fiscalité DOM) pour décider et investir à distance en toute sérénité. Notre réseau de professionnels locaux vous accompagne pour les visites et la gestion.
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          Quelle différence avec un outil comme LyBox ?
+          <span class="icon">+</span>
+        </div>
+        <div class="faq-a">
+          LyBox est un excellent outil pour la France hexagonale, mais il ne couvre pas les spécificités des marchés DOM : données DVF locales, fiscalité Girardin, LMNP antillais, saisonnalité touristique, loyers locaux calibrés. kazImmo a été conçu du sol au plafond pour les Antilles — c'est la différence entre un outil généraliste et un expert de votre marché.
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          Les rendements affichés sont-ils réalistes ?
+          <span class="icon">+</span>
+        </div>
+        <div class="faq-a">
+          Nos rendements bruts sont calculés en temps réel à partir des prix de vente réels et des loyers de marché observés dans chaque commune. Nous affichons clairement rendement brut ET net (après charges, taxe foncière, gestion). Notre simulateur de fiscalité vous permet d'aller encore plus loin avec une simulation personnalisée intégrant votre tranche marginale d'imposition et votre régime choisi.
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          Comment fonctionne l'essai gratuit 7 jours ?
+          <span class="icon">+</span>
+        </div>
+        <div class="faq-a">
+          Créez votre compte en 2 minutes, sans carte bancaire. Pendant 7 jours, vous avez accès à toutes les fonctionnalités du plan Investisseur : moteur de recherche 3 territoires, alertes, simulateurs de fiscalité DOM, marketplace. À la fin de l'essai, choisissez le plan qui correspond à votre usage ou annulez sans frais.
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          kazImmo couvre-t-il d'autres territoires DOM ?
+          <span class="icon">+</span>
+        </div>
+        <div class="faq-a">
+          Actuellement kazImmo couvre la Martinique, la Guadeloupe (dont Saint-Martin et Saint-Barthélemy) et la Guyane. La Réunion et Mayotte sont en cours d'intégration. Inscrivez-vous à la liste d'attente depuis votre espace membre pour être alerté en priorité.
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          Puis-je accéder à kazImmo depuis mon téléphone ?
+          <span class="icon">+</span>
+        </div>
+        <div class="faq-a">
+          kazImmo est intégralement responsive et optimisé mobile. Vous recevez vos alertes rentabilité par notification push et pouvez analyser n'importe quelle annonce depuis votre smartphone. Une application iOS et Android dédiée est en développement pour une sortie prochaine.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     CTA FINAL
+     LyBox : grande section fond coloré
+     "Rejoignez X investisseurs" + CTA fort
+═══════════════════════════════════════ -->
+<section class="cta-section">
+  <div class="cta-inner">
+    <h2>Votre prochain bien rentable<br>aux Antilles commence <em>ici</em></h2>
+    <p>Rejoignez les investisseurs qui ont arrêté de chercher à l'aveugle et qui trouvent des biens rentables 7 fois plus vite avec kazImmo.</p>
+    <div class="cta-btns">
+      <a href="#" class="btn btn-white" style="font-size:1rem;padding:15px 32px">Commencer l'essai gratuit →</a>
+      <a href="#fonctionnalites" class="btn btn-outline-white">Voir les fonctionnalités</a>
+    </div>
+    <div class="cta-reassurance">
+      <span>Essai gratuit 7 jours</span>
+      <span>Sans carte bancaire</span>
+      <span>Résiliable à tout moment</span>
+      <span>Données 100% Antilles</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     FOOTER
+═══════════════════════════════════════ -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="#" class="nav-logo">kaz<span>Immo</span></a>
+        <p>La marketplace immobilière des Antilles françaises. Martinique, Guadeloupe, Guyane — des données locales pour des décisions éclairées.</p>
+        <div class="footer-social">
+          <a href="#">in</a>
+          <a href="#">𝕏</a>
+          <a href="#">▶</a>
+          <a href="#">f</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h5>Plateforme</h5>
+        <ul>
+          <li><a href="#">Moteur de recherche</a></li>
+          <li><a href="#">Simulateur rendement</a></li>
+          <li><a href="#">Fiscalité DOM-TOM</a></li>
+          <li><a href="#">Marketplace</a></li>
+          <li><a href="#">Alertes rentabilité</a></li>
+          <li><a href="#">Extension navigateur</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Territoires</h5>
+        <ul>
+          <li><a href="#">Martinique</a></li>
+          <li><a href="#">Guadeloupe</a></li>
+          <li><a href="#">Guyane</a></li>
+          <li><a href="#">Saint-Martin</a></li>
+          <li><a href="#">Saint-Barthélemy</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Entreprise</h5>
+        <ul>
+          <li><a href="#">À propos</a></li>
+          <li><a href="#">Blog investissement</a></li>
+          <li><a href="#">Partenaires</a></li>
+          <li><a href="#">Presse</a></li>
+          <li><a href="#">Contact</a></li>
+          <li><a href="#">Mentions légales</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 kazImmo · Fait aux Antilles 🇲🇶 · Tous droits réservés</p>
+      <div class="footer-badges">
+        <span class="fbadge">🔒 Données sécurisées</span>
+        <span class="fbadge">🇫🇷 Hébergé en France</span>
+        <span class="fbadge">✓ RGPD conforme</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ═══════════════════════════════════════
+     SCRIPTS
+═══════════════════════════════════════ -->
+<script>
+/* ── Scroll reveal ── */
+const revealEls = document.querySelectorAll('.reveal');
+const revealObs = new IntersectionObserver((entries) => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) {
+      setTimeout(() => e.target.classList.add('in'), i * 90);
+      revealObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.08 });
+revealEls.forEach(el => revealObs.observe(el));
+
+/* ── Animation barres comparatif ── */
+const barObs = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.querySelectorAll('.metric-bar-fill').forEach(bar => {
+        const w = bar.dataset.width || 0;
+        setTimeout(() => { bar.style.width = w + '%'; }, 200);
+      });
+      barObs.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.3 });
+document.querySelectorAll('.compare-card').forEach(c => barObs.observe(c));
+
+/* ── Feature tabs ── */
+const SCREENS = {
+  market: {
+    title: 'Analyse du marché · Fort-de-France',
+    html: `
+      <div class="mini-stat-row" style="margin-bottom:12px">
+        <div class="mini-stat"><span class="v">2 850€</span><span class="l">Prix / m² médian</span></div>
+        <div class="mini-stat"><span class="v">14 €</span><span class="l">Loyer / m² moyen</span></div>
+        <div class="mini-stat"><span class="v">96%</span><span class="l">Taux d'occupation</span></div>
+      </div>
+      <div style="background:var(--kaz-bg);border:1px solid var(--kaz-border);border-radius:10px;padding:14px">
+        <div style="font-size:.75rem;font-weight:600;color:var(--kaz-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Évolution des prix · 12 mois</div>
+        <div style="display:flex;align-items:flex-end;gap:5px;height:70px">
+          ${[55,60,58,64,62,70,68,74,72,78,80,88].map((h,i)=>`<div style="flex:1;height:${h}%;background:${i===11?'var(--kaz-teal)':'rgba(0,168,150,.25)'};border-radius:3px 3px 0 0"></div>`).join('')}
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:6px">
+          <span style="font-size:.68rem;color:var(--kaz-muted)">Jan 24</span>
+          <span style="font-size:.68rem;color:var(--kaz-teal);font-weight:700">+12% sur 12 mois</span>
+          <span style="font-size:.68rem;color:var(--kaz-muted)">Déc 24</span>
+        </div>
+      </div>
+      <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+        <span style="background:rgba(0,168,150,.1);color:var(--kaz-teal);font-size:.72rem;font-weight:600;padding:4px 12px;border-radius:50px;border:1px solid rgba(0,168,150,.2)">Fort-de-France</span>
+        <span style="background:rgba(26,60,110,.07);color:var(--kaz-blue);font-size:.72rem;font-weight:600;padding:4px 12px;border-radius:50px;border:1px solid rgba(26,60,110,.15)">Le Lamentin</span>
+        <span style="background:rgba(26,60,110,.07);color:var(--kaz-blue);font-size:.72rem;font-weight:600;padding:4px 12px;border-radius:50px;border:1px solid rgba(26,60,110,.15)">Schoelcher</span>
+        <span style="background:rgba(244,166,35,.1);color:#B45309;font-size:.72rem;font-weight:600;padding:4px 12px;border-radius:50px;border:1px solid rgba(244,166,35,.3)">Le Robert</span>
+      </div>`
+  },
+  search: {
+    title: 'Moteur de recherche · Antilles',
+    html: `
+      <div class="map-area">
+        <div class="map-pin" style="top:28%;left:25%">8,4% · Lamentin</div>
+        <div class="map-pin" style="top:52%;left:54%;background:var(--kaz-blue)">9,1% · Fort-de-France</div>
+        <div class="map-pin" style="top:67%;left:33%;background:var(--kaz-gold);color:#0D1F35">7,8% · Le Robert</div>
+        <div class="map-island-label">🇲🇶 Martinique · 48 communes</div>
+      </div>
+      <div class="mini-stat-row">
+        <div class="mini-stat"><span class="v">2 100</span><span class="l">Annonces actives</span></div>
+        <div class="mini-stat"><span class="v">7,9%</span><span class="l">Rendement moyen</span></div>
+        <div class="mini-stat"><span class="v">+38</span><span class="l">Nouvelles ce matin</span></div>
+      </div>`
+  },
+  alert: {
+    title: 'Alertes rentabilité · Temps réel',
+    html: `
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="background:rgba(0,168,150,.07);border:1px solid var(--kaz-border);border-left:3px solid var(--kaz-teal);border-radius:10px;padding:14px 16px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <span style="font-size:.78rem;font-weight:700;color:var(--kaz-teal)">🔔 Nouvelle alerte · il y a 3 min</span>
+            <span style="font-size:.72rem;font-weight:800;color:var(--kaz-teal)">8,4%</span>
+          </div>
+          <div style="font-size:.85rem;font-weight:600;color:var(--kaz-blue)">T3 meublé · Le Lamentin, Martinique</div>
+          <div style="font-size:.75rem;color:var(--kaz-muted)">149 000 € · 72 m² · LMNP éligible · Loyer estimé 1 050€</div>
+        </div>
+        <div style="background:var(--kaz-bg);border:1px solid var(--kaz-border);border-left:3px solid var(--kaz-gold);border-radius:10px;padding:14px 16px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <span style="font-size:.78rem;font-weight:700;color:var(--kaz-gold)">🔔 Nouvelle alerte · il y a 18 min</span>
+            <span style="font-size:.72rem;font-weight:800;color:var(--kaz-gold)">11,2%</span>
+          </div>
+          <div style="font-size:.85rem;font-weight:600;color:var(--kaz-blue)">T2 · Marigot, Saint-Martin</div>
+          <div style="font-size:.75rem;color:var(--kaz-muted)">95 000 € · 48 m² · Forte tension · Loyer estimé 890€</div>
+        </div>
+        <div style="background:var(--kaz-bg);border:1px solid var(--kaz-border);border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <span style="font-size:.8rem;color:var(--kaz-muted)">Mes critères actifs :</span>
+          <span style="background:rgba(0,168,150,.1);color:var(--kaz-teal);font-size:.72rem;font-weight:600;padding:3px 9px;border-radius:50px">Rendement > 7%</span>
+          <span style="background:rgba(26,60,110,.08);color:var(--kaz-blue);font-size:.72rem;font-weight:600;padding:3px 9px;border-radius:50px">Martinique + Saint-Martin</span>
+        </div>
+      </div>`
+  },
+  fiscal: {
+    title: 'Simulateur fiscalité DOM',
+    html: `
+      <div style="background:var(--kaz-bg);border:1px solid var(--kaz-border);border-radius:10px;padding:14px;margin-bottom:12px">
+        <div style="font-size:.75rem;color:var(--kaz-muted);margin-bottom:6px">Bien simulé · T3 Fort-de-France · 149 000€ · Loyer 1 050€/mois</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <span style="background:rgba(0,168,150,.1);color:var(--kaz-teal);font-size:.72rem;font-weight:600;padding:3px 9px;border-radius:50px">TMI 30%</span>
+          <span style="background:rgba(26,60,110,.08);color:var(--kaz-blue);font-size:.72rem;font-weight:600;padding:3px 9px;border-radius:50px">Financement 80%</span>
+        </div>
+      </div>
+      <div class="fiscal-rows">
+        <div class="fiscal-row">
+          <span class="regime">Girardin IS</span>
+          <span class="impot">0 € / an</span>
+          <span class="gain">-12 400€ d'impôts</span>
+        </div>
+        <div class="fiscal-row">
+          <span class="regime">LMNP (BIC réel)</span>
+          <span class="impot">1 240 € / an</span>
+          <span class="gain">Cashflow +310€/mois</span>
+        </div>
+        <div class="fiscal-row">
+          <span class="regime">Nu propriétaire</span>
+          <span class="impot">3 680 € / an</span>
+          <span class="gain">Cashflow +140€/mois</span>
+        </div>
+        <div class="fiscal-row" style="opacity:.4">
+          <span class="regime">Micro-foncier</span>
+          <span class="impot">5 420 € / an</span>
+          <span class="gain">Non recommandé</span>
+        </div>
+      </div>`
+  },
+  marketplace: {
+    title: 'Marketplace kazImmo · Transactions',
+    html: `
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;gap:8px;margin-bottom:4px">
+          <span style="background:rgba(0,168,150,.1);color:var(--kaz-teal);font-size:.72rem;font-weight:600;padding:3px 10px;border-radius:50px;cursor:pointer">Acheter</span>
+          <span style="background:rgba(26,60,110,.08);color:var(--kaz-blue);font-size:.72rem;font-weight:600;padding:3px 10px;border-radius:50px;cursor:pointer">Vendre</span>
+          <span style="background:rgba(26,60,110,.08);color:var(--kaz-blue);font-size:.72rem;font-weight:600;padding:3px 10px;border-radius:50px;cursor:pointer">Professionnels</span>
+        </div>
+        <div class="result-row">
+          <div class="result-thumb" style="background:rgba(0,168,150,.1)">🏠</div>
+          <div class="result-info">
+            <div class="result-name">T3 meublé · Schoelcher, Martinique</div>
+            <div class="result-meta">Vendeur direct · Notaire partenaire · Visite virtuelle dispo</div>
+          </div>
+          <div class="result-yield"><span class="yield-val">8,1%</span><span class="yield-lbl">brut</span></div>
+        </div>
+        <div class="result-row">
+          <div class="result-thumb" style="background:rgba(244,166,35,.1)">🏢</div>
+          <div class="result-info">
+            <div class="result-name">Immeuble 4 logements · Basse-Terre</div>
+            <div class="result-meta">Agent certifié kazImmo · Loué à 100%</div>
+          </div>
+          <div class="result-yield"><span class="yield-val">9,8%</span><span class="yield-lbl">brut</span></div>
+        </div>
+        <div style="background:var(--kaz-bg);border:1px solid var(--kaz-border);border-radius:8px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between">
+          <span style="font-size:.75rem;color:var(--kaz-muted)">248 biens disponibles · 12 agents vérifiés</span>
+          <span class="result-badge">Mise à jour quotidienne</span>
+        </div>
+      </div>`
+  }
+};
+
+document.querySelectorAll('.feature-item').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.feature-item').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    const key = tab.dataset.feat;
+    document.getElementById('feat-title').textContent = SCREENS[key].title;
+    document.getElementById('feat-body').innerHTML = SCREENS[key].html;
+  });
+});
+
+/* ── Billing toggle — prix 9 / 19 / 39 ── */
+let annual = true;
+// [mensuel, annuel]
+const prices = { p1:[9,8], p2:[19,16], p3:[39,33] };
+document.getElementById('billing-toggle').addEventListener('click', function(){
+  annual = !annual;
+  this.style.background = annual ? 'var(--kaz-teal)' : '#ccc';
+  Object.keys(prices).forEach(k => {
+    const el = document.getElementById(k);
+    if(el) el.textContent = annual ? prices[k][1] : prices[k][0];
+  });
+  const p1y = document.getElementById('p1y');
+  const p2y = document.getElementById('p2y');
+  const p3y = document.getElementById('p3y');
+  if(p1y) p1y.textContent = annual ? '96€/an' : '108€/an';
+  if(p2y) p2y.textContent = annual ? '192€/an' : '228€/an';
+  if(p3y) p3y.textContent = annual ? '396€/an' : '468€/an';
+});
+
+/* ── FAQ accordion ── */
+function toggleFaq(el) {
+  const isOpen = el.classList.contains('open');
+  document.querySelectorAll('.faq-q').forEach(q => {
+    q.classList.remove('open');
+    q.nextElementSibling.classList.remove('open');
+  });
+  if (!isOpen) {
+    el.classList.add('open');
+    el.nextElementSibling.classList.add('open');
+  }
+}
+</script>
+
+</body>
+</html>

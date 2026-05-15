@@ -132,6 +132,71 @@ nav {
 }
 .btn-text-link:hover { color:var(--kaz-teal); border-color:var(--kaz-teal); }
 
+/* PROPERTY CARD — fiche bien (hero) */
+.property-card{
+  background:#fff;border-radius:22px;
+  box-shadow:0 24px 70px rgba(26,60,110,.18),0 2px 8px rgba(0,0,0,.06);
+  border:1px solid var(--kaz-border);overflow:hidden;
+  max-width:440px;width:100%;position:relative;
+}
+.pc-img{position:relative;height:240px;overflow:hidden}
+.pc-img img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s ease}
+.property-card:hover .pc-img img{transform:scale(1.04)}
+.pc-img-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 50%,rgba(0,0,0,.55) 100%)}
+.pc-badge-hot{
+  position:absolute;top:14px;left:14px;
+  background:#FF6B4A;color:#fff;font-size:.72rem;font-weight:800;
+  letter-spacing:.5px;padding:5px 11px;border-radius:50px;
+  box-shadow:0 4px 14px rgba(255,107,74,.45);text-transform:uppercase;
+}
+.pc-fav{
+  position:absolute;top:12px;right:12px;
+  width:36px;height:36px;border-radius:50%;border:none;
+  background:rgba(255,255,255,.92);color:var(--kaz-blue);
+  font-size:1.15rem;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 2px 10px rgba(0,0,0,.15);transition:all .2s;
+}
+.pc-fav:hover{background:#fff;color:#FF6B4A;transform:scale(1.08)}
+.pc-img-meta{
+  position:absolute;bottom:12px;left:14px;right:14px;
+  display:flex;align-items:center;gap:8px;
+  color:#fff;font-size:.78rem;font-weight:600;
+  text-shadow:0 1px 4px rgba(0,0,0,.5);
+}
+.pc-img-meta .pc-img-dot{opacity:.6;font-size:.5rem}
+.pc-img-meta span:last-child{margin-left:auto;background:rgba(0,0,0,.4);padding:3px 8px;border-radius:50px;font-size:.7rem;backdrop-filter:blur(6px)}
+
+.pc-body{padding:20px 22px 22px}
+.pc-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:14px}
+.pc-type{font-size:.74rem;font-weight:600;color:var(--kaz-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
+.pc-title{font-size:1.15rem;font-weight:800;color:var(--kaz-blue);letter-spacing:-.3px;line-height:1.2;margin:0}
+.pc-yield{text-align:right;flex-shrink:0;background:rgba(0,168,150,.08);border:1px solid rgba(0,168,150,.25);border-radius:10px;padding:6px 10px}
+.pc-yield-val{display:block;font-size:1.35rem;font-weight:800;color:var(--kaz-teal);line-height:1}
+.pc-yield-lbl{display:block;font-size:.62rem;color:var(--kaz-teal);font-weight:600;margin-top:2px;text-transform:uppercase;letter-spacing:.4px}
+
+.pc-specs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:12px;background:var(--kaz-bg);border-radius:12px;margin-bottom:14px}
+.pc-spec{display:flex;align-items:center;gap:5px;font-size:.74rem;color:var(--kaz-text);justify-content:center}
+.pc-spec b{color:var(--kaz-blue);font-weight:700}
+
+.pc-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.pc-tag{font-size:.7rem;font-weight:700;padding:4px 10px;border-radius:50px;letter-spacing:.2px}
+.pc-tag.tag-green{background:rgba(34,197,94,.12);color:#16A34A;border:1px solid rgba(34,197,94,.25)}
+.pc-tag.tag-gold{background:rgba(244,166,35,.14);color:#B45309;border:1px solid rgba(244,166,35,.3)}
+.pc-tag.tag-teal{background:rgba(0,168,150,.1);color:var(--kaz-teal);border:1px solid rgba(0,168,150,.25)}
+
+.pc-foot{display:flex;justify-content:space-between;align-items:center;padding-top:14px;border-top:1px solid var(--kaz-border)}
+.pc-price-lbl{font-size:.7rem;color:var(--kaz-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
+.pc-price{font-size:1.5rem;font-weight:800;color:var(--kaz-blue);letter-spacing:-.5px}
+.pc-cta{
+  background:var(--kaz-teal);color:#fff;font-weight:700;font-size:.86rem;
+  padding:11px 18px;border-radius:50px;text-decoration:none;
+  transition:all .2s;white-space:nowrap;
+}
+.pc-cta:hover{background:#008f7e;transform:translateY(-2px);box-shadow:0 8px 22px rgba(0,168,150,.32)}
+
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+
 /* HERO SCREEN — dashboard mockup */
 .hero-screen {
   background:#fff; border-radius:20px;
@@ -692,55 +757,52 @@ footer {
       </div>
     </div>
 
-    <!-- DASHBOARD MOCKUP — légèrement réduit pour aérer le titre -->
-    <div class="hero-screen" style="animation:float 5s ease-in-out infinite; max-width:420px; width:100%;">
-      <div class="screen-bar">
-        <div class="screen-dots"><i></i><i></i><i></i></div>
-        <span>kazImmo · Moteur de recherche Antilles</span>
+    <!-- PROPERTY CARD — fiche bien type kazImmo -->
+    <div class="property-card" style="animation:float 5s ease-in-out infinite;">
+      <!-- IMAGE -->
+      <div class="pc-img">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Martinique_-_Habitation_cr%C3%A9ole.jpg/960px-Martinique_-_Habitation_cr%C3%A9ole.jpg" alt="Maison créole en Martinique" loading="lazy">
+        <div class="pc-img-overlay"></div>
+        <span class="pc-badge-hot">🔥 Pépite</span>
+        <button class="pc-fav" aria-label="Favoris">♡</button>
+        <div class="pc-img-meta">
+          <span>📍 Le Lamentin · Martinique</span>
+          <span class="pc-img-dot">●</span>
+          <span>1/12</span>
+        </div>
       </div>
-      <div class="screen-body">
-        <div class="screen-search">
-          <input value="T3 Martinique · Rendement > 7%" readonly>
-          <button class="sfilter">Filtrer</button>
-        </div>
-        <div class="screen-results">
-          <div class="result-row">
-            <div class="result-thumb" style="background:rgba(0,168,150,.1)">🏠</div>
-            <div class="result-info">
-              <div class="result-name">T3 meublé · Le Lamentin</div>
-              <div class="result-meta">72 m² · 149 000 € · LMNP éligible</div>
-            </div>
-            <div class="result-yield">
-              <span class="yield-val">8,4%</span>
-              <span class="yield-lbl">brut</span>
-            </div>
+      <!-- BODY -->
+      <div class="pc-body">
+        <div class="pc-head">
+          <div>
+            <div class="pc-type">T3 meublé · 72 m²</div>
+            <h3 class="pc-title">Villa créole rénovée</h3>
           </div>
-          <div class="result-row">
-            <div class="result-thumb" style="background:rgba(26,60,110,.08)">🏢</div>
-            <div class="result-info">
-              <div class="result-name">Appt · Fort-de-France Centre</div>
-              <div class="result-meta">55 m² · 128 000 € · Girardin éligible</div>
-            </div>
-            <div class="result-yield">
-              <span class="yield-val">9,1%</span>
-              <span class="yield-lbl">brut</span>
-            </div>
-          </div>
-          <div class="result-row">
-            <div class="result-thumb" style="background:rgba(244,166,35,.1)">🌿</div>
-            <div class="result-info">
-              <div class="result-name">T2 · Marigot (Saint-Martin)</div>
-              <div class="result-meta">48 m² · 95 000 € · Forte tension locative</div>
-            </div>
-            <div class="result-yield">
-              <span class="yield-val">11,2%</span>
-              <span class="yield-lbl">brut</span>
-            </div>
+          <div class="pc-yield">
+            <span class="pc-yield-val">8,4%</span>
+            <span class="pc-yield-lbl">rentabilité brute</span>
           </div>
         </div>
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding-top:12px;border-top:1px solid var(--kaz-border)">
-          <span style="font-size:.72rem;color:var(--kaz-muted)">4 200 annonces analysées · Mise à jour en temps réel</span>
-          <span class="result-badge">+127 nouvelles aujourd'hui</span>
+
+        <div class="pc-specs">
+          <div class="pc-spec"><span>🛏️</span><b>3</b> pièces</div>
+          <div class="pc-spec"><span>📐</span><b>72</b> m²</div>
+          <div class="pc-spec"><span>🌴</span><b>Jardin</b></div>
+          <div class="pc-spec"><span>🚗</span><b>Parking</b></div>
+        </div>
+
+        <div class="pc-tags">
+          <span class="pc-tag tag-green">LMNP éligible</span>
+          <span class="pc-tag tag-gold">Girardin</span>
+          <span class="pc-tag tag-teal">Loué 1 050€/mois</span>
+        </div>
+
+        <div class="pc-foot">
+          <div>
+            <div class="pc-price-lbl">Prix de vente</div>
+            <div class="pc-price">149 000 €</div>
+          </div>
+          <a href="#" class="pc-cta">Voir le bien →</a>
         </div>
       </div>
     </div>

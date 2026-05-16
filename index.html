@@ -68,6 +68,78 @@ nav {
 }
 .nav-links a.cta-nav:hover { background:#008f7e; transform:translateY(-1px); }
 
+/* ─── MEGA MENU "Nos outils" ─── */
+.nav-mega{position:relative}
+.nav-trigger{display:inline-flex;align-items:center;gap:4px;cursor:pointer}
+.nav-trigger .caret{font-size:.85rem;transition:transform .25s ease;display:inline-block}
+.nav-mega:hover .nav-trigger .caret{transform:rotate(180deg);color:var(--kaz-teal)}
+.nav-mega:hover .nav-trigger{color:var(--kaz-blue)}
+
+.mega{
+  position:absolute;top:calc(100% + 6px);left:50%;transform:translateX(-50%) translateY(6px);
+  width:880px;max-width:92vw;
+  background:#fff;border-radius:18px;border:1px solid var(--kaz-border);
+  box-shadow:0 24px 60px rgba(13,31,53,.16),0 4px 12px rgba(0,0,0,.06);
+  padding:24px;
+  display:grid;grid-template-columns:280px 1fr 1fr;gap:20px;
+  opacity:0;visibility:hidden;pointer-events:none;
+  transition:opacity .2s ease,transform .2s ease,visibility .2s;
+  z-index:200;
+}
+.mega::before{
+  content:"";position:absolute;top:-10px;left:0;right:0;height:10px;
+}
+.nav-mega:hover .mega{opacity:1;visibility:visible;pointer-events:auto;transform:translateX(-50%) translateY(0)}
+
+/* PROMO card */
+.mega-promo{
+  display:flex;flex-direction:column;gap:10px;
+  background:linear-gradient(160deg,#F0FAF8,#EBF4FF);
+  border:1px solid var(--kaz-border);border-radius:14px;
+  padding:18px;text-decoration:none;color:var(--kaz-blue);
+  transition:transform .2s ease,box-shadow .2s ease;
+}
+.mega-promo:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(26,60,110,.1)}
+.mega-promo-tag{display:inline-block;background:rgba(0,168,150,.12);color:var(--kaz-teal);font-size:.7rem;font-weight:700;letter-spacing:.4px;text-transform:uppercase;padding:3px 10px;border-radius:50px;width:fit-content}
+.mega-promo-title{font-size:1.05rem;font-weight:800;letter-spacing:-.3px;line-height:1.25;color:var(--kaz-blue)}
+.mega-promo-thumb{position:relative;border-radius:12px;overflow:hidden;aspect-ratio:16/10;background:#0E2A33}
+.mega-promo-thumb img{width:100%;height:100%;object-fit:cover;display:block;opacity:.85;transition:transform .4s ease}
+.mega-promo:hover .mega-promo-thumb img{transform:scale(1.05);opacity:1}
+.mega-play{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:44px;height:44px;border-radius:50%;
+  background:rgba(255,255,255,.95);color:var(--kaz-coral,#FF6B4A);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.05rem;font-weight:800;
+  box-shadow:0 6px 18px rgba(0,0,0,.25);
+  z-index:2;
+}
+.mega-promo-foot{font-size:.74rem;color:var(--kaz-muted);font-weight:500}
+
+/* COLUMNS */
+.mega-col{display:flex;flex-direction:column;gap:6px}
+.mega-col-title{font-size:.7rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--kaz-muted);padding:0 6px 6px;border-bottom:1px solid var(--kaz-border);margin-bottom:6px}
+.mega-item{display:flex;gap:12px;align-items:flex-start;padding:10px 8px;border-radius:10px;text-decoration:none;transition:background .15s}
+.mega-item:hover{background:var(--kaz-bg)}
+.mega-ico{
+  width:38px;height:38px;border-radius:9px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.05rem;
+}
+.mi-search{background:rgba(26,60,110,.08);color:var(--kaz-blue)}
+.mi-ext{background:rgba(34,197,94,.1);color:#16A34A}
+.mi-market{background:rgba(139,92,246,.12);color:#7C3AED}
+.mi-yield{background:rgba(244,166,35,.14);color:#B45309}
+.mi-tax{background:rgba(244,166,35,.14);color:#B45309}
+.mi-rent{background:rgba(255,107,74,.12);color:var(--kaz-coral,#E85436)}
+.mega-body strong{display:block;font-size:.9rem;font-weight:700;color:var(--kaz-blue);margin-bottom:2px;line-height:1.2}
+.mega-body span{display:block;font-size:.78rem;color:var(--kaz-muted);line-height:1.45}
+
+@media(max-width:1024px){
+  .mega{display:none}
+  .nav-trigger .caret{display:none}
+}
+
 /* ─────────────────────────────────────────
    HERO  (même structure que LyBox)
    H1 + sous-titre + CTA primaire + image/screen mockup
@@ -298,12 +370,24 @@ nav {
 .proof-stat .num {
   font-size:1.6rem; font-weight:800; color:var(--kaz-blue); display:block; line-height:1;
 }
-.proof-stat .num em { color:var(--kaz-teal); font-style:normal; }
+.proof-stat .num em { color:inherit; font-style:normal; }
 .proof-stat .lbl { font-size:.75rem; color:var(--kaz-muted); margin-top:3px; }
 .proof-divider { width:1px; height:40px; background:var(--kaz-border); }
 .proof-rating { display:flex; flex-direction:column; align-items:center; gap:4px; }
 .stars { color:#F4A623; font-size:1.1rem; letter-spacing:1px; }
 .proof-rating .lbl { font-size:.75rem; color:var(--kaz-muted); }
+
+/* BRANDS BAR — sources d'agrégation */
+.brands-bar{background:#fff;border-bottom:1px solid var(--kaz-border);padding:42px 0 36px}
+.brands-eyebrow{text-align:center;font-size:.85rem;color:var(--kaz-muted);font-weight:500;margin-bottom:22px;max-width:680px;margin-left:auto;margin-right:auto}
+.brands-grid{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:18px 38px;margin-bottom:22px;filter:grayscale(.4)}
+.brand-logo{font-family:var(--font);font-size:1.05rem;font-weight:800;color:#94A3B8;letter-spacing:-.3px;opacity:.85;white-space:nowrap;display:inline-flex;align-items:baseline;line-height:1;transition:opacity .2s,color .2s}
+.brand-logo:hover{opacity:1;color:var(--kaz-blue)}
+.brand-logo sup,.brand-logo small,.brand-logo em,.brand-logo b,.brand-logo i{color:inherit;font-style:inherit;font-weight:inherit;background:transparent;padding:0}
+.brand-logo small{font-size:.7em;margin-left:1px}
+.brand-logo sup{font-size:.55em;margin-left:1px}
+.brands-disclaimer{text-align:center;font-size:.72rem;color:#94A3B8;font-style:italic;max-width:780px;margin:0 auto;line-height:1.5}
+@media(max-width:640px){.brands-grid{gap:14px 22px}.brand-logo{font-size:.92rem}}
 
 /* Badge essai gratuit sous la liste features */
 .feat-trial-badge {
@@ -579,6 +663,8 @@ nav {
 }
 .pricing-toggle span { font-size:.9rem; color:var(--kaz-muted); font-weight:500; }
 .pricing-toggle .active-period { color:var(--kaz-blue); font-weight:700; }
+.pricing-reassure{text-align:center;font-size:.85rem;color:var(--kaz-muted);font-weight:500;margin:0 0 36px}
+.pricing-reassure::before{content:"";display:inline-block}
 .toggle-switch {
   width:44px; height:24px; background:var(--kaz-teal); border-radius:50px;
   position:relative; cursor:pointer;
@@ -612,6 +698,8 @@ nav {
 }
 .plan-price .curr { font-size:1.1rem; color:var(--kaz-muted); margin-top:6px; }
 .plan-price .per { font-size:.82rem; color:var(--kaz-muted); }
+.plan-trial-top{font-size:.78rem;color:var(--kaz-muted);font-weight:600;margin:6px 0 8px}
+.plan-trial-top::before{content:"✓ ";color:#16A34A;font-weight:800}
 .plan-billing { font-size:.75rem; color:var(--kaz-muted); margin-bottom:26px; }
 .plan-billing .save { color:var(--kaz-teal); font-weight:600; }
 .plan-features { list-style:none; display:flex; flex-direction:column; gap:11px; margin-bottom:28px; }
@@ -755,8 +843,140 @@ footer {
 <nav>
   <a href="#" class="nav-logo">kaz<span>Immo</span></a>
   <ul class="nav-links">
-    <li><a href="#fonctionnalites">Fonctionnalités</a></li>
-    <li><a href="#territoires">Territoires</a></li>
+    <li class="nav-mega">
+      <a href="#fonctionnalites" class="nav-trigger">Nos outils <span class="caret">⌄</span></a>
+      <div class="mega">
+        <!-- LEFT: tutoriel -->
+        <a class="mega-promo" href="#">
+          <div class="mega-promo-tag">🎬 Tutoriel</div>
+          <div class="mega-promo-title">Comment trouver une pépite<br>aux Antilles en 3 minutes</div>
+          <div class="mega-promo-thumb">
+            <span class="mega-play">▶</span>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Martinique_-_Habitation_cr%C3%A9ole.jpg/640px-Martinique_-_Habitation_cr%C3%A9ole.jpg" alt="Tutoriel kazImmo" loading="lazy">
+          </div>
+          <div class="mega-promo-foot">Cas concret : un T3 au Lamentin à 12,8 %</div>
+        </a>
+
+        <!-- COL 1 -->
+        <div class="mega-col">
+          <div class="mega-col-title">Outils</div>
+          <a href="#fonctionnalites" class="mega-item">
+            <div class="mega-ico mi-search">🔍</div>
+            <div class="mega-body">
+              <strong>Moteur de recherche</strong>
+              <span>Toutes les annonces des 3 territoires, filtrées par rendement.</span>
+            </div>
+          </a>
+          <a href="#fonctionnalites" class="mega-item">
+            <div class="mega-ico mi-ext">🧩</div>
+            <div class="mega-body">
+              <strong>Extension navigateur</strong>
+              <span>Analysez n'importe quelle annonce externe en 1 clic.</span>
+            </div>
+          </a>
+          <a href="#fonctionnalites" class="mega-item">
+            <div class="mega-ico mi-market">📍</div>
+            <div class="mega-body">
+              <strong>Analyse du marché DOM</strong>
+              <span>Prix/m², loyers, tension locative — commune par commune.</span>
+            </div>
+          </a>
+        </div>
+
+        <!-- COL 2 -->
+        <div class="mega-col">
+          <div class="mega-col-title">Simulateurs</div>
+          <a href="#calculateur" class="mega-item">
+            <div class="mega-ico mi-yield">📈</div>
+            <div class="mega-body">
+              <strong>Simulateur de rentabilité</strong>
+              <span>Rendement brut, net, cash-flow — en 30 secondes.</span>
+            </div>
+          </a>
+          <a href="#fonctionnalites" class="mega-item">
+            <div class="mega-ico mi-tax">⚖️</div>
+            <div class="mega-body">
+              <strong>Simulateur de fiscalité DOM</strong>
+              <span>Girardin, LMNP, déficit foncier — comparez les régimes.</span>
+            </div>
+          </a>
+          <a href="#fonctionnalites" class="mega-item">
+            <div class="mega-ico mi-rent">💶</div>
+            <div class="mega-body">
+              <strong>Simulateur de loyer</strong>
+              <span>Estimation LDD &amp; LCD pour chaque commune.</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </li>
+    <li class="nav-mega">
+      <a href="#territoires" class="nav-trigger">Ressources <span class="caret">⌄</span></a>
+      <div class="mega">
+        <!-- LEFT: promo vidéo -->
+        <a class="mega-promo" href="#">
+          <div class="mega-promo-tag">🎬 Dernière vidéo</div>
+          <div class="mega-promo-title">Comment économiser 100 000 €<br>en négociant aux Antilles</div>
+          <div class="mega-promo-thumb">
+            <span class="mega-play">▶</span>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Martinique_-_Habitation_cr%C3%A9ole.jpg/640px-Martinique_-_Habitation_cr%C3%A9ole.jpg" alt="Vidéo négociation" loading="lazy">
+          </div>
+          <div class="mega-promo-foot">Études de cas réels sur des biens en Martinique et Guadeloupe</div>
+        </a>
+
+        <!-- COL 1 — Ressources -->
+        <div class="mega-col">
+          <div class="mega-col-title">Ressources</div>
+          <a href="#" class="mega-item">
+            <div class="mega-ico mi-ext">🏝️</div>
+            <div class="mega-body">
+              <strong>Comment devenir rentier aux Antilles ?</strong>
+              <span>La méthode complète pour vivre de ses loyers en quelques années.</span>
+            </div>
+          </a>
+          <a href="#" class="mega-item">
+            <div class="mega-ico mi-yield">🏢</div>
+            <div class="mega-body">
+              <strong>Acheter un immeuble de rapport</strong>
+              <span>Astuces et pièges à connaître avant d'acquérir un IDR.</span>
+            </div>
+          </a>
+          <a href="#" class="mega-item">
+            <div class="mega-ico mi-search">📈</div>
+            <div class="mega-body">
+              <strong>Améliorer son rendement locatif</strong>
+              <span>Nos méthodes pour optimiser la rentabilité de votre bien.</span>
+            </div>
+          </a>
+        </div>
+
+        <!-- COL 2 — Où investir -->
+        <div class="mega-col">
+          <div class="mega-col-title">Où investir aux Antilles</div>
+          <a href="#" class="mega-item">
+            <div class="mega-ico mi-market">🗺️</div>
+            <div class="mega-body">
+              <strong>Carte interactive des opportunités</strong>
+              <span>Visualisez les pépites en direct sur les 3 territoires.</span>
+            </div>
+          </a>
+          <a href="#" class="mega-item">
+            <div class="mega-ico mi-tax">💰</div>
+            <div class="mega-body">
+              <strong>Rentabilités réelles Antilles</strong>
+              <span>Données vérifiées par commune : Martinique, Guadeloupe, Saint-Martin.</span>
+            </div>
+          </a>
+          <a href="#" class="mega-item">
+            <div class="mega-ico mi-rent">📘</div>
+            <div class="mega-body">
+              <strong>Nos ebooks sur l'immobilier</strong>
+              <span>Formez-vous avec nos guides gratuits sur l'investissement DOM.</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </li>
     <li><a href="#tarifs">Tarifs</a></li>
     <li><a href="#faq">FAQ</a></li>
     <li><a href="#" class="cta-nav">Essai gratuit 7 jours</a></li>
@@ -882,6 +1102,27 @@ footer {
     </div>
   </div>
 </div>
+
+<!-- BANNIÈRE MARQUES PARTENAIRES DES SITES SOURCES -->
+<section class="brands-bar">
+  <div class="container">
+    <div class="brands-grid">
+      <span class="brand-logo bl-lbc">leboncoin</span>
+      <span class="brand-logo bl-seloger">SeLoger<sup>•</sup></span>
+      <span class="brand-logo bl-pap">PAP<small>.fr</small></span>
+      <span class="brand-logo bl-bienici">bien'<em>ici</em></span>
+      <span class="brand-logo bl-logic">LOGIC<small>-IMMO</small></span>
+      <span class="brand-logo bl-orpi">orpi</span>
+      <span class="brand-logo bl-century"><b>CENTURY</b><i>21</i></span>
+      <span class="brand-logo bl-square">Square Habitat</span>
+      <span class="brand-logo bl-laforet">laforêt</span>
+      <span class="brand-logo bl-fa"><b>FRANCE</b><i>-Antilles</i></span>
+      <span class="brand-logo bl-caraibe">Caraïbe<em>Immo</em></span>
+      <span class="brand-logo bl-notaires">immobilier<small>.notaires.fr</small></span>
+    </div>
+    <p class="brands-disclaimer">Toutes les marques citées appartiennent à leurs propriétaires exclusifs. Il n'existe aucun partenariat entre kazImmo et les différents sites.</p>
+  </div>
+</section>
 
 <!-- ═══════════════════════════════════════
      COMPARATIF SANS / AVEC kazImmo
@@ -1021,7 +1262,7 @@ footer {
     <div class="section-header reveal" style="max-width:680px;margin-left:auto;margin-right:auto;margin-bottom:64px;">
       <span class="tag tag-teal" style="margin-bottom:14px;display:inline-flex">La plateforme</span>
       <h2 style="font-size:clamp(2rem,3.8vw,3rem);letter-spacing:-1.5px;margin-bottom:16px;">
-        L'immobilier rentable,<br><em>enfin simplifié. Avec kazImmo.</em>
+        L'immobilier rentable,<br><em>sans sacrifier son temps. Avec kazImmo.</em>
       </h2>
       <p style="font-size:1.05rem;color:var(--kaz-muted);line-height:1.75;max-width:520px;margin:0 auto;">
         5 outils. 1 seule plateforme. Tout ce qu'un investisseur sérieux aux Antilles a besoin — et rien de superflu.
@@ -1275,14 +1516,15 @@ footer {
     <div class="section-header reveal">
       <span class="tag tag-teal">Nos forfaits et tarifs</span>
       <h2>Nos forfaits et tarifs</h2>
-      <p>Tous les outils pour investir intelligemment, sans perdre des heures à chercher.</p>
+      <p style="max-width:1120px">Le seul outil pensé pour investir aux Antilles sans sacrifier votre temps.<br>Des milliers d'acquéreurs, investisseurs et propriétaires utilisent déjà KazImmo pour trouver les meilleures opportunités immobilières aux Antilles.</p>
     </div>
     <!-- Toggle mensuel / annuel -->
     <div class="pricing-toggle reveal">
       <span>Mensuel</span>
       <div class="toggle-switch" id="billing-toggle" title="Basculer facturation"></div>
-      <span class="active-period">Annuel <span style="background:rgba(0,168,150,.12);color:var(--kaz-teal);font-size:.72rem;padding:2px 8px;border-radius:50px;font-weight:700;margin-left:4px">−2 mois offerts</span></span>
+      <span class="active-period">Annuel <span style="background:rgba(0,168,150,.12);color:var(--kaz-teal);font-size:.72rem;padding:2px 8px;border-radius:50px;font-weight:700;margin-left:4px">−20%</span></span>
     </div>
+    <p class="pricing-reassure reveal">✓ Sans engagement · Résiliable à tout moment</p>
     <div class="pricing-grid reveal">
 
       <!-- PLAN 1 : Découverte -->
@@ -1294,6 +1536,7 @@ footer {
           <span class="amount" id="p1">9</span>
           <span class="per">/mois</span>
         </div>
+        <div class="plan-trial-top">Essai gratuit 7 jours</div>
         <div class="plan-billing">Soit <span class="save" id="p1y">96€/an</span> en annuel · 2 mois offerts</div>
         <ul class="plan-features">
           <li><span class="chk">✓</span> 30 annonces analysées / jour</li>
@@ -1305,7 +1548,6 @@ footer {
           <li><span class="no">—</span> Données Guadeloupe &amp; Saint-Martin</li>
         </ul>
         <a href="#" class="plan-cta outline">Commencer l'essai gratuit</a>
-        <p class="plan-trial">7 jours gratuits · Sans engagement</p>
       </div>
 
       <!-- PLAN 2 : Investisseur (populaire) -->
@@ -1318,6 +1560,7 @@ footer {
           <span class="amount" id="p2">19</span>
           <span class="per">/mois</span>
         </div>
+        <div class="plan-trial-top">Essai gratuit 7 jours</div>
         <div class="plan-billing">Soit <span class="save" id="p2y">192€/an</span> en annuel · <span class="save">Économisez 36€</span></div>
         <ul class="plan-features">
           <li><span class="chk">✓</span> Annonces illimitées · 3 territoires</li>
@@ -1329,7 +1572,6 @@ footer {
           <li><span class="chk">✓</span> Historique et suivi des annonces</li>
         </ul>
         <a href="#" class="plan-cta filled">Essai gratuit 7 jours →</a>
-        <p class="plan-trial">Carte bancaire non requise</p>
       </div>
 
       <!-- PLAN 3 : Expert -->
@@ -1341,6 +1583,7 @@ footer {
           <span class="amount" id="p3">39</span>
           <span class="per">/mois</span>
         </div>
+        <div class="plan-trial-top">Essai gratuit 7 jours</div>
         <div class="plan-billing">Soit <span class="save" id="p3y">396€/an</span> en annuel · <span class="save">Économisez 72€</span></div>
         <ul class="plan-features">
           <li><span class="chk">✓</span> Tout Investisseur inclus</li>
@@ -1352,7 +1595,6 @@ footer {
           <li><span class="chk">✓</span> Support prioritaire 7j/7</li>
         </ul>
         <a href="#" class="plan-cta outline">Essai gratuit 7 jours</a>
-        <p class="plan-trial">Contactez-nous pour un devis sur mesure</p>
       </div>
     </div>
 

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulateur de rentabilité · kazImmo</title>
+  <meta name="description" content="Simulez la rentabilité de votre investissement immobilier aux Antilles : rendement brut, net, cash-flow, comparaison longue durée vs Airbnb.">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --kaz-blue:#1A3C6E;
+      --kaz-teal:#00A896;
+      --kaz-gold:#F4A623;
+      --kaz-bg:#F8FAFC;
+      --kaz-border:#D8E8E5;
+      --kaz-muted:#64748B;
+      --kaz-text:#1E293B;
+      --shadow-sm:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.05);
+    }
+    html,body{height:100%;overflow:hidden}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--kaz-bg);display:flex;flex-direction:column;}
+
+    /* ── NAV ── */
+    .topbar{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:0 28px;height:56px;
+      background:#fff;border-bottom:1px solid var(--kaz-border);
+      box-shadow:var(--shadow-sm);flex-shrink:0;z-index:10;
+    }
+    .topbar-left{display:flex;align-items:center;gap:20px;}
+    .back-btn{
+      display:inline-flex;align-items:center;gap:6px;
+      font-size:.82rem;font-weight:600;color:var(--kaz-muted);
+      text-decoration:none;padding:5px 10px;border-radius:8px;
+      transition:background .15s,color .15s;
+    }
+    .back-btn:hover{background:var(--kaz-bg);color:var(--kaz-blue);}
+    .back-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
+    .logo{font-size:1.2rem;font-weight:900;color:var(--kaz-blue);text-decoration:none;letter-spacing:-.5px;}
+    .logo span{color:var(--kaz-teal);}
+    .breadcrumb{font-size:.8rem;color:var(--kaz-muted);display:flex;align-items:center;gap:6px;}
+    .breadcrumb a{color:var(--kaz-muted);text-decoration:none;}
+    .breadcrumb a:hover{color:var(--kaz-blue);}
+    .breadcrumb-sep{opacity:.4;}
+    .breadcrumb-cur{color:var(--kaz-blue);font-weight:600;}
+    .topbar-right{display:flex;align-items:center;gap:10px;}
+    .cta-btn{
+      display:inline-flex;align-items:center;
+      padding:7px 16px;border-radius:50px;font-size:.8rem;font-weight:700;
+      background:var(--kaz-teal);color:#fff;text-decoration:none;
+      transition:opacity .15s;
+    }
+    .cta-btn:hover{opacity:.88;}
+
+    /* ── IFRAME ── */
+    .sim-frame{flex:1;width:100%;border:none;display:block;}
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="topbar-left">
+      <a href="index.html" class="back-btn">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        Retour
+      </a>
+      <a href="index.html" class="logo">Kaz<span>Immo</span></a>
+      <div class="breadcrumb">
+        <a href="index.html">Accueil</a>
+        <span class="breadcrumb-sep">›</span>
+        <a href="index.html#fonctionnalites">Nos outils</a>
+        <span class="breadcrumb-sep">›</span>
+        <span class="breadcrumb-cur">Simulateur de rentabilité</span>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <a href="index.html#tarifs" class="cta-btn">Essai gratuit 7 jours →</a>
+    </div>
+  </div>
+
+  <iframe
+    class="sim-frame"
+    src="https://kazimmo-nine.vercel.app/simulateur"
+    title="Simulateur de rentabilité kazImmo"
+    loading="eager"
+    allow="fullscreen"
+  ></iframe>
+
+</body>
+</html>

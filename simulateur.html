@@ -138,10 +138,10 @@ a{text-decoration:none}
 @media(max-width:900px){.main{grid-template-columns:1fr}}
 
 /* ── ADVANCED FORM ── */
-.adv-toggle{display:flex;align-items:center;justify-content:center;margin:28px 0 0;gap:8px;font-size:.82rem;font-weight:600;color:rgba(255,255,255,.7);cursor:pointer;padding-bottom:20px}
-.adv-toggle svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .3s}
+.adv-toggle{display:flex;align-items:center;justify-content:center;margin:28px auto 0;gap:10px;font-size:.95rem;font-weight:700;color:#fff;cursor:pointer;padding:14px 32px;background:rgba(255,255,255,.18);border:2px solid rgba(255,255,255,.6);border-radius:50px;backdrop-filter:blur(6px);letter-spacing:.3px;transition:background .2s,border-color .2s,transform .15s;max-width:480px;width:100%}
+.adv-toggle svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;transition:transform .3s}
 .adv-toggle.open svg{transform:rotate(180deg)}
-.adv-toggle:hover{color:#fff}
+.adv-toggle:hover{background:rgba(255,255,255,.28);border-color:#fff;transform:translateY(-1px)}
 
 /* form card */
 .form-card{background:#fff;border:1px solid var(--kaz-border2);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow-md);margin-bottom:20px}

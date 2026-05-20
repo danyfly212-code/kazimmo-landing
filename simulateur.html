@@ -1,90 +1,462 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Simulateur de rentabilité · kazImmo</title>
-  <meta name="description" content="Simulez la rentabilité de votre investissement immobilier aux Antilles : rendement brut, net, cash-flow, comparaison longue durée vs Airbnb.">
-  <style>
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    :root{
-      --kaz-blue:#1A3C6E;
-      --kaz-teal:#00A896;
-      --kaz-gold:#F4A623;
-      --kaz-bg:#F8FAFC;
-      --kaz-border:#D8E8E5;
-      --kaz-muted:#64748B;
-      --kaz-text:#1E293B;
-      --shadow-sm:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.05);
-    }
-    html,body{height:100%;overflow:hidden}
-    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--kaz-bg);display:flex;flex-direction:column;}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulateur de rentabilité · kazImmo</title>
+<meta name="description" content="Analysez la rentabilité de votre investissement immobilier aux Antilles : rendement brut, net, cash-flow, comparaison longue durée vs Airbnb.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ─── TOKENS ─── */
+:root {
+  --kaz-blue:   #1A3C6E;
+  --kaz-teal:   #00A896;
+  --kaz-gold:   #F4A623;
+  --kaz-light:  #E8F4F1;
+  --kaz-bg:     #F7FAFA;
+  --kaz-white:  #FFFFFF;
+  --kaz-dark:   #0D1F35;
+  --kaz-text:   #1A2B3C;
+  --kaz-muted:  #6B7F93;
+  --kaz-border: #D8E8E5;
+  --kaz-green:  #0D9C5C;
+  --kaz-red:    #C0392B;
+  --radius:     10px;
+  --radius-lg:  16px;
+  --shadow:     0 2px 16px rgba(0,168,150,.10);
+  --shadow-md:  0 4px 24px rgba(26,60,110,.12);
+  --shadow-lg:  0 8px 40px rgba(26,60,110,.13);
+  --font:       'Inter', system-ui, sans-serif;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:var(--font);color:var(--kaz-text);background:var(--kaz-bg);line-height:1.6}
 
-    /* ── NAV ── */
-    .topbar{
-      display:flex;align-items:center;justify-content:space-between;
-      padding:0 28px;height:56px;
-      background:#fff;border-bottom:1px solid var(--kaz-border);
-      box-shadow:var(--shadow-sm);flex-shrink:0;z-index:10;
-    }
-    .topbar-left{display:flex;align-items:center;gap:20px;}
-    .back-btn{
-      display:inline-flex;align-items:center;gap:6px;
-      font-size:.82rem;font-weight:600;color:var(--kaz-muted);
-      text-decoration:none;padding:5px 10px;border-radius:8px;
-      transition:background .15s,color .15s;
-    }
-    .back-btn:hover{background:var(--kaz-bg);color:var(--kaz-blue);}
-    .back-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
-    .logo{font-size:1.2rem;font-weight:900;color:var(--kaz-blue);text-decoration:none;letter-spacing:-.5px;}
-    .logo span{color:var(--kaz-teal);}
-    .breadcrumb{font-size:.8rem;color:var(--kaz-muted);display:flex;align-items:center;gap:6px;}
-    .breadcrumb a{color:var(--kaz-muted);text-decoration:none;}
-    .breadcrumb a:hover{color:var(--kaz-blue);}
-    .breadcrumb-sep{opacity:.4;}
-    .breadcrumb-cur{color:var(--kaz-blue);font-weight:600;}
-    .topbar-right{display:flex;align-items:center;gap:10px;}
-    .cta-btn{
-      display:inline-flex;align-items:center;
-      padding:7px 16px;border-radius:50px;font-size:.8rem;font-weight:700;
-      background:var(--kaz-teal);color:#fff;text-decoration:none;
-      transition:opacity .15s;
-    }
-    .cta-btn:hover{opacity:.88;}
+/* ─── NAV ─── */
+nav {
+  position:sticky;top:0;z-index:100;
+  background:rgba(255,255,255,.96);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--kaz-border);
+  padding:0 24px;height:64px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.nav-logo{font-size:1.45rem;font-weight:800;letter-spacing:-1px;color:var(--kaz-blue);text-decoration:none}
+.nav-logo span{color:var(--kaz-teal)}
+.nav-back{display:flex;align-items:center;gap:6px;font-size:.82rem;font-weight:600;color:var(--kaz-muted);text-decoration:none;padding:6px 12px;border-radius:8px;border:1px solid var(--kaz-border);background:#fff;transition:all .15s}
+.nav-back:hover{color:var(--kaz-blue);border-color:var(--kaz-teal)}
+.nav-back svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.nav-right{display:flex;align-items:center;gap:10px}
+.nav-cta{display:inline-flex;align-items:center;padding:8px 18px;border-radius:50px;font-size:.82rem;font-weight:700;background:var(--kaz-teal);color:#fff;text-decoration:none;transition:opacity .15s}
+.nav-cta:hover{opacity:.88}
+.breadcrumb{display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--kaz-muted)}
+.breadcrumb a{color:var(--kaz-muted);text-decoration:none}
+.breadcrumb a:hover{color:var(--kaz-blue)}
+.breadcrumb-sep{opacity:.35}
+.breadcrumb-cur{color:var(--kaz-blue);font-weight:600}
 
-    /* ── IFRAME ── */
-    .sim-frame{flex:1;width:100%;border:none;display:block;}
-  </style>
+/* ─── HERO ─── */
+.sim-hero{
+  background:linear-gradient(135deg,var(--kaz-blue) 0%,#1e4e8a 100%);
+  padding:52px 24px 48px;text-align:center;color:#fff;
+}
+.sim-hero-tag{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);
+  font-size:.72rem;font-weight:700;letter-spacing:.6px;text-transform:uppercase;
+  padding:5px 14px;border-radius:50px;color:rgba(255,255,255,.9);margin-bottom:18px;
+}
+.sim-hero h1{font-size:clamp(1.7rem,3.5vw,2.4rem);font-weight:800;letter-spacing:-1px;margin-bottom:12px;line-height:1.2}
+.sim-hero h1 em{color:var(--kaz-gold);font-style:normal}
+.sim-hero p{font-size:.95rem;color:rgba(255,255,255,.75);max-width:480px;margin:0 auto;line-height:1.7}
+.sim-tabs-toggle{
+  display:inline-flex;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);
+  border-radius:50px;padding:4px;margin-top:28px;gap:4px;
+}
+.sim-mode-btn{
+  padding:8px 22px;border-radius:50px;font-size:.84rem;font-weight:600;border:none;cursor:pointer;
+  color:rgba(255,255,255,.65);background:transparent;transition:all .2s;
+}
+.sim-mode-btn.active{background:#fff;color:var(--kaz-blue);box-shadow:0 2px 8px rgba(0,0,0,.15)}
+
+/* ─── MAIN LAYOUT ─── */
+.sim-wrap{max-width:1060px;margin:0 auto;padding:40px 24px 60px;display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start}
+@media(max-width:820px){.sim-wrap{grid-template-columns:1fr}}
+
+/* ─── CARD ─── */
+.sim-card{background:#fff;border:1px solid var(--kaz-border);border-radius:var(--radius-lg);padding:28px 28px 24px;box-shadow:var(--shadow-md)}
+.sim-card-title{font-size:.9rem;font-weight:700;color:var(--kaz-blue);margin-bottom:22px;display:flex;align-items:center;gap:8px}
+.sim-card-title::before{content:'';display:inline-block;width:4px;height:18px;background:var(--kaz-teal);border-radius:2px}
+
+/* ─── FORM GRID ─── */
+.sim-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.sim-field{display:flex;flex-direction:column}
+.sim-field.full{grid-column:1/-1}
+.sim-label{font-size:.76rem;font-weight:600;color:var(--kaz-blue);margin-bottom:6px;letter-spacing:.15px}
+.sim-input-wrap{position:relative;display:flex;align-items:center}
+.sim-input{
+  width:100%;padding:11px 38px 11px 13px;
+  border:1.5px solid var(--kaz-border);border-radius:var(--radius);
+  font-size:.88rem;font-weight:600;color:var(--kaz-text);background:#fff;
+  outline:none;transition:border-color .2s,box-shadow .2s;
+  -moz-appearance:textfield;
+}
+.sim-input::-webkit-inner-spin-button,.sim-input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+.sim-input:focus{border-color:var(--kaz-teal);box-shadow:0 0 0 3px rgba(0,168,150,.12)}
+.sim-input::placeholder{color:#b0bec5;font-weight:400}
+.sim-suffix{position:absolute;right:11px;font-size:.76rem;font-weight:700;color:var(--kaz-muted);pointer-events:none}
+.sim-select{
+  width:100%;padding:11px 13px;
+  border:1.5px solid var(--kaz-border);border-radius:var(--radius);
+  font-size:.88rem;font-weight:600;color:var(--kaz-text);background:#fff;
+  outline:none;cursor:pointer;transition:border-color .2s;
+}
+.sim-select:focus{border-color:var(--kaz-teal);box-shadow:0 0 0 3px rgba(0,168,150,.12)}
+
+/* Durée pills */
+.dur-pills{display:flex;gap:8px;margin-top:6px}
+.dur-pill{
+  flex:1;padding:9px 0;border:1.5px solid var(--kaz-border);border-radius:9px;
+  background:#fff;font-size:.82rem;font-weight:600;color:var(--kaz-muted);
+  cursor:pointer;transition:all .2s;
+}
+.dur-pill.active{background:var(--kaz-teal);border-color:var(--kaz-teal);color:#fff;box-shadow:0 2px 8px rgba(0,168,150,.25)}
+
+/* ─── RESULTS ─── */
+.res-empty{padding:40px 24px;text-align:center}
+.res-empty-ico{font-size:2.2rem;margin-bottom:12px}
+.res-empty p{font-size:.88rem;color:var(--kaz-muted);line-height:1.7;max-width:280px;margin:0 auto}
+
+.res-grid{display:flex;flex-direction:column;gap:14px}
+
+.res-block{border-radius:13px;padding:18px 20px}
+.res-block-white{background:#fff;border:1px solid var(--kaz-border);box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.res-label{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.45px;margin-bottom:4px;color:var(--kaz-muted)}
+.res-value{font-size:1.85rem;font-weight:800;line-height:1.1}
+.res-sub{font-size:.73rem;margin-top:3px;color:var(--kaz-muted)}
+
+.res-2col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+/* Cash-flow card (coloured) */
+#cf-block{background:linear-gradient(135deg,#0a4228,#0d6e40);border:none}
+#cf-block .res-label{color:rgba(255,255,255,.6)}
+#cf-block .res-value{color:#fff}
+#cf-block .res-sub{color:rgba(255,255,255,.5)}
+#cf-block.negative{background:linear-gradient(135deg,#7f1d1d,#991b1b)}
+
+/* ROI dark card */
+#roi-block{background:linear-gradient(135deg,var(--kaz-blue),#1e4e8a);border:none}
+#roi-block .res-label{color:rgba(255,255,255,.55)}
+#roi-block .res-value{color:#fff}
+#roi-block .res-sub{color:rgba(255,255,255,.45)}
+
+/* Yield blocks */
+.yield-block{background:#fff;border:1px solid var(--kaz-border);border-radius:12px;padding:16px 18px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.yield-block .res-label{color:var(--kaz-muted)}
+
+/* CTA */
+.res-cta{
+  display:flex;align-items:center;justify-content:center;
+  padding:13px 24px;border-radius:50px;font-size:.88rem;font-weight:700;
+  background:linear-gradient(135deg,var(--kaz-teal),#008a7e);color:#fff;
+  text-decoration:none;transition:opacity .15s;box-shadow:0 4px 14px rgba(0,168,150,.3);
+  margin-top:4px;
+}
+.res-cta:hover{opacity:.9}
+
+/* ─── FOOTER ─── */
+.sim-footer{
+  background:var(--kaz-blue);color:rgba(255,255,255,.5);
+  text-align:center;padding:20px 24px;font-size:.78rem;
+}
+.sim-footer a{color:rgba(255,255,255,.6);text-decoration:none}
+.sim-footer a:hover{color:#fff}
+</style>
 </head>
 <body>
 
-  <div class="topbar">
-    <div class="topbar-left">
-      <a href="index.html" class="back-btn">
-        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
-        Retour
-      </a>
-      <a href="index.html" class="logo">Kaz<span>Immo</span></a>
-      <div class="breadcrumb">
-        <a href="index.html">Accueil</a>
-        <span class="breadcrumb-sep">›</span>
-        <a href="index.html#fonctionnalites">Nos outils</a>
-        <span class="breadcrumb-sep">›</span>
-        <span class="breadcrumb-cur">Simulateur de rentabilité</span>
-      </div>
+<!-- ── NAV ── -->
+<nav>
+  <div style="display:flex;align-items:center;gap:16px">
+    <a href="index.html" class="nav-back">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      Accueil
+    </a>
+    <a href="index.html" class="nav-logo">kaz<span>Immo</span></a>
+    <div class="breadcrumb">
+      <span class="breadcrumb-sep">›</span>
+      <a href="index.html#fonctionnalites">Nos outils</a>
+      <span class="breadcrumb-sep">›</span>
+      <span class="breadcrumb-cur">Simulateur de rentabilité</span>
     </div>
-    <div class="topbar-right">
-      <a href="index.html#tarifs" class="cta-btn">Essai gratuit 7 jours →</a>
+  </div>
+  <div class="nav-right">
+    <a href="index.html#tarifs" class="nav-cta">Essai gratuit 7 jours →</a>
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<div class="sim-hero">
+  <div class="sim-hero-tag">⚡ Outil gratuit · Résultats en temps réel</div>
+  <h1>Simulateur de <em>rentabilité</em><br>immobilière aux Antilles</h1>
+  <p>Rendement brut, rendement net, cash-flow mensuel — comparez longue durée et location saisonnière en quelques secondes.</p>
+  <div class="sim-tabs-toggle">
+    <button class="sim-mode-btn active" id="tab-ld" onclick="setMode('ld')">📋 Longue durée</button>
+    <button class="sim-mode-btn" id="tab-air" onclick="setMode('air')">🌴 Airbnb / Saisonnier</button>
+  </div>
+</div>
+
+<!-- ── SIMULATOR ── -->
+<div class="sim-wrap">
+
+  <!-- LEFT: Paramètres -->
+  <div class="sim-card">
+    <div class="sim-card-title">Paramètres du projet</div>
+    <div class="sim-grid">
+
+      <div class="sim-field">
+        <label class="sim-label">Prix du bien</label>
+        <div class="sim-input-wrap">
+          <input id="f-price" type="number" class="sim-input" placeholder="180 000" min="0">
+          <span class="sim-suffix">€</span>
+        </div>
+      </div>
+
+      <div class="sim-field">
+        <label class="sim-label">Montant des travaux</label>
+        <div class="sim-input-wrap">
+          <input id="f-works" type="number" class="sim-input" placeholder="15 000" min="0">
+          <span class="sim-suffix">€</span>
+        </div>
+      </div>
+
+      <div class="sim-field">
+        <label class="sim-label">Apport personnel</label>
+        <div class="sim-input-wrap">
+          <input id="f-apport" type="number" class="sim-input" placeholder="20 000" min="0">
+          <span class="sim-suffix">€</span>
+        </div>
+      </div>
+
+      <div class="sim-field">
+        <label class="sim-label">Taux d'intérêt</label>
+        <div class="sim-input-wrap">
+          <input id="f-rate" type="number" class="sim-input" value="3.5" step="0.1" min="0" max="20">
+          <span class="sim-suffix">%</span>
+        </div>
+      </div>
+
+      <div class="sim-field full">
+        <label class="sim-label">Durée du prêt</label>
+        <div class="dur-pills">
+          <button class="dur-pill" onclick="setDur(this,15)">15 ans</button>
+          <button class="dur-pill active" onclick="setDur(this,20)">20 ans</button>
+          <button class="dur-pill" onclick="setDur(this,25)">25 ans</button>
+        </div>
+      </div>
+
+      <div class="sim-field">
+        <label class="sim-label">Loyer mensuel (longue durée)</label>
+        <div class="sim-input-wrap">
+          <input id="f-rent" type="number" class="sim-input" placeholder="800" min="0">
+          <span class="sim-suffix">€</span>
+        </div>
+      </div>
+
+      <div class="sim-field">
+        <label class="sim-label">Loyer Airbnb / nuit</label>
+        <div class="sim-input-wrap">
+          <input id="f-airbnb" type="number" class="sim-input" placeholder="80" min="0">
+          <span class="sim-suffix">€</span>
+        </div>
+      </div>
+
+      <div class="sim-field">
+        <label class="sim-label">Taux d'occupation Airbnb</label>
+        <div class="sim-input-wrap">
+          <input id="f-occ" type="number" class="sim-input" value="65" min="0" max="100">
+          <span class="sim-suffix">%</span>
+        </div>
+      </div>
+
+      <div class="sim-field">
+        <label class="sim-label">Charges mensuelles</label>
+        <div class="sim-input-wrap">
+          <input id="f-charges" type="number" class="sim-input" value="200" min="0">
+          <span class="sim-suffix">€</span>
+        </div>
+      </div>
+
+      <div class="sim-field full">
+        <label class="sim-label">Mode de gestion</label>
+        <select id="f-mgmt" class="sim-select">
+          <option value="0">Gestion directe (0%)</option>
+          <option value="7">Agence (7%)</option>
+          <option value="10">Agence (10%)</option>
+        </select>
+      </div>
+
     </div>
   </div>
 
-  <iframe
-    class="sim-frame"
-    src="https://kazimmo-nine.vercel.app/simulateur"
-    title="Simulateur de rentabilité kazImmo"
-    loading="eager"
-    allow="fullscreen"
-  ></iframe>
+  <!-- RIGHT: Résultats -->
+  <div class="sim-card" style="position:sticky;top:80px">
+    <div class="sim-card-title">Résultats</div>
+
+    <!-- Empty state -->
+    <div id="res-empty" class="res-empty">
+      <div class="res-empty-ico">🏠</div>
+      <p>Saisissez le prix du bien pour voir votre analyse de rentabilité apparaître en temps réel.</p>
+    </div>
+
+    <!-- Results -->
+    <div id="res-content" class="res-grid" style="display:none">
+
+      <!-- Mensualité -->
+      <div class="res-block res-block-white">
+        <div class="res-label">Mensualité du crédit</div>
+        <div class="res-value" id="r-monthly" style="color:var(--kaz-blue)"></div>
+        <div class="res-sub">/ mois · <span id="r-loan"></span> emprunté</div>
+      </div>
+
+      <!-- Cash-flow -->
+      <div class="res-block" id="cf-block">
+        <div class="res-label" id="r-cf-label">Cash-flow mensuel (longue durée)</div>
+        <div class="res-value" id="r-cf"></div>
+        <div class="res-sub" id="r-cf-sub">/ mois après crédit + charges</div>
+      </div>
+
+      <!-- Rendements -->
+      <div class="res-2col">
+        <div class="yield-block">
+          <div class="res-label">Rendement brut</div>
+          <div class="res-value" id="r-gross" style="color:var(--kaz-teal)"></div>
+        </div>
+        <div class="yield-block">
+          <div class="res-label">Rendement net</div>
+          <div class="res-value" id="r-net" style="color:var(--kaz-blue)"></div>
+        </div>
+      </div>
+
+      <!-- ROI -->
+      <div class="res-block" id="roi-block" style="display:none">
+        <div class="res-label">ROI annuel sur apport</div>
+        <div class="res-value" id="r-roi"></div>
+        <div class="res-sub">Retour sur capital investi</div>
+      </div>
+
+      <!-- CTA -->
+      <a href="index.html#tarifs" class="res-cta">Analyser une vraie opportunité →</a>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- ── FOOTER ── -->
+<div class="sim-footer">
+  <p>© 2025 kazImmo · <a href="index.html">Retour à l'accueil</a> · <a href="index.html#tarifs">Nos forfaits</a></p>
+</div>
+
+<script>
+(function(){
+  var dur  = 20;
+  var mode = 'ld';
+
+  function val(id){ return parseFloat(document.getElementById(id).value)||0; }
+
+  function fmt(n){
+    return new Intl.NumberFormat('fr-FR',{style:'currency',currency:'EUR',minimumFractionDigits:0,maximumFractionDigits:0}).format(n);
+  }
+  function fmtPct(n){
+    return new Intl.NumberFormat('fr-FR',{minimumFractionDigits:1,maximumFractionDigits:1}).format(n)+'%';
+  }
+
+  function calcMonthly(loan, rate, years){
+    if(loan<=0||years<=0) return 0;
+    if(rate<=0) return Math.round(loan/(12*years)*100)/100;
+    var r=rate/100/12, n=12*years;
+    return Math.round(loan*r*Math.pow(1+r,n)/(Math.pow(1+r,n)-1)*100)/100;
+  }
+
+  function update(){
+    var price    = val('f-price');
+    var works    = val('f-works');
+    var apport   = val('f-apport');
+    var rate     = val('f-rate');
+    var rentLD   = val('f-rent');
+    var airNight = val('f-airbnb');
+    var occ      = val('f-occ');
+    var charges  = val('f-charges');
+    var mgmt     = parseFloat(document.getElementById('f-mgmt').value)||0;
+
+    var invest   = price + works;
+    var loan     = Math.max(0, invest - apport);
+    var monthly  = calcMonthly(loan, rate, dur);
+    var airMonth = Math.round(30 * airNight * (occ/100));
+    var chLD     = charges + mgmt/100 * rentLD;
+    var chAir    = charges + mgmt/100 * airMonth;
+    var cfLD     = rentLD   - monthly - chLD;
+    var cfAir    = airMonth - monthly - chAir;
+    var gLD      = invest>0 ? (12*rentLD/invest)*100  : 0;
+    var nLD      = invest>0 ? ((12*rentLD-12*chLD)/invest)*100 : 0;
+    var gAir     = invest>0 ? (12*airMonth/invest)*100 : 0;
+    var nAir     = invest>0 ? ((12*airMonth-12*chAir)/invest)*100 : 0;
+    var roiLD    = apport>0 ? (12*cfLD/apport)*100  : 0;
+    var roiAir   = apport>0 ? (12*cfAir/apport)*100 : 0;
+
+    var show = price > 0;
+    document.getElementById('res-empty').style.display   = show ? 'none'  : 'block';
+    document.getElementById('res-content').style.display = show ? 'flex'  : 'none';
+    if(!show) return;
+
+    document.getElementById('r-monthly').textContent = fmt(monthly);
+    document.getElementById('r-loan').textContent    = fmt(loan);
+
+    var cf    = mode==='ld' ? cfLD  : cfAir;
+    var gross = mode==='ld' ? gLD   : gAir;
+    var net   = mode==='ld' ? nLD   : nAir;
+    var roi   = mode==='ld' ? roiLD : roiAir;
+    var isPos = cf >= 0;
+
+    var cfBlock = document.getElementById('cf-block');
+    cfBlock.classList.toggle('negative', !isPos);
+    document.getElementById('r-cf-label').textContent = 'Cash-flow mensuel (' + (mode==='ld'?'longue durée':'Airbnb') + ')';
+    document.getElementById('r-cf').textContent       = (isPos?'+':'')+fmt(cf);
+
+    document.getElementById('r-gross').textContent = fmtPct(gross);
+    document.getElementById('r-net').textContent   = fmtPct(net);
+
+    var roiBlock = document.getElementById('roi-block');
+    if(apport > 0){
+      document.getElementById('r-roi').textContent = (roi>=0?'+':'')+fmtPct(roi);
+      roiBlock.style.display = '';
+    } else {
+      roiBlock.style.display = 'none';
+    }
+  }
+
+  window.setDur = function(btn, d){
+    dur = d;
+    document.querySelectorAll('.dur-pill').forEach(function(b){ b.classList.remove('active'); });
+    btn.classList.add('active');
+    update();
+  };
+
+  window.setMode = function(m){
+    mode = m;
+    document.getElementById('tab-ld').classList.toggle('active', m==='ld');
+    document.getElementById('tab-air').classList.toggle('active', m==='air');
+    update();
+  };
+
+  ['f-price','f-works','f-apport','f-rate','f-rent','f-airbnb','f-occ','f-charges','f-mgmt'].forEach(function(id){
+    document.getElementById(id).addEventListener('input', update);
+  });
+
+  update();
+})();
+</script>
 
 </body>
 </html>

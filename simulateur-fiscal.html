@@ -1,0 +1,1245 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulateur de fiscalité DOM · Girardin, LMNP, Déficit foncier · kazImmo</title>
+<meta name="description" content="Calculez votre économie d'impôt avec les dispositifs DOM-TOM : Girardin IR, Girardin IS, LMNP, déficit foncier. Comparatif complet adapté aux marchés de Martinique, Guadeloupe et Saint-Martin.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+/* ── TOKENS ── */
+:root{
+  --kaz-bg:#f5f3ee;--kaz-surface:#ffffff;
+  --kaz-navy:#0d2d45;--kaz-navy-mid:#163d5c;--kaz-navy-deep:#05131d;
+  --kaz-green:#1a6b4a;--kaz-green-mid:#2d8a60;--kaz-green-light:#e8f5ee;
+  --kaz-teal:#4dcea0;--kaz-teal-light:#e1f5ee;
+  --kaz-gold:#c8891a;--kaz-gold-mid:#d99a2b;--kaz-gold-light:#fdf3e1;
+  --kaz-fire:#d44a1a;--kaz-fire-light:#fef0ea;
+  --kaz-text:#1a1916;--kaz-muted:#6b6760;
+  --kaz-border:rgba(13,45,69,.1);--kaz-border2:rgba(13,45,69,.06);
+  --shadow-sm:0 1px 4px rgba(13,45,69,.07);
+  --shadow-md:0 4px 20px rgba(13,45,69,.1);
+  --shadow-lg:0 12px 40px rgba(13,45,69,.14);
+  --r:12px;--r-lg:18px;--font:'Inter',system-ui,sans-serif;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:var(--font);color:var(--kaz-text);background:var(--kaz-bg);line-height:1.6}
+a{text-decoration:none}
+
+/* ── NAV ── */
+.topnav{position:sticky;top:0;z-index:200;height:62px;background:rgba(255,255,255,.97);backdrop-filter:blur(14px);border-bottom:1px solid var(--kaz-border2);display:flex;align-items:center;justify-content:space-between;padding:0 28px}
+.nav-l{display:flex;align-items:center;gap:14px}
+.nav-logo{font-size:1.35rem;font-weight:800;letter-spacing:-.8px;color:var(--kaz-navy)}
+.nav-logo span{color:var(--kaz-teal)}
+.nav-back{display:inline-flex;align-items:center;gap:5px;font-size:.78rem;font-weight:600;color:var(--kaz-muted);padding:5px 11px;border-radius:8px;border:1px solid var(--kaz-border);background:#fff;transition:all .15s}
+.nav-back:hover{color:var(--kaz-navy);border-color:var(--kaz-teal)}
+.nav-back svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.bc{display:flex;align-items:center;gap:5px;font-size:.75rem;color:var(--kaz-muted)}
+.bc a{color:var(--kaz-muted);transition:color .15s}.bc a:hover{color:var(--kaz-navy)}
+.bc-sep{opacity:.4}
+.nav-cta{background:var(--kaz-fire);color:#fff;font-size:.8rem;font-weight:700;padding:9px 18px;border-radius:50px;letter-spacing:.2px;transition:opacity .15s}
+.nav-cta:hover{opacity:.88}
+
+/* ── HERO ── */
+.hero{background:linear-gradient(135deg,var(--kaz-navy-deep) 0%,var(--kaz-navy) 55%,var(--kaz-navy-mid) 100%);padding:64px 24px 52px;text-align:center;position:relative;overflow:hidden}
+.hero::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 100%,rgba(77,206,160,.12) 0%,transparent 70%);pointer-events:none}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(200,137,26,.18);border:1px solid rgba(200,137,26,.5);color:var(--kaz-gold-mid);font-size:.7rem;font-weight:700;letter-spacing:.8px;text-transform:uppercase;padding:5px 14px;border-radius:50px;margin-bottom:24px}
+.hero-badge::before{content:'⚖️';font-size:.9rem}
+.hero h1{font-size:clamp(2rem,5vw,3rem);font-weight:900;color:#fff;line-height:1.12;margin-bottom:16px;letter-spacing:-.5px}
+.hero h1 span{color:var(--kaz-gold)}
+.hero-sub{font-size:1.05rem;color:rgba(255,255,255,.78);max-width:620px;margin:0 auto 32px;line-height:1.65}
+.hero-pills{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:40px}
+.hero-pill{display:flex;align-items:center;gap:6px;font-size:.78rem;font-weight:600;color:rgba(255,255,255,.88);background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);padding:6px 14px;border-radius:50px}
+.hero-pill::before{content:'✓';color:var(--kaz-teal);font-weight:800}
+
+/* ── REGIME TABS ── */
+.regime-wrap{background:#fff;border-bottom:1px solid var(--kaz-border2);position:sticky;top:62px;z-index:100;box-shadow:var(--shadow-sm)}
+.regime-tabs{display:flex;max-width:1120px;margin:0 auto;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.regime-tabs::-webkit-scrollbar{display:none}
+.rtab{flex:1;min-width:180px;display:flex;align-items:center;gap:10px;padding:16px 20px;cursor:pointer;border-bottom:3px solid transparent;transition:all .2s;color:var(--kaz-muted);font-weight:600;font-size:.88rem;white-space:nowrap;border:none;background:none;font-family:var(--font)}
+.rtab-ico{font-size:1.4rem;flex-shrink:0}
+.rtab-name{font-weight:700;font-size:.85rem;color:inherit;line-height:1.2}
+.rtab-sub{font-size:.72rem;color:var(--kaz-muted);font-weight:400}
+.rtab:hover{background:var(--kaz-bg);color:var(--kaz-navy)}
+.rtab.active{color:var(--kaz-navy);border-bottom:3px solid var(--kaz-gold);background:var(--kaz-gold-light)}
+.rtab.active .rtab-name{color:var(--kaz-gold)}
+
+/* ── MAIN GRID ── */
+.main{max-width:1120px;margin:0 auto;padding:40px 24px 80px;display:grid;grid-template-columns:1fr 360px;gap:32px;align-items:start}
+@media(max-width:900px){.main{grid-template-columns:1fr}}
+
+/* ── FORM CARDS ── */
+.form-card{background:#fff;border-radius:var(--r-lg);border:1px solid var(--kaz-border2);box-shadow:var(--shadow-sm);overflow:hidden;margin-bottom:16px}
+.form-card-head{display:flex;align-items:center;gap:14px;padding:18px 20px;cursor:pointer;user-select:none;transition:background .15s}
+.form-card-head:hover{background:#fafafa}
+.form-card-num{width:28px;height:28px;border-radius:50%;background:var(--kaz-navy);color:#fff;font-size:.75rem;font-weight:800;display:grid;place-items:center;flex-shrink:0}
+.form-card-head.active .form-card-num{background:var(--kaz-gold)}
+.form-card-title{font-weight:700;font-size:.95rem;color:var(--kaz-navy)}
+.form-card-sub{font-size:.75rem;color:var(--kaz-muted);margin-top:1px}
+.fc-arrow{width:18px;height:18px;stroke:var(--kaz-muted);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;margin-left:auto;flex-shrink:0;transition:transform .3s}
+.fc-arrow.open{transform:rotate(180deg)}
+.form-card-body{padding:0 20px 0;max-height:0;overflow:hidden;transition:max-height .35s ease,padding .2s}
+.form-card-body.open{max-height:1200px;padding:4px 20px 20px}
+
+/* ── FIELD GRID ── */
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.fg-1{grid-column:span 2}
+@media(max-width:600px){.fg{grid-template-columns:1fr}.fg-1{grid-column:span 1}}
+.f{display:flex;flex-direction:column;gap:5px}
+.flabel{font-size:.78rem;font-weight:600;color:var(--kaz-navy);display:flex;align-items:center;gap:5px}
+.tip{width:15px;height:15px;border-radius:50%;background:var(--kaz-border);color:var(--kaz-muted);font-size:.62rem;font-weight:700;display:grid;place-items:center;cursor:help;flex-shrink:0}
+.iw{position:relative;display:flex;align-items:center}
+.inp{width:100%;padding:9px 36px 9px 12px;border:1.5px solid var(--kaz-border);border-radius:var(--r);font-size:.9rem;font-family:var(--font);background:#fff;transition:border-color .15s;-moz-appearance:textfield}
+.inp::-webkit-inner-spin-button,.inp::-webkit-outer-spin-button{-webkit-appearance:none}
+.inp:focus{outline:none;border-color:var(--kaz-teal)}
+.suf{position:absolute;right:10px;font-size:.75rem;font-weight:600;color:var(--kaz-muted);pointer-events:none}
+.sel{width:100%;padding:9px 12px;border:1.5px solid var(--kaz-border);border-radius:var(--r);font-size:.9rem;font-family:var(--font);background:#fff;cursor:pointer;transition:border-color .15s}
+.sel:focus{outline:none;border-color:var(--kaz-teal)}
+.fhint{font-size:.7rem;color:var(--kaz-muted);line-height:1.4}
+.divider{height:1px;background:var(--kaz-border2);margin:16px 0}
+
+/* TMI pills */
+.tmi-group{display:flex;gap:6px;flex-wrap:wrap}
+.tmi-btn{padding:5px 12px;border-radius:6px;border:1.5px solid var(--kaz-border);font-size:.78rem;font-weight:600;color:var(--kaz-muted);background:#fff;cursor:pointer;transition:all .15s;font-family:var(--font)}
+.tmi-btn.on{background:var(--kaz-navy);border-color:var(--kaz-navy);color:#fff}
+
+/* ── RESULTS PANEL ── */
+.res-panel{position:sticky;top:130px;display:flex;flex-direction:column;gap:14px}
+.res-card{background:#fff;border-radius:var(--r-lg);border:1px solid var(--kaz-border2);box-shadow:var(--shadow-md);overflow:hidden}
+.res-head{padding:16px 20px 0;font-size:.72rem;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--kaz-muted)}
+.res-main-val{padding:4px 20px 8px;font-size:2.6rem;font-weight:900;letter-spacing:-1px;line-height:1}
+.res-main-val.gold{color:var(--kaz-gold)}
+.res-main-val.teal{color:var(--kaz-teal)}
+.res-main-val.green{color:var(--kaz-green)}
+.res-main-val.fire{color:var(--kaz-fire)}
+.res-main-sub{padding:0 20px 16px;font-size:.75rem;color:var(--kaz-muted)}
+.res-divider{height:1px;background:var(--kaz-border2);margin:0 20px}
+.res-rows{padding:14px 20px}
+.res-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--kaz-border2)}
+.res-row:last-child{border-bottom:none}
+.res-row-label{font-size:.78rem;color:var(--kaz-muted)}
+.res-row-val{font-size:.88rem;font-weight:700;color:var(--kaz-navy)}
+.res-row-val.gold{color:var(--kaz-gold)}
+.res-row-val.green{color:var(--kaz-green)}
+.res-row-val.fire{color:var(--kaz-fire)}
+.res-alert{margin:12px 16px;padding:10px 14px;border-radius:var(--r);font-size:.76rem;font-weight:600;line-height:1.5}
+.res-alert.info{background:var(--kaz-teal-light);color:var(--kaz-green);border:1px solid rgba(77,206,160,.3)}
+.res-alert.warn{background:var(--kaz-gold-light);color:var(--kaz-gold);border:1px solid rgba(200,137,26,.3)}
+.res-alert.bad{background:var(--kaz-fire-light);color:var(--kaz-fire);border:1px solid rgba(212,74,26,.3)}
+.res-ctas{padding:0 16px 16px;display:flex;flex-direction:column;gap:8px}
+.cta-pri{display:flex;align-items:center;justify-content:center;gap:8px;padding:12px 20px;background:var(--kaz-navy);color:#fff;border-radius:50px;font-size:.85rem;font-weight:700;transition:opacity .15s}
+.cta-pri:hover{opacity:.88}
+.cta-sec{display:flex;align-items:center;justify-content:center;gap:8px;padding:11px 20px;background:#fff;color:var(--kaz-navy);border:1.5px solid var(--kaz-border);border-radius:50px;font-size:.85rem;font-weight:600;transition:all .15s}
+.cta-sec:hover{border-color:var(--kaz-teal);color:var(--kaz-green)}
+
+/* ── COMPARATIF ── */
+.section{max-width:1120px;margin:0 auto;padding:60px 24px}
+.section-tag{font-size:.72rem;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--kaz-gold);margin-bottom:10px}
+.section-title{font-size:clamp(1.5rem,3vw,2.1rem);font-weight:900;color:var(--kaz-navy);letter-spacing:-.4px;margin-bottom:10px}
+.section-sub{font-size:1rem;color:var(--kaz-muted);max-width:580px;line-height:1.65;margin-bottom:40px}
+.comp-setup{background:#fff;border-radius:var(--r-lg);border:1px solid var(--kaz-border2);padding:24px;margin-bottom:28px}
+.comp-setup-title{font-size:.88rem;font-weight:700;color:var(--kaz-navy);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.comp-fields{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px}
+.comp-table-wrap{overflow-x:auto}
+.comp-table{width:100%;border-collapse:collapse;background:#fff;border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow-md)}
+.comp-table th{background:var(--kaz-navy);color:#fff;padding:14px 16px;font-size:.78rem;font-weight:700;text-align:left;letter-spacing:.3px}
+.comp-table th:first-child{background:var(--kaz-navy-deep)}
+.comp-table td{padding:13px 16px;font-size:.85rem;border-bottom:1px solid var(--kaz-border2)}
+.comp-table tr:last-child td{border-bottom:none}
+.comp-table tr:nth-child(even){background:rgba(13,45,69,.025)}
+.comp-table .label{font-weight:600;color:var(--kaz-navy);font-size:.82rem}
+.comp-badge{display:inline-flex;padding:3px 10px;border-radius:50px;font-size:.7rem;font-weight:700}
+.badge-gold{background:var(--kaz-gold-light);color:var(--kaz-gold)}
+.badge-green{background:var(--kaz-green-light);color:var(--kaz-green)}
+.badge-teal{background:var(--kaz-teal-light);color:#1a6b4a}
+.badge-navy{background:rgba(13,45,69,.1);color:var(--kaz-navy)}
+.badge-fire{background:var(--kaz-fire-light);color:var(--kaz-fire)}
+.best-row td{background:rgba(200,137,26,.06)!important}
+.best-row .label{color:var(--kaz-gold)}
+
+/* ── EDITORIAL ── */
+.editorial{background:var(--kaz-bg);border-top:1px solid var(--kaz-border2)}
+.ed-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:32px}
+@media(max-width:700px){.ed-grid{grid-template-columns:1fr}}
+.ed-card{background:#fff;border-radius:var(--r-lg);padding:28px;border:1px solid var(--kaz-border2);box-shadow:var(--shadow-sm)}
+.ed-card-ico{font-size:2rem;margin-bottom:14px;display:block}
+.ed-card-title{font-size:1.1rem;font-weight:800;color:var(--kaz-navy);margin-bottom:8px}
+.ed-card-body{font-size:.85rem;color:var(--kaz-muted);line-height:1.75}
+.ed-card-body strong{color:var(--kaz-navy)}
+.formula-box{background:var(--kaz-bg);border-radius:var(--r);padding:14px 16px;margin:12px 0;border-left:3px solid var(--kaz-gold);font-size:.8rem;font-family:monospace;color:var(--kaz-navy)}
+.ed-tag{display:inline-flex;padding:2px 8px;border-radius:4px;font-size:.68rem;font-weight:700;background:var(--kaz-gold-light);color:var(--kaz-gold);margin-bottom:10px;letter-spacing:.3px;text-transform:uppercase}
+.profil-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-top:32px}
+.profil-card{background:#fff;border-radius:var(--r-lg);padding:22px;border:1px solid var(--kaz-border2);text-align:center}
+.profil-ico{font-size:1.8rem;margin-bottom:10px}
+.profil-type{font-size:.88rem;font-weight:700;color:var(--kaz-navy);margin-bottom:6px}
+.profil-regime{font-size:.8rem;color:var(--kaz-gold);font-weight:700;margin-bottom:8px}
+.profil-desc{font-size:.75rem;color:var(--kaz-muted);line-height:1.5}
+.warning-box{background:rgba(212,74,26,.06);border:1px solid rgba(212,74,26,.2);border-radius:var(--r);padding:18px 20px;margin-top:32px}
+.warning-box strong{color:var(--kaz-fire)}
+.warning-box p{font-size:.82rem;color:var(--kaz-muted);margin-top:6px;line-height:1.6}
+
+/* ── FOOTER ── */
+footer{background:var(--kaz-navy);color:rgba(255,255,255,.55);text-align:center;padding:24px;font-size:.78rem}
+footer a{color:rgba(255,255,255,.7);transition:color .15s}
+footer a:hover{color:#fff}
+
+/* ── PANEL TABS ── */
+.panel-sim{display:none}
+.panel-sim.active{display:block}
+.regime-section{display:none}
+.regime-section.active{display:contents}
+
+/* ── COMPARISON HIGHLIGHT ── */
+.highlight-winner{position:relative}
+.highlight-winner::after{content:'⭐ Optimal';position:absolute;top:-8px;right:8px;background:var(--kaz-gold);color:#fff;font-size:.62rem;font-weight:800;padding:2px 8px;border-radius:50px;white-space:nowrap}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="topnav">
+  <div class="nav-l">
+    <a href="index.html" class="nav-back">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      Accueil
+    </a>
+    <a href="index.html" class="nav-logo">Kaz<span>Immo</span></a>
+    <div class="bc">
+      <span class="bc-sep">›</span>
+      <a href="index.html#fonctionnalites">Nos outils</a>
+      <span class="bc-sep">›</span>
+      <span>Fiscalité DOM</span>
+    </div>
+  </div>
+  <a href="#" class="nav-cta">Essai gratuit 7 jours →</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">Certifié · Calculs DGFIP · DOM-TOM 2025</div>
+  <h1>Optimisez votre fiscalité<br>avec les dispositifs <span>DOM-TOM</span></h1>
+  <p class="hero-sub">Girardin IR &amp; IS, LMNP DOM, déficit foncier — simulez chaque régime, comparez les économies d'impôt et identifiez la stratégie idéale pour votre profil aux Antilles.</p>
+  <div class="hero-pills">
+    <div class="hero-pill">Girardin IR — jusqu'à 34% de réduction</div>
+    <div class="hero-pill">Girardin IS — déduction IS entreprise</div>
+    <div class="hero-pill">LMNP DOM — amortissement &amp; déficit BIC</div>
+    <div class="hero-pill">Déficit foncier — 10 700 € /an</div>
+    <div class="hero-pill">Comparatif régimes</div>
+  </div>
+</div>
+
+<!-- REGIME TABS -->
+<div class="regime-wrap">
+  <div class="regime-tabs" id="regime-tabs">
+    <button class="rtab active" onclick="setRegime('gir')" id="tab-gir">
+      <span class="rtab-ico">🏗️</span>
+      <div><div class="rtab-name">Girardin IR</div><div class="rtab-sub">Particuliers · Réduction d'impôt</div></div>
+    </button>
+    <button class="rtab" onclick="setRegime('gis')" id="tab-gis">
+      <span class="rtab-ico">🏭</span>
+      <div><div class="rtab-name">Girardin IS</div><div class="rtab-sub">Sociétés · Déduction IS</div></div>
+    </button>
+    <button class="rtab" onclick="setRegime('lmnp')" id="tab-lmnp">
+      <span class="rtab-ico">🛋️</span>
+      <div><div class="rtab-name">LMNP DOM</div><div class="rtab-sub">Meublé · Amortissement</div></div>
+    </button>
+    <button class="rtab" onclick="setRegime('df')" id="tab-df">
+      <span class="rtab-ico">🔧</span>
+      <div><div class="rtab-name">Déficit foncier</div><div class="rtab-sub">Nu · Travaux déductibles</div></div>
+    </button>
+  </div>
+</div>
+
+<!-- ════════════════════ SIMULATORS ════════════════════ -->
+<div id="sim-gir" class="panel-sim active">
+<div class="main">
+  <!-- LEFT: GIRARDIN IR FORM -->
+  <div>
+    <!-- Card 1: Investissement -->
+    <div class="form-card">
+      <div class="form-card-head active" onclick="toggleCard(this)">
+        <div class="form-card-num">1</div>
+        <div><div class="form-card-title">Votre investissement Girardin</div><div class="form-card-sub">Montant, sous-dispositif, engagement</div></div>
+        <svg class="fc-arrow open" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+      </div>
+      <div class="form-card-body open">
+        <div class="fg">
+          <div class="f fg-1">
+            <div class="flabel">Montant de l'investissement <span class="tip" title="Capital que vous apportez dans la société de portage Girardin">?</span></div>
+            <div class="iw"><input id="gi-invest" type="number" class="inp" placeholder="50 000" min="0"><span class="suf">€</span></div>
+          </div>
+          <div class="f fg-1">
+            <div class="flabel">Sous-dispositif <span class="tip" title="Le taux de réduction dépend du type de logement et du plafond de loyer appliqué">?</span></div>
+            <select id="gi-type" class="sel">
+              <option value="libre">Logement libre — 22% de réduction</option>
+              <option value="inter" selected>Logement intermédiaire (loyer plafonné) — 26%</option>
+              <option value="social">Logement social (organisme agréé) — 34%</option>
+            </select>
+          </div>
+          <div class="f fg-1">
+            <div class="flabel">Durée d'engagement</div>
+            <div id="gi-duree-display" style="font-size:.9rem;font-weight:700;color:var(--kaz-navy);padding:9px 12px;background:var(--kaz-bg);border-radius:var(--r)">5 ans (logement intermédiaire)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 2: Situation fiscale -->
+    <div class="form-card">
+      <div class="form-card-head" onclick="toggleCard(this)">
+        <div class="form-card-num">2</div>
+        <div><div class="form-card-title">Votre situation fiscale</div><div class="form-card-sub">TMI, impôt payé, niches utilisées</div></div>
+        <svg class="fc-arrow" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+      </div>
+      <div class="form-card-body">
+        <div class="fg">
+          <div class="f fg-1">
+            <div class="flabel">Tranche marginale d'imposition (TMI)</div>
+            <div class="tmi-group" id="gi-tmi-group">
+              <button class="tmi-btn" onclick="setTMI('gi',0)">0%</button>
+              <button class="tmi-btn" onclick="setTMI('gi',11)">11%</button>
+              <button class="tmi-btn on" onclick="setTMI('gi',30)">30%</button>
+              <button class="tmi-btn" onclick="setTMI('gi',41)">41%</button>
+              <button class="tmi-btn" onclick="setTMI('gi',45)">45%</button>
+            </div>
+            <input type="hidden" id="gi-tmi" value="30">
+          </div>
+          <div class="f">
+            <div class="flabel">Impôt N-1 payé <span class="tip" title="Votre impôt sur le revenu de l'année dernière. La réduction ne peut pas dépasser ce montant.">?</span></div>
+            <div class="iw"><input id="gi-impot" type="number" class="inp" placeholder="18 000" min="0"><span class="suf">€</span></div>
+          </div>
+          <div class="f">
+            <div class="flabel">Niches déjà utilisées <span class="tip" title="Plafond global des niches fiscales en DOM : 18 000 €. Déduisez vos autres niches (emploi à domicile, Pinel, etc.)">?</span></div>
+            <div class="iw"><input id="gi-niches" type="number" class="inp" placeholder="0" min="0"><span class="suf">€</span></div>
+            <div class="fhint">Plafond DOM = 18 000 € (vs 10 000 € en métropole)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Info bloc -->
+    <div class="ed-card" style="margin-top:8px">
+      <span class="ed-tag">Comment ça marche</span>
+      <div class="ed-card-body">
+        <strong>Le Girardin IR</strong> (art. 199 undecies B du CGI) est une réduction d'impôt <strong>one-shot</strong> : vous investissez dans une société de portage qui construit des logements en DOM, et vous récupérez en 1 ou 2 ans une réduction d'impôt supérieure à votre mise.
+        <div class="formula-box">Réduction = Montant investi × Taux (22% / 26% / 34%)<br>Plafond niche DOM = 18 000 € par foyer fiscal<br>Réduction effective = min(réduction brute, plafond disponible, impôt N-1)</div>
+        Le rendement fiscal est typiquement de <strong>10 à 20%</strong> sur 1 à 2 ans selon le sous-dispositif. C'est un outil <strong>à fort levier</strong>, mais qui comporte un risque si la société de portage fait défaut.
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: RESULTS GIRARDIN IR -->
+  <div class="res-panel">
+    <div class="res-card">
+      <div class="res-head">Réduction d'impôt effective</div>
+      <div class="res-main-val gold" id="gi-res-effective">—</div>
+      <div class="res-main-sub">économisé sur votre impôt</div>
+      <div class="res-divider"></div>
+      <div class="res-rows">
+        <div class="res-row"><span class="res-row-label">Réduction brute</span><span class="res-row-val" id="gi-res-brute">—</span></div>
+        <div class="res-row"><span class="res-row-label">Taux de réduction</span><span class="res-row-val gold" id="gi-res-taux">—</span></div>
+        <div class="res-row"><span class="res-row-label">Plafond disponible</span><span class="res-row-val" id="gi-res-plafond">18 000 €</span></div>
+        <div class="res-row"><span class="res-row-label">Durée d'engagement</span><span class="res-row-val" id="gi-res-duree">5 ans</span></div>
+        <div class="res-row"><span class="res-row-label">Rendement fiscal</span><span class="res-row-val green" id="gi-res-rendement">—</span></div>
+      </div>
+    </div>
+    <div class="res-card" id="gi-alert-block" style="display:none">
+      <div id="gi-alert-content" class="res-alert info" style="margin:16px"></div>
+    </div>
+    <div class="res-card">
+      <div class="res-rows">
+        <div class="res-row"><span class="res-row-label">Investissement initial</span><span class="res-row-val" id="gi-res-invest">—</span></div>
+        <div class="res-row"><span class="res-row-label">Réduction obtenue</span><span class="res-row-val gold" id="gi-res-effective2">—</span></div>
+        <div class="res-row" style="border-top:2px solid var(--kaz-gold);padding-top:10px"><span class="res-row-label" style="font-weight:700">Flux net investisseur</span><span class="res-row-val green" id="gi-res-flux">—</span></div>
+      </div>
+    </div>
+    <div class="res-ctas">
+      <a href="#" class="cta-pri">📞 Parler à un expert fiscaliste</a>
+      <a href="simulateur.html" class="cta-sec">↩ Retour au simulateur de rendement</a>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══ GIRARDIN IS ══ -->
+<div id="sim-gis" class="panel-sim">
+<div class="main">
+  <div>
+    <div class="form-card">
+      <div class="form-card-head active" onclick="toggleCard(this)">
+        <div class="form-card-num">1</div>
+        <div><div class="form-card-title">L'investissement de votre société</div><div class="form-card-sub">Montant, type de dispositif</div></div>
+        <svg class="fc-arrow open" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+      </div>
+      <div class="form-card-body open">
+        <div class="fg">
+          <div class="f fg-1">
+            <div class="flabel">Montant investi par la société</div>
+            <div class="iw"><input id="gis-invest" type="number" class="inp" placeholder="100 000" min="0"><span class="suf">€</span></div>
+          </div>
+          <div class="f fg-1">
+            <div class="flabel">Type de Girardin IS</div>
+            <select id="gis-type" class="sel">
+              <option value="industriel" selected>Girardin industriel (équipements)</option>
+              <option value="logement">Girardin logement (immobilier)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="form-card-head" onclick="toggleCard(this)">
+        <div class="form-card-num">2</div>
+        <div><div class="form-card-title">Situation de votre société</div><div class="form-card-sub">Résultat fiscal, taux IS</div></div>
+        <svg class="fc-arrow" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+      </div>
+      <div class="form-card-body">
+        <div class="fg">
+          <div class="f fg-1">
+            <div class="flabel">Résultat fiscal avant déduction <span class="tip" title="Bénéfice imposable de votre société avant prise en compte de l'investissement Girardin">?</span></div>
+            <div class="iw"><input id="gis-resultat" type="number" class="inp" placeholder="250 000" min="0"><span class="suf">€</span></div>
+          </div>
+          <div class="f fg-1">
+            <div class="flabel">Taux d'IS applicable</div>
+            <select id="gis-taux-is" class="sel">
+              <option value="25" selected>25% — Taux normal</option>
+              <option value="15">15% — PME (bénéfice ≤ 42 500 €)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ed-card" style="margin-top:8px">
+      <span class="ed-tag">Comment ça marche</span>
+      <div class="ed-card-body">
+        <strong>Le Girardin IS</strong> (art. 217 undecies du CGI) permet à une société soumise à l'IS de <strong>déduire 100% de son investissement</strong> dans les DOM de son résultat fiscal imposable, générant une économie d'IS immédiate.
+        <div class="formula-box">IS sans Girardin = Résultat × Taux IS<br>IS avec Girardin = max(0, Résultat − Investissement) × Taux IS<br>Économie IS = IS sans − IS avec</div>
+        Idéal pour les <strong>entreprises en fort bénéfice</strong> souhaitant financer leur développement aux Antilles tout en réduisant leur charge fiscale.
+      </div>
+    </div>
+  </div>
+
+  <div class="res-panel">
+    <div class="res-card">
+      <div class="res-head">Économie d'IS réalisée</div>
+      <div class="res-main-val teal" id="gis-res-economie">—</div>
+      <div class="res-main-sub">réduction de l'impôt sur les sociétés</div>
+      <div class="res-divider"></div>
+      <div class="res-rows">
+        <div class="res-row"><span class="res-row-label">IS sans Girardin</span><span class="res-row-val fire" id="gis-res-avant">—</span></div>
+        <div class="res-row"><span class="res-row-label">IS avec Girardin</span><span class="res-row-val green" id="gis-res-apres">—</span></div>
+        <div class="res-row"><span class="res-row-label">Résultat après déduction</span><span class="res-row-val" id="gis-res-resdec">—</span></div>
+        <div class="res-row"><span class="res-row-label">Rendement fiscal</span><span class="res-row-val teal" id="gis-res-rendement">—</span></div>
+      </div>
+    </div>
+    <div class="res-card">
+      <div class="res-rows">
+        <div class="res-row"><span class="res-row-label">Investissement société</span><span class="res-row-val" id="gis-res-invest">—</span></div>
+        <div class="res-row"><span class="res-row-label">Économie d'IS</span><span class="res-row-val teal" id="gis-res-eco2">—</span></div>
+        <div class="res-row" style="border-top:2px solid var(--kaz-teal);padding-top:10px"><span class="res-row-label" style="font-weight:700">Flux net société</span><span class="res-row-val green" id="gis-res-flux">—</span></div>
+      </div>
+    </div>
+    <div class="res-ctas">
+      <a href="#" class="cta-pri">📞 Parler à un expert fiscaliste</a>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══ LMNP DOM ══ -->
+<div id="sim-lmnp" class="panel-sim">
+<div class="main">
+  <div>
+    <div class="form-card">
+      <div class="form-card-head active" onclick="toggleCard(this)">
+        <div class="form-card-num">1</div>
+        <div><div class="form-card-title">Le bien meublé</div><div class="form-card-sub">Prix d'acquisition, amortissements</div></div>
+        <svg class="fc-arrow open" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+      </div>
+      <div class="form-card-body open">
+        <div class="fg">
+          <div class="f">
+            <div class="flabel">Prix d'acquisition (hors meubles)</div>
+            <div class="iw"><input id="lm-prix" type="number" class="inp" placeholder="180 000" min="0"><span class="suf">€</span></div>
+          </div>
+          <div class="f">
+            <div class="flabel">Durée d'amortissement du bien <span class="tip" title="En LMNP réel, vous amortissez la structure sur 25 à 40 ans. Hors terrain (~15% de la valeur).">?</span></div>
+            <select id="lm-duree-amort" class="sel">
+              <option value="25">25 ans</option>
+              <option value="30" selected>30 ans (recommandé)</option>
+              <option value="35">35 ans</option>
+              <option value="40">40 ans</option>
+            </select>
+          </div>
+          <div class="f">
+            <div class="flabel">Valeur des meubles / équipements</div>
+            <div class="iw"><input id="lm-meubles" type="number" class="inp" placeholder="12 000" min="0"><span class="suf">€</span></div>
+          </div>
+          <div class="f">
+            <div class="flabel">Durée d'amortissement meubles</div>
+            <select id="lm-duree-meub" class="sel">
+              <option value="7">7 ans</option>
+              <option value="10" selected>10 ans (recommandé)</option>
+            </select>
+          </div>
+          <div class="f fg-1">
+            <div class="flabel">Type de location meublée</div>
+            <select id="lm-mode" class="sel">
+              <option value="ld" selected>Longue durée (abattement micro-BIC 50%)</option>
+              <option value="tour">Tourisme classé (abattement micro-BIC 71%)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="form-card-head" onclick="toggleCard(this)">
+        <div class="form-card-num">2</div>
+        <div><div class="form-card-title">Les revenus locatifs</div><div class="form-card-sub">Loyers bruts annuels</div></div>
+        <svg class="fc-arrow" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+      </div>
+      <div class="form-card-body">
+        <div class="fg">
+          <div class="f fg-1">
+            <div class="flabel">Loyers bruts annuels</div>
+            <div class="iw"><input id="lm-loyers" type="number" class="inp" placeholder="12 000" min="0"><span class="suf">€</span></div>
+          </div>
+          <div class="f fg-1">
+            <div class="flabel">Taux de vacance locative <span class="tip" title="Aux Antilles : 3-5% en longue durée, 10-20% en saisonnier">?</span></div>
+            <div class="iw"><input id="lm-vacance" type="number" class="inp" value="5" min="0" max="50"><span class="suf">%</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="form-card-head" onclick="toggleCard(this)">
+        <div class="form-card-num">3</div>
+        <div><div class="form-card-title">Les charges déductibles</div><div class="form-card-sub">Intérêts, gestion, taxes, travaux</div></div>
+        <svg class="fc-arrow" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+      </div>
+      <div class="form-card-body">
+        <div class="fg">
+          <div class="f">
+            <div class="flabel">Intérêts d'emprunt annuels</div>
+            <div class="iw"><input id="lm-interets" type="number" class="inp" placeholder="6 000" min="0"><span class="suf">€</span></div>
+          </div>
+          <div class="f">
+            <div class="flabel">Taxe foncière</div>
+            <div class="iw"><input id="lm-tf" type="number" class="inp" placeholder="1 200" min="0"><span class="suf">€</span></div>
+          </div>
+          <div class="f">
+            <div class="flabel">Frais de gestion</div>
+            <div class="iw"><input id="lm-gestion" type="number" class="inp" value="8" min="0" max="20"><span class="suf">%</span></div>
+          </div>
+          <div class="f">
+            <div class="flabel">Assurances (PNO, GLI…)</div>
+            <div class="iw"><input id="lm-assur" type="number" class="inp" placeholder="400" min="0"><span class="suf">€</span></div>
+          </div>
+          <div class="f">
+            <div class="flabel">Entretien / provisions</div>
+            <div class="iw"><input id="lm-entret" type="number" class="inp" placeholder="600" min="0"><span class="suf">€</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="form-card-head" onclick="toggleCard(this)">
+        <div class="form-card-num">4</div>
+        <div><div class="form-card-title">Votre fiscalité personnelle</div><div class="form-card-sub">TMI, prélèvements sociaux</div></div>
+        <svg class="fc-arrow" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+      </div>
+      <div class="form-card-body">
+        <div class="fg">
+          <div class="f fg-1">
+            <div class="flabel">Tranche marginale d'imposition (TMI)</div>
+            <div class="tmi-group" id="lm-tmi-group">
+              <button class="tmi-btn" onclick="setTMI('lm',0)">0%</button>
+              <button class="tmi-btn" onclick="setTMI('lm',11)">11%</button>
+              <button class="tmi-btn on" onclick="setTMI('lm',30)">30%</button>
+              <button class="tmi-btn" onclick="setTMI('lm',41)">41%</button>
+              <button class="tmi-btn" onclick="setTMI('lm',45)">45%</button>
+            </div>
+            <input type="hidden" id="lm-tmi" value="30">
+          </div>
+          <div class="f fg-1">
+            <div class="flabel">Prélèvements sociaux <span class="tip" title="17,2% applicables sur les revenus de source BIC (LMNP)">?</span></div>
+            <div class="iw"><input id="lm-ps" type="number" class="inp" value="17.2" step="0.1"><span class="suf">%</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ed-card" style="margin-top:8px">
+      <span class="ed-tag">Comment ça marche</span>
+      <div class="ed-card-body">
+        <strong>Le LMNP au régime réel</strong> permet d'amortir comptablement votre bien et vos meubles, ce qui <strong>neutralise fiscalement vos revenus locatifs</strong> pendant de nombreuses années.
+        <div class="formula-box">Résultat BIC = Loyers − (Amort. bien + Amort. meubles + Charges)<br>Si Résultat BIC &lt; 0 : déficit reportable 10 ans<br>Si Résultat BIC &gt; 0 : imposé à TMI + 17,2% PS</div>
+        Différence clé vs micro-BIC : abattement forfaitaire <strong>50%</strong> (ou <strong>71%</strong> tourisme classé) vs amortissements réels souvent plus favorables.
+      </div>
+    </div>
+  </div>
+
+  <div class="res-panel">
+    <div class="res-card">
+      <div class="res-head">Charge fiscale annuelle (régime réel)</div>
+      <div class="res-main-val green" id="lm-res-impot-reel">—</div>
+      <div class="res-main-sub" id="lm-res-statut">sur vos revenus BIC</div>
+      <div class="res-divider"></div>
+      <div class="res-rows">
+        <div class="res-row"><span class="res-row-label">Loyers nets (après vacance)</span><span class="res-row-val" id="lm-res-loyers-nets">—</span></div>
+        <div class="res-row"><span class="res-row-label">Amortissement bien/an</span><span class="res-row-val teal" id="lm-res-amort-bien">—</span></div>
+        <div class="res-row"><span class="res-row-label">Amortissement meubles/an</span><span class="res-row-val teal" id="lm-res-amort-meub">—</span></div>
+        <div class="res-row"><span class="res-row-label">Total charges déductibles</span><span class="res-row-val" id="lm-res-charges">—</span></div>
+        <div class="res-row"><span class="res-row-label">Résultat BIC</span><span class="res-row-val" id="lm-res-bic">—</span></div>
+      </div>
+    </div>
+    <div class="res-card">
+      <div class="res-rows">
+        <div class="res-row"><span class="res-row-label">Impôt régime réel</span><span class="res-row-val green" id="lm-res-ir-reel">—</span></div>
+        <div class="res-row"><span class="res-row-label">Impôt micro-BIC</span><span class="res-row-val" id="lm-res-ir-micro">—</span></div>
+        <div class="res-row" style="border-top:2px solid var(--kaz-teal);padding-top:10px"><span class="res-row-label" style="font-weight:700">Économie réel vs micro-BIC</span><span class="res-row-val gold" id="lm-res-economie">—</span></div>
+        <div class="res-row"><span class="res-row-label">Économie vs location nue</span><span class="res-row-val green" id="lm-res-vs-nu">—</span></div>
+      </div>
+    </div>
+    <div id="lm-report-block" class="res-card" style="display:none">
+      <div class="res-alert info" style="margin:16px" id="lm-report-msg"></div>
+    </div>
+    <div class="res-ctas">
+      <a href="#" class="cta-pri">📞 Parler à un expert LMNP</a>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══ DÉFICIT FONCIER ══ -->
+<div id="sim-df" class="panel-sim">
+<div class="main">
+  <div>
+    <div class="form-card">
+      <div class="form-card-head active" onclick="toggleCard(this)">
+        <div class="form-card-num">1</div>
+        <div><div class="form-card-title">Les revenus fonciers</div><div class="form-card-sub">Loyers bruts de la location nue</div></div>
+        <svg class="fc-arrow open" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+      </div>
+      <div class="form-card-body open">
+        <div class="fg">
+          <div class="f fg-1">
+            <div class="flabel">Loyers bruts annuels</div>
+            <div class="iw"><input id="df-loyers" type="number" class="inp" placeholder="9 600" min="0"><span class="suf">€</span></div>
+            <div class="fhint">Location nue uniquement (le LMNP relève des BIC, pas des revenus fonciers)</div>
+          </div>
+          <div class="f fg-1">
+            <div class="flabel">Autres revenus fonciers du foyer <span class="tip" title="Le déficit foncier s'impute d'abord sur les autres revenus fonciers avant de l'être sur le revenu global">?</span></div>
+            <div class="iw"><input id="df-autres-rf" type="number" class="inp" placeholder="0" min="0"><span class="suf">€</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="form-card-head" onclick="toggleCard(this)">
+        <div class="form-card-num">2</div>
+        <div><div class="form-card-title">Les charges déductibles</div><div class="form-card-sub">Intérêts, travaux, gestion, assurances</div></div>
+        <svg class="fc-arrow" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+      </div>
+      <div class="form-card-body">
+        <div class="fg">
+          <div class="f">
+            <div class="flabel">Intérêts d'emprunt <span class="tip" title="Déductibles uniquement des revenus fonciers, pas du revenu global">?</span></div>
+            <div class="iw"><input id="df-interets" type="number" class="inp" placeholder="7 000" min="0"><span class="suf">€</span></div>
+            <div class="fhint">⚠ Imputables uniquement sur revenus fonciers</div>
+          </div>
+          <div class="f">
+            <div class="flabel">Travaux de réparation / amélioration</div>
+            <div class="iw"><input id="df-travaux" type="number" class="inp" placeholder="15 000" min="0"><span class="suf">€</span></div>
+          </div>
+          <div class="f">
+            <div class="flabel">Frais de gestion locative</div>
+            <div class="iw"><input id="df-gestion" type="number" class="inp" placeholder="800" min="0"><span class="suf">€</span></div>
+          </div>
+          <div class="f">
+            <div class="flabel">Taxe foncière</div>
+            <div class="iw"><input id="df-tf" type="number" class="inp" placeholder="1 200" min="0"><span class="suf">€</span></div>
+          </div>
+          <div class="f">
+            <div class="flabel">Assurances (PNO, GLI…)</div>
+            <div class="iw"><input id="df-assur" type="number" class="inp" placeholder="350" min="0"><span class="suf">€</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="form-card-head" onclick="toggleCard(this)">
+        <div class="form-card-num">3</div>
+        <div><div class="form-card-title">Votre fiscalité personnelle</div><div class="form-card-sub">TMI pour calculer l'économie fiscale</div></div>
+        <svg class="fc-arrow" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+      </div>
+      <div class="form-card-body">
+        <div class="fg">
+          <div class="f fg-1">
+            <div class="flabel">Tranche marginale d'imposition (TMI)</div>
+            <div class="tmi-group" id="df-tmi-group">
+              <button class="tmi-btn" onclick="setTMI('df',0)">0%</button>
+              <button class="tmi-btn" onclick="setTMI('df',11)">11%</button>
+              <button class="tmi-btn on" onclick="setTMI('df',30)">30%</button>
+              <button class="tmi-btn" onclick="setTMI('df',41)">41%</button>
+              <button class="tmi-btn" onclick="setTMI('df',45)">45%</button>
+            </div>
+            <input type="hidden" id="df-tmi" value="30">
+          </div>
+          <div class="f fg-1">
+            <div class="flabel">Prélèvements sociaux</div>
+            <div class="iw"><input id="df-ps" type="number" class="inp" value="17.2" step="0.1"><span class="suf">%</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ed-card" style="margin-top:8px">
+      <span class="ed-tag">Comment ça marche</span>
+      <div class="ed-card-body">
+        <strong>Le déficit foncier</strong> permet, en location nue, de déduire les charges (travaux notamment) supérieures aux loyers, créant un déficit imputable sur votre <strong>revenu global</strong> jusqu'à <strong>10 700 € par an</strong>.
+        <div class="formula-box">Déficit hors intérêts = Charges (hors intérêts) − Loyers<br>Portion imputable revenu global = min(déficit, 10 700 €)<br>Économie fiscale = Portion imputable × TMI</div>
+        <strong>Règle clé :</strong> les intérêts d'emprunt ne sont déductibles que sur les revenus fonciers (pas sur le revenu global). L'excédent est reportable <strong>10 ans</strong> sur vos revenus fonciers futurs.
+      </div>
+    </div>
+  </div>
+
+  <div class="res-panel">
+    <div class="res-card">
+      <div class="res-head">Économie fiscale année 1</div>
+      <div class="res-main-val gold" id="df-res-economie">—</div>
+      <div class="res-main-sub">réduction de votre impôt sur le revenu</div>
+      <div class="res-divider"></div>
+      <div class="res-rows">
+        <div class="res-row"><span class="res-row-label">Total charges (hors intérêts)</span><span class="res-row-val" id="df-res-charges">—</span></div>
+        <div class="res-row"><span class="res-row-label">Intérêts d'emprunt</span><span class="res-row-val" id="df-res-interets">—</span></div>
+        <div class="res-row"><span class="res-row-label">Résultat foncier</span><span class="res-row-val" id="df-res-resultat">—</span></div>
+        <div class="res-row"><span class="res-row-label">Déficit foncier total</span><span class="res-row-val fire" id="df-res-deficit">—</span></div>
+      </div>
+    </div>
+    <div class="res-card">
+      <div class="res-rows">
+        <div class="res-row"><span class="res-row-label">Imputable revenu global</span><span class="res-row-val green" id="df-res-imputable">—</span></div>
+        <div class="res-row"><span class="res-row-label">Plafond légal</span><span class="res-row-val">10 700 €</span></div>
+        <div class="res-row"><span class="res-row-label">Reportable (10 ans)</span><span class="res-row-val" id="df-res-reportable">—</span></div>
+        <div class="res-row" style="border-top:2px solid var(--kaz-gold);padding-top:10px"><span class="res-row-label" style="font-weight:700">Économie totale (report inclus)</span><span class="res-row-val gold" id="df-res-total">—</span></div>
+      </div>
+    </div>
+    <div id="df-alert-block" class="res-card" style="display:none">
+      <div id="df-alert-content" class="res-alert info" style="margin:16px"></div>
+    </div>
+    <div class="res-ctas">
+      <a href="#" class="cta-pri">📞 Parler à un expert</a>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════ COMPARATIF ═══════════════ -->
+<div class="editorial" style="padding-top:0">
+<div class="section">
+  <div class="section-tag">Comparatif</div>
+  <div class="section-title">Quel régime est le plus avantageux pour votre profil&nbsp;?</div>
+  <div class="section-sub">Entrez un profil d'investissement commun pour voir côte à côte ce que chaque dispositif vous rapporte fiscalement.</div>
+
+  <div class="comp-setup">
+    <div class="comp-setup-title">⚙️ Définir le profil de comparaison</div>
+    <div class="comp-fields">
+      <div class="f">
+        <div class="flabel">Investissement (€)</div>
+        <div class="iw"><input id="cmp-invest" type="number" class="inp" value="200000"><span class="suf">€</span></div>
+      </div>
+      <div class="f">
+        <div class="flabel">Loyers annuels (€)</div>
+        <div class="iw"><input id="cmp-loyers" type="number" class="inp" value="12000"><span class="suf">€</span></div>
+      </div>
+      <div class="f">
+        <div class="flabel">Intérêts emprunt (€/an)</div>
+        <div class="iw"><input id="cmp-interets" type="number" class="inp" value="7000"><span class="suf">€</span></div>
+      </div>
+      <div class="f">
+        <div class="flabel">Autres charges (€/an)</div>
+        <div class="iw"><input id="cmp-charges" type="number" class="inp" value="3500"><span class="suf">€</span></div>
+      </div>
+      <div class="f">
+        <div class="flabel">TMI</div>
+        <select id="cmp-tmi" class="sel">
+          <option value="11">11%</option>
+          <option value="30" selected>30%</option>
+          <option value="41">41%</option>
+          <option value="45">45%</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="comp-table-wrap">
+    <table class="comp-table" id="comp-table">
+      <thead>
+        <tr>
+          <th>Critère</th>
+          <th>🏗️ Girardin IR</th>
+          <th>🛋️ LMNP réel</th>
+          <th>🔧 Déficit foncier</th>
+          <th>📊 Micro-BIC 50%</th>
+        </tr>
+      </thead>
+      <tbody id="comp-body">
+        <tr><td class="label">Économie fiscale — Année 1</td><td id="c-gir-y1">—</td><td id="c-lmnp-y1">—</td><td id="c-df-y1">—</td><td id="c-micro-y1">—</td></tr>
+        <tr><td class="label">Économie fiscale — 5 ans cumulé</td><td id="c-gir-y5">—</td><td id="c-lmnp-y5">—</td><td id="c-df-y5">—</td><td id="c-micro-y5">—</td></tr>
+        <tr><td class="label">Type de bien</td><td><span class="comp-badge badge-navy">Neuf DOM</span></td><td><span class="comp-badge badge-teal">Meublé</span></td><td><span class="comp-badge badge-navy">Nu</span></td><td><span class="comp-badge badge-teal">Meublé</span></td></tr>
+        <tr><td class="label">Durée d'engagement</td><td>5 – 6 ans</td><td>Libre</td><td>3 ans minimum</td><td>Libre</td></tr>
+        <tr><td class="label">Complexité administrative</td><td><span class="comp-badge badge-fire">Élevée</span></td><td><span class="comp-badge badge-gold">Moyenne</span></td><td><span class="comp-badge badge-green">Faible</span></td><td><span class="comp-badge badge-green">Très faible</span></td></tr>
+        <tr><td class="label">Risque</td><td><span class="comp-badge badge-fire">Risque société</span></td><td><span class="comp-badge badge-teal">Faible</span></td><td><span class="comp-badge badge-teal">Faible</span></td><td><span class="comp-badge badge-teal">Faible</span></td></tr>
+        <tr><td class="label">Liquidité</td><td>Bloqué 5-6 ans</td><td>Revente possible</td><td>Revente possible</td><td>Revente possible</td></tr>
+        <tr class="best-row"><td class="label">Meilleur pour</td><td>Forte TMI, impôt élevé</td><td>Patrimoine long terme</td><td>Travaux importants</td><td>Débutant, simplicité</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════ ÉDITORIALE ═══════════════ -->
+<div class="editorial">
+<div class="section">
+  <div class="section-tag">Comprendre les dispositifs</div>
+  <div class="section-title">La fiscalité DOM expliquée simplement</div>
+  <div class="section-sub">Les DOM-TOM bénéficient de dispositifs fiscaux dérogatoires inaccessibles en métropole. Voici ce que chaque régime vous permet d'optimiser.</div>
+
+  <div class="ed-grid">
+    <div class="ed-card">
+      <span class="ed-card-ico">🏗️</span>
+      <div class="ed-tag">Girardin IR</div>
+      <div class="ed-card-title">Réduction d'impôt immédiate</div>
+      <div class="ed-card-body">
+        Vous investissez dans une <strong>société de portage</strong> qui construit des logements neufs en DOM. En retour, vous obtenez une réduction d'impôt sur le revenu de <strong>22% à 34%</strong> de votre investissement, applicable en 1 ou 2 ans.
+        <br><br>
+        <strong>Plafond spécial DOM :</strong> 18 000 € (vs 10 000 € en métropole), ce qui autorise des investissements plus importants.
+        <br><br>
+        <strong>⚠ Point de vigilance :</strong> la réduction est liée à la bonne réalisation du programme. Choisissez un gestionnaire agréé. En cas de défaut, le fisc peut remettre en cause la réduction obtenue.
+      </div>
+    </div>
+
+    <div class="ed-card">
+      <span class="ed-card-ico">🏭</span>
+      <div class="ed-tag">Girardin IS</div>
+      <div class="ed-card-title">Déduction IS pour les sociétés</div>
+      <div class="ed-card-body">
+        Dispositif réservé aux <strong>personnes morales à l'IS</strong>. La société déduit 100% de son investissement en DOM de son résultat fiscal, générant une économie IS proportionnelle à son taux.
+        <br><br>
+        <strong>Exemple :</strong> 100 000 € investis → économie de <strong>25 000 € d'IS</strong> au taux normal. Le "rendement fiscal" est de 25% sur 1 an.
+        <br><br>
+        <strong>Idéal pour :</strong> sociétés avec fort bénéfice souhaitant investir dans leur développement aux Antilles tout en optimisant leur IS.
+      </div>
+    </div>
+
+    <div class="ed-card">
+      <span class="ed-card-ico">🛋️</span>
+      <div class="ed-tag">LMNP DOM</div>
+      <div class="ed-card-title">Amortissement &amp; neutralisation fiscale</div>
+      <div class="ed-card-body">
+        Le <strong>régime réel LMNP</strong> permet d'amortir comptablement le bien (2,5% – 4%/an) et les meubles (10% – 14%/an), ce qui <strong>efface fiscalement vos revenus locatifs</strong> pendant 15 à 25 ans.
+        <br><br>
+        <strong>Micro-BIC :</strong> abattement forfaitaire de 50% (ou 71% meublé de tourisme classé), sans nécessité de comptabilité. Simple mais souvent moins favorable que le réel.
+        <br><br>
+        <strong>Différence clé :</strong> le déficit BIC LMNP est <em>non imputable</em> sur le revenu global (contrairement au déficit foncier). Il est reporté 10 ans sur les BIC de même nature.
+      </div>
+    </div>
+
+    <div class="ed-card">
+      <span class="ed-card-ico">🔧</span>
+      <div class="ed-tag">Déficit foncier</div>
+      <div class="ed-card-title">Travaux = économie fiscale immédiate</div>
+      <div class="ed-card-body">
+        En location nue au régime réel, si vos charges (principalement des <strong>travaux de rénovation</strong>) dépassent vos loyers, le déficit généré est imputable sur votre revenu global jusqu'à <strong>10 700 € par an</strong>.
+        <br><br>
+        <strong>Règle des 3 ans :</strong> pour bénéficier de l'imputation sur revenu global, vous devez maintenir la location nue pendant 3 ans après la dernière imputation.
+        <br><br>
+        <strong>Aux Antilles :</strong> les travaux de rénovation dans l'ancien (remise aux normes, isolation thermique tropicale) permettent souvent des déficits significatifs sur 1 à 3 ans.
+      </div>
+    </div>
+  </div>
+
+  <!-- Profils investisseurs -->
+  <div class="section-title" style="margin-top:60px;margin-bottom:8px;font-size:1.4rem">Quel régime pour quel investisseur&nbsp;?</div>
+  <div class="section-sub" style="margin-bottom:0">Chaque profil a son dispositif optimal. Voici notre grille de lecture selon votre situation.</div>
+
+  <div class="profil-grid">
+    <div class="profil-card">
+      <div class="profil-ico">💼</div>
+      <div class="profil-type">Cadre supérieur, TMI 41–45%</div>
+      <div class="profil-regime">→ Girardin IR</div>
+      <div class="profil-desc">Fort impôt à réduire, recherche de levier fiscal maximal. Le Girardin offre le meilleur retour sur 1-2 ans.</div>
+    </div>
+    <div class="profil-card">
+      <div class="profil-ico">🏢</div>
+      <div class="profil-type">Chef d'entreprise, société IS</div>
+      <div class="profil-regime">→ Girardin IS</div>
+      <div class="profil-desc">Société bénéficiaire souhaitant investir aux Antilles en déduisant 100% de l'investissement de l'IS.</div>
+    </div>
+    <div class="profil-card">
+      <div class="profil-ico">🏠</div>
+      <div class="profil-type">Investisseur patrimonial, TMI 30%</div>
+      <div class="profil-regime">→ LMNP DOM réel</div>
+      <div class="profil-desc">Construction de patrimoine long terme. Les amortissements neutralisent les revenus sur 20+ ans.</div>
+    </div>
+    <div class="profil-card">
+      <div class="profil-ico">🔨</div>
+      <div class="profil-type">Acheteur dans l'ancien avec travaux</div>
+      <div class="profil-regime">→ Déficit foncier</div>
+      <div class="profil-desc">Budget travaux significatif (> 15 000 €). Économie fiscale immédiate via l'imputation sur revenu global.</div>
+    </div>
+    <div class="profil-card">
+      <div class="profil-ico">🌴</div>
+      <div class="profil-type">Primo-investisseur, TMI 11%</div>
+      <div class="profil-regime">→ Micro-BIC tourisme</div>
+      <div class="profil-desc">Simplicité et abattement de 71% sur les revenus d'une location saisonnière classée en DOM.</div>
+    </div>
+    <div class="profil-card">
+      <div class="profil-ico">📈</div>
+      <div class="profil-type">Multi-investisseur, TMI 30–41%</div>
+      <div class="profil-regime">→ LMNP + Déficit</div>
+      <div class="profil-desc">Combinaison : déficit foncier sur l'ancien rénové + LMNP meublé sur les acquisitions neuves.</div>
+    </div>
+  </div>
+
+  <div class="warning-box">
+    <strong>⚠ Avertissement légal important</strong>
+    <p>Ce simulateur est fourni à titre informatif et éducatif uniquement. Les calculs sont basés sur la législation fiscale en vigueur en 2025 (CGI art. 199 undecies B & C, 217 undecies) et les règles générales du régime réel foncier et BIC. Ils ne tiennent pas compte de votre situation personnelle, de votre foyer fiscal complet, ni des éventuelles modifications législatives en cours d'année. <strong>Consultez un expert-comptable ou un conseiller en gestion de patrimoine (CGP) agréé</strong> avant toute décision d'investissement ou d'optimisation fiscale.</p>
+  </div>
+</div>
+</div>
+
+<footer>
+  <p>© 2025 kazImmo · <a href="index.html">Retour à l'accueil</a> · <a href="simulateur.html">Simulateur de rendement</a> · Calculs fournis à titre indicatif uniquement</p>
+</footer>
+
+<script>
+(function(){
+
+/* ── UTILS ── */
+function v(id){ return parseFloat(document.getElementById(id).value)||0; }
+function vs(id){ var e=document.getElementById(id); return e?e.value:''; }
+function fmt(n){ return new Intl.NumberFormat('fr-FR',{style:'currency',currency:'EUR',minimumFractionDigits:0,maximumFractionDigits:0}).format(n); }
+function pct(n,d){ d=d===undefined?1:d; return new Intl.NumberFormat('fr-FR',{minimumFractionDigits:d,maximumFractionDigits:d}).format(n)+'%'; }
+function set(id,txt){ var e=document.getElementById(id); if(e) e.textContent=txt; }
+function show(id,vis){ var e=document.getElementById(id); if(e) e.style.display=vis?'':'none'; }
+
+/* ── TOGGLE CARD ── */
+window.toggleCard = function(head){
+  var body = head.nextElementSibling;
+  var arrow = head.querySelector('.fc-arrow');
+  var open = body.classList.toggle('open');
+  if(arrow) arrow.classList.toggle('open', open);
+  head.classList.toggle('active', open);
+};
+
+/* ── TMI PILLS ── */
+window.setTMI = function(prefix, val){
+  document.getElementById(prefix+'-tmi').value = val;
+  document.querySelectorAll('#'+prefix+'-tmi-group .tmi-btn').forEach(function(b){
+    b.classList.toggle('on', parseInt(b.textContent)===val);
+  });
+  if(prefix==='gi') calcGirardinIR();
+  if(prefix==='lm') calcLMNP();
+  if(prefix==='df') calcDeficit();
+};
+
+/* ── REGIME SWITCH ── */
+window.setRegime = function(r){
+  ['gir','gis','lmnp','df'].forEach(function(k){
+    document.getElementById('sim-'+k).classList.toggle('active', k===r);
+    document.getElementById('tab-'+k).classList.toggle('active', k===r);
+  });
+};
+
+/* ══════════════════ GIRARDIN IR ══════════════════ */
+var GI_RATES = {libre:0.22, inter:0.26, social:0.34};
+var GI_DUREE = {libre:'5 ans — logement libre', inter:'5 ans — logement intermédiaire', social:'5 ans — logement social'};
+
+function calcGirardinIR(){
+  var invest = v('gi-invest');
+  var type   = vs('gi-type');
+  var impot  = v('gi-impot');
+  var niches = v('gi-niches');
+  var tmi    = v('gi-tmi');
+
+  var taux         = GI_RATES[type] || 0.26;
+  var reductionBrute = invest * taux;
+  var plafondDispo   = Math.max(0, 18000 - niches);
+  var reduction      = Math.min(reductionBrute, plafondDispo, impot>0 ? impot : Infinity);
+  var rendement      = invest>0 ? reduction/invest*100 : 0;
+  var flux           = reduction - invest;
+
+  document.getElementById('gi-duree-display').textContent = GI_DUREE[type];
+
+  set('gi-res-effective',  fmt(reduction));
+  set('gi-res-effective2', fmt(reduction));
+  set('gi-res-brute',      fmt(reductionBrute));
+  set('gi-res-taux',       pct(taux*100,0)+' ('+type+')');
+  set('gi-res-plafond',    fmt(plafondDispo)+' disponible');
+  set('gi-res-duree',      GI_DUREE[type]);
+  set('gi-res-rendement',  pct(rendement));
+  set('gi-res-invest',     fmt(invest));
+  set('gi-res-flux',       (flux>=0?'+':'')+fmt(flux));
+
+  // Alerts
+  var alerts = [];
+  if(impot>0 && reductionBrute>impot) alerts.push('⚠ Réduction brute ('+fmt(reductionBrute)+') supérieure à votre impôt ('+fmt(impot)+'). Plafonnée à votre impôt réel.');
+  if(plafondDispo<reductionBrute && plafondDispo<18000) alerts.push('⚠ Plafond de niches fiscales DOM partiellement utilisé. Réduction disponible : '+fmt(plafondDispo)+'.');
+  if(invest>0 && reduction===0) alerts.push('❌ Réduction nulle. Vérifiez votre impôt N-1 ou le plafond de niches disponible.');
+  if(invest>0 && tmi<30) alerts.push('💡 Girardin IR est plus efficace à partir d\'une TMI de 30%. Pour votre TMI de '+tmi+'%, étudiez d\'abord le déficit foncier ou le LMNP.');
+
+  var alertBlock = document.getElementById('gi-alert-block');
+  var alertContent = document.getElementById('gi-alert-content');
+  if(alerts.length>0 && invest>0){
+    alertBlock.style.display='';
+    alertContent.innerHTML=alerts.join('<br>');
+    alertContent.className='res-alert '+(reduction===0?'bad':reduction<reductionBrute?'warn':'info');
+  } else {
+    alertBlock.style.display='none';
+  }
+}
+
+document.querySelectorAll('#sim-gir input,#sim-gir select').forEach(function(el){
+  el.addEventListener('input',calcGirardinIR);
+});
+
+/* ══════════════════ GIRARDIN IS ══════════════════ */
+function calcGirardinIS(){
+  var invest   = v('gis-invest');
+  var resultat = v('gis-resultat');
+  var tauxIS   = v('gis-taux-is')/100;
+
+  var isAvant      = resultat * tauxIS;
+  var resApres     = Math.max(0, resultat - invest);
+  var isApres      = resApres * tauxIS;
+  var economie     = isAvant - isApres;
+  var rendement    = invest>0 ? economie/invest*100 : 0;
+  var flux         = economie - invest;
+
+  set('gis-res-economie',   fmt(economie));
+  set('gis-res-avant',      fmt(isAvant));
+  set('gis-res-apres',      fmt(isApres));
+  set('gis-res-resdec',     fmt(resApres));
+  set('gis-res-rendement',  pct(rendement));
+  set('gis-res-invest',     fmt(invest));
+  set('gis-res-eco2',       fmt(economie));
+  set('gis-res-flux',       (flux>=0?'+':'')+fmt(flux));
+}
+
+document.querySelectorAll('#sim-gis input,#sim-gis select').forEach(function(el){
+  el.addEventListener('input',calcGirardinIS);
+});
+
+/* ══════════════════ LMNP DOM ══════════════════ */
+function calcLMNP(){
+  var prix       = v('lm-prix');
+  var dureeAmort = v('lm-duree-amort')||30;
+  var meubles    = v('lm-meubles');
+  var dureeMeub  = v('lm-duree-meub')||10;
+  var loyersBrut = v('lm-loyers');
+  var vacance    = v('lm-vacance')/100;
+  var interets   = v('lm-interets');
+  var tf         = v('lm-tf');
+  var gestionPct = v('lm-gestion')/100;
+  var assur      = v('lm-assur');
+  var entret     = v('lm-entret');
+  var tmi        = v('lm-tmi')/100;
+  var ps         = v('lm-ps')/100;
+  var mode       = vs('lm-mode');
+
+  var loyers       = loyersBrut * (1 - vacance);
+  var amortBien    = prix * 0.85 / dureeAmort; // hors terrain ~15%
+  var amortMeub    = meubles / dureeMeub;
+  var gestion      = loyers * gestionPct;
+  var totalCharges = interets + tf + gestion + assur + entret + amortBien + amortMeub;
+  var bicReel      = loyers - totalCharges;
+  var impotReel    = bicReel>0 ? bicReel*(tmi+ps) : 0;
+
+  var abatt        = mode==='tour' ? 0.71 : 0.50;
+  var bicMicro     = loyers * (1-abatt);
+  var impotMicro   = bicMicro*(tmi+ps);
+
+  // VS location nue (régime réel foncier sans amortissement)
+  var bicNu         = Math.max(0, loyers - interets - tf - gestion - assur - entret);
+  var impotNu       = bicNu*(tmi+ps);
+  var econVsNu      = impotNu - impotReel;
+  var econVsMicro   = impotMicro - impotReel;
+
+  set('lm-res-loyers-nets', fmt(loyers));
+  set('lm-res-amort-bien',  fmt(amortBien)+'/an');
+  set('lm-res-amort-meub',  fmt(amortMeub)+'/an');
+  set('lm-res-charges',     fmt(totalCharges));
+  set('lm-res-bic',         (bicReel>=0?'+':'')+fmt(bicReel));
+  set('lm-res-impot-reel',  fmt(impotReel));
+  set('lm-res-ir-reel',     fmt(impotReel));
+  set('lm-res-ir-micro',    fmt(impotMicro));
+  set('lm-res-economie',    (econVsMicro>=0?'+':'')+fmt(econVsMicro));
+  set('lm-res-vs-nu',       (econVsNu>=0?'+':'')+fmt(econVsNu));
+
+  var statut = bicReel<0 ? 'Déficit BIC de '+fmt(-bicReel)+' (reportable 10 ans)' : 'Bénéfice BIC imposable';
+  set('lm-res-statut', statut);
+
+  var reportBlock = document.getElementById('lm-report-block');
+  var reportMsg   = document.getElementById('lm-report-msg');
+  if(bicReel<0){
+    reportBlock.style.display='';
+    reportMsg.textContent = '💡 Déficit BIC de '+fmt(-bicReel)+' reportable sur vos prochains revenus de location meublée (10 ans max). Non imputable sur le revenu global.';
+    reportMsg.className='res-alert info';
+  } else {
+    reportBlock.style.display='none';
+  }
+}
+
+document.querySelectorAll('#sim-lmnp input,#sim-lmnp select').forEach(function(el){
+  el.addEventListener('input',calcLMNP);
+});
+
+/* ══════════════════ DÉFICIT FONCIER ══════════════════ */
+function calcDeficit(){
+  var loyers    = v('df-loyers');
+  var autresRF  = v('df-autres-rf');
+  var interets  = v('df-interets');
+  var travaux   = v('df-travaux');
+  var gestion   = v('df-gestion');
+  var tf        = v('df-tf');
+  var assur     = v('df-assur');
+  var tmi       = v('df-tmi')/100;
+  var ps        = v('df-ps')/100;
+
+  var totalLoyers  = loyers + autresRF;
+  var chargesHorsI = travaux + gestion + tf + assur;
+  var totalCharges = chargesHorsI + interets;
+
+  // Calcul résultat foncier
+  // 1. Imputer d'abord les intérêts sur les loyers
+  var loyers_apres_interets = totalLoyers - interets;
+  // 2. Résultat foncier = loyers_apres_interets - chargesHorsI
+  var resultatFoncier = loyers_apres_interets - chargesHorsI;
+
+  // Déficit & portions
+  var deficit = Math.max(0, -resultatFoncier);
+  var deficitHorsInterets = Math.max(0, -(totalLoyers - chargesHorsI));
+
+  // Partie imputable revenu global = déficit hors intérêts, plafonné à 10 700
+  var imputable = Math.min(deficitHorsInterets, 10700);
+  // Partie reportable = le reste (y compris intérêts non absorbés)
+  var reportable = Math.max(0, deficit - imputable);
+
+  var economieY1    = imputable * tmi;
+  var economieTotal = Math.min(deficit, 10700 * 10) * tmi; // approx max sur 10 ans
+
+  set('df-res-charges',    fmt(chargesHorsI));
+  set('df-res-interets',   fmt(interets));
+  set('df-res-resultat',   (resultatFoncier>=0?'+':'')+fmt(resultatFoncier));
+  set('df-res-deficit',    deficit>0 ? fmt(deficit) : 'Aucun déficit');
+  set('df-res-imputable',  fmt(imputable));
+  set('df-res-reportable', fmt(reportable));
+  set('df-res-economie',   fmt(economieY1));
+  set('df-res-total',      fmt(economieTotal));
+
+  var alertBlock = document.getElementById('df-alert-block');
+  var alertContent = document.getElementById('df-alert-content');
+  var alerts = [];
+
+  if(deficit===0 && loyers>0) alerts.push('ℹ Pas de déficit foncier cette année. Vos revenus couvrent vos charges. Envisagez des travaux pour générer un déficit déductible.');
+  if(deficitHorsInterets>10700) alerts.push('⚠ Votre déficit hors intérêts ('+fmt(deficitHorsInterets)+') dépasse le plafond de 10 700 €. L\'excédent ('+fmt(deficitHorsInterets-10700)+') est reporté sur vos revenus fonciers les années suivantes.');
+  if(interets>totalLoyers) alerts.push('💡 Vos intérêts ('+fmt(interets)+') dépassent vos loyers. Cet excédent est reportable 10 ans sur les revenus fonciers uniquement.');
+
+  if(alerts.length>0 && loyers>0){
+    alertBlock.style.display='';
+    alertContent.innerHTML=alerts.join('<br>');
+    alertContent.className='res-alert warn';
+  } else {
+    alertBlock.style.display='none';
+  }
+}
+
+document.querySelectorAll('#sim-df input,#sim-df select').forEach(function(el){
+  el.addEventListener('input',calcDeficit);
+});
+
+/* ══════════════════ COMPARATIF ══════════════════ */
+function calcComparatif(){
+  var invest   = v('cmp-invest');
+  var loyers   = v('cmp-loyers');
+  var interets = v('cmp-interets');
+  var charges  = v('cmp-charges');
+  var tmi      = parseFloat(vs('cmp-tmi'))/100;
+  var ps       = 0.172;
+
+  // Girardin IR: on calcule comme si on investit "invest" en Girardin intermédiaire 26%
+  var girY1 = Math.min(invest*0.26, 18000);
+  var girY5 = girY1; // one-shot, bénéfice concentré sur 1-2 ans
+
+  // LMNP réel: amortissement bien + charges
+  var amortBien = invest*0.85/30;
+  var amortMeub = invest*0.06/10; // ~6% de l'investissement en meubles
+  var gestion = loyers*0.08;
+  var totalChLMNP = interets + charges + amortBien + amortMeub + gestion;
+  var bicLMNP = loyers - totalChLMNP;
+  var impotLMNP = bicLMNP>0 ? bicLMNP*(tmi+ps) : 0;
+  // Économie vs sans dispositif (location nue imposée)
+  var impotSansLMNP = Math.max(0,(loyers-interets-charges-gestion))*(tmi+ps);
+  var lmnpY1 = Math.max(0, impotSansLMNP - impotLMNP);
+  var lmnpY5 = lmnpY1 * 5;
+
+  // Déficit foncier
+  var chargesHorsI = charges;
+  var defHorsI = Math.max(0, chargesHorsI - loyers);
+  var dfY1 = Math.min(defHorsI, 10700)*tmi;
+  var dfY5 = Math.min(defHorsI*5, 10700*5)*tmi;
+
+  // Micro-BIC 50%
+  var bicMicro = loyers*0.50;
+  var impotMicro = bicMicro*(tmi+ps);
+  var impotMicroSans = Math.max(0,(loyers-interets-charges))*(tmi+ps);
+  var microY1 = Math.max(0, impotMicroSans - impotMicro);
+  var microY5 = microY1*5;
+
+  var vals = [girY1, lmnpY1, dfY1, microY1];
+  var max1 = Math.max.apply(null, vals);
+
+  function cell(val, max){
+    var cls = val===max ? 'style="font-weight:800;color:var(--kaz-gold)"' : '';
+    return '<span '+cls+'>'+fmt(val)+'</span>'+(val===max?' <span class="comp-badge badge-gold" style="font-size:.62rem">Optimal</span>':'');
+  }
+
+  document.getElementById('c-gir-y1').innerHTML  = cell(girY1,  max1);
+  document.getElementById('c-lmnp-y1').innerHTML = cell(lmnpY1, max1);
+  document.getElementById('c-df-y1').innerHTML   = cell(dfY1,   max1);
+  document.getElementById('c-micro-y1').innerHTML= cell(microY1,max1);
+
+  var max5 = Math.max(girY5,lmnpY5,dfY5,microY5);
+  function cell5(val){ return val===max5 ? '<strong style="color:var(--kaz-green)">'+fmt(val)+'</strong>' : fmt(val); }
+  document.getElementById('c-gir-y5').innerHTML  = cell5(girY5);
+  document.getElementById('c-lmnp-y5').innerHTML = cell5(lmnpY5);
+  document.getElementById('c-df-y5').innerHTML   = cell5(dfY5);
+  document.getElementById('c-micro-y5').innerHTML= cell5(microY5);
+}
+
+document.querySelectorAll('#cmp-invest,#cmp-loyers,#cmp-interets,#cmp-charges,#cmp-tmi').forEach(function(el){
+  el.addEventListener('input',calcComparatif);
+});
+
+/* ── INIT ── */
+calcGirardinIR();
+calcGirardinIS();
+calcLMNP();
+calcDeficit();
+calcComparatif();
+
+})();
+</script>
+</body>
+</html>

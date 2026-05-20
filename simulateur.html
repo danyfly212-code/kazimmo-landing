@@ -3,246 +3,359 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Simulateurs d'investissement · kazImmo</title>
-<meta name="description" content="Calculez votre capacité d'emprunt ou simulez un projet complet en quelques clics. Tous les calculs sont réalisés en temps réel.">
+<title>Simulateur de rendement locatif aux Antilles · kazImmo</title>
+<meta name="description" content="Calculez le rendement locatif brut, net et net-net de votre investissement immobilier aux Antilles (Martinique, Guadeloupe, Saint-Martin). Simulateur gratuit avec fiscalité DOM-TOM intégrée.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-/* ─── TOKENS (couleurs kazimmo-nine.vercel.app) ─── */
-:root {
-  --kaz-bg:          #f5f3ee;
-  --kaz-bg-hero:     #eef6f2;
-  --kaz-surface:     #ffffff;
-  --kaz-navy:        #0d2d45;
-  --kaz-navy-mid:    #163d5c;
-  --kaz-green:       #1a6b4a;
-  --kaz-green-mid:   #2d8a60;
-  --kaz-green-light: #e8f5ee;
-  --kaz-teal:        #4dcea0;
-  --kaz-teal-light:  #e1f5ee;
-  --kaz-gold:        #c8891a;
-  --kaz-gold-light:  #fdf3e1;
-  --kaz-fire:        #d44a1a;
-  --kaz-fire-light:  #fef0ea;
-  --kaz-text:        #1a1916;
-  --kaz-muted:       #6b6760;
-  --kaz-border:      rgba(13,45,69,.1);
-  --kaz-border2:     rgba(13,45,69,.06);
-  --shadow-sm:       0 1px 3px rgba(13,45,69,.07), 0 1px 2px rgba(13,45,69,.04);
-  --shadow-md:       0 4px 16px rgba(13,45,69,.09), 0 2px 6px rgba(13,45,69,.05);
-  --shadow-lg:       0 12px 40px rgba(13,45,69,.13), 0 4px 12px rgba(13,45,69,.07);
-  --radius:          12px;
-  --radius-lg:       18px;
+/* ── TOKENS ── */
+:root{
+  --kaz-bg:         #f5f3ee;
+  --kaz-surface:    #ffffff;
+  --kaz-navy:       #0d2d45;
+  --kaz-navy-mid:   #163d5c;
+  --kaz-green:      #1a6b4a;
+  --kaz-green-mid:  #2d8a60;
+  --kaz-green-light:#e8f5ee;
+  --kaz-teal:       #4dcea0;
+  --kaz-teal-light: #e1f5ee;
+  --kaz-gold:       #c8891a;
+  --kaz-gold-light: #fdf3e1;
+  --kaz-fire:       #d44a1a;
+  --kaz-fire-light: #fef0ea;
+  --kaz-text:       #1a1916;
+  --kaz-muted:      #6b6760;
+  --kaz-border:     rgba(13,45,69,.1);
+  --kaz-border2:    rgba(13,45,69,.06);
+  --shadow-sm:      0 1px 4px rgba(13,45,69,.07);
+  --shadow-md:      0 4px 20px rgba(13,45,69,.1);
+  --shadow-lg:      0 12px 40px rgba(13,45,69,.14);
+  --r:              12px;
+  --r-lg:           18px;
+  --font:           'Inter',system-ui,sans-serif;
 }
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth;font-size:16px}
-body{font-family:'Inter',system-ui,sans-serif;color:var(--kaz-text);background:var(--kaz-bg);line-height:1.6;min-height:100vh}
+body{font-family:var(--font);color:var(--kaz-text);background:var(--kaz-bg);line-height:1.6}
+a{text-decoration:none}
 
-/* ─── NAV ─── */
+/* ── NAV ── */
 .topnav{
-  position:sticky;top:0;z-index:100;
-  background:rgba(255,255,255,.96);backdrop-filter:blur(14px);
+  position:sticky;top:0;z-index:200;height:62px;
+  background:rgba(255,255,255,.97);backdrop-filter:blur(14px);
   border-bottom:1px solid var(--kaz-border2);
-  padding:0 24px;height:62px;
-  display:flex;align-items:center;justify-content:space-between;
+  display:flex;align-items:center;justify-content:space-between;padding:0 28px;
 }
-.nav-left{display:flex;align-items:center;gap:14px}
-.nav-logo{font-size:1.35rem;font-weight:800;letter-spacing:-.8px;color:var(--kaz-navy);text-decoration:none}
+.nav-l{display:flex;align-items:center;gap:14px}
+.nav-logo{font-size:1.35rem;font-weight:800;letter-spacing:-.8px;color:var(--kaz-navy)}
 .nav-logo span{color:var(--kaz-teal)}
 .nav-back{
   display:inline-flex;align-items:center;gap:5px;
   font-size:.78rem;font-weight:600;color:var(--kaz-muted);
-  text-decoration:none;padding:5px 11px;border-radius:8px;
-  border:1px solid var(--kaz-border);background:#fff;
-  transition:all .15s;
+  padding:5px 11px;border-radius:8px;
+  border:1px solid var(--kaz-border);background:#fff;transition:all .15s;
 }
 .nav-back:hover{color:var(--kaz-navy);border-color:var(--kaz-teal)}
-.nav-back svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
-.breadcrumb{display:flex;align-items:center;gap:5px;font-size:.75rem;color:var(--kaz-muted)}
-.breadcrumb a{color:var(--kaz-muted);text-decoration:none}
-.breadcrumb a:hover{color:var(--kaz-navy)}
-.bc-sep{opacity:.35}
-.bc-cur{color:var(--kaz-navy);font-weight:600}
+.nav-back svg,.ico{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.bc{display:flex;align-items:center;gap:5px;font-size:.75rem;color:var(--kaz-muted)}
+.bc a{color:var(--kaz-muted)}
+.bc a:hover{color:var(--kaz-navy)}
+.bc-s{opacity:.35}
+.bc-c{color:var(--kaz-navy);font-weight:600}
 .nav-cta{
-  display:inline-flex;align-items:center;
-  padding:7px 16px;border-radius:50px;
-  font-size:.78rem;font-weight:700;
-  background:var(--kaz-fire);color:#fff;
-  text-decoration:none;border:1.5px solid rgba(212,74,26,.25);
+  display:inline-flex;align-items:center;gap:6px;
+  padding:7px 16px;border-radius:50px;font-size:.78rem;font-weight:700;
+  background:var(--kaz-fire);color:#fff;border:1.5px solid rgba(212,74,26,.2);
   transition:opacity .15s;
 }
 .nav-cta:hover{opacity:.88}
 
-/* ─── HERO ─── */
+/* ── HERO ── */
 .hero{
-  background:linear-gradient(160deg, #0d6e48 0%, #1a9e6a 40%, #4dcea0 100%);
-  padding:52px 24px 0;text-align:center;color:#fff;
+  background:linear-gradient(155deg,#0a4d34 0%,#1a8055 45%,#3db88a 100%);
+  padding:56px 28px 0;text-align:center;color:#fff;
 }
-.hero h1{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:800;letter-spacing:-.8px;margin-bottom:10px}
-.hero p{font-size:.95rem;color:rgba(255,255,255,.78);max-width:520px;margin:0 auto 32px}
-
-/* ─── TAB SWITCHER ─── */
-.tab-bar{
-  display:inline-flex;background:rgba(255,255,255,.15);
-  backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.2);
-  border-radius:16px 16px 0 0;padding:6px 6px 0;
-  gap:4px;margin:0 auto;
+.hero-tag{
+  display:inline-flex;align-items:center;gap:6px;margin-bottom:16px;
+  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);
+  padding:5px 14px;border-radius:50px;font-size:.73rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;
 }
-.tab-btn{
-  padding:11px 28px;border-radius:12px 12px 0 0;
-  font-size:.88rem;font-weight:600;border:none;cursor:pointer;
-  background:transparent;color:rgba(255,255,255,.65);
-  transition:all .2s;display:flex;align-items:center;gap:7px;
+.hero h1{font-size:clamp(1.8rem,4vw,2.7rem);font-weight:900;letter-spacing:-1px;margin-bottom:12px;line-height:1.15}
+.hero h1 em{color:var(--kaz-gold);font-style:normal}
+.hero p{font-size:.95rem;color:rgba(255,255,255,.75);max-width:560px;margin:0 auto 30px;line-height:1.75}
+.hero-badges{display:flex;justify-content:center;gap:20px;flex-wrap:wrap;margin-bottom:32px}
+.hero-badge{display:flex;align-items:center;gap:5px;font-size:.78rem;color:rgba(255,255,255,.8);font-weight:500}
+.hero-badge svg{width:13px;height:13px;stroke:var(--kaz-teal);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+
+/* ── QUICK CALC ── */
+.quick-bar{
+  display:inline-flex;align-items:flex-end;gap:12px;flex-wrap:wrap;justify-content:center;
+  background:rgba(255,255,255,.1);backdrop-filter:blur(6px);
+  border:1px solid rgba(255,255,255,.18);border-radius:var(--r-lg) var(--r-lg) 0 0;
+  padding:22px 28px 0;margin:0 auto;
 }
-.tab-btn.active{background:#fff;color:var(--kaz-green);box-shadow:var(--shadow-md)}
-.tab-btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-
-/* ─── CONTENT AREA ─── */
-.sim-content{background:var(--kaz-bg);padding:40px 24px 64px}
-.sim-wrap{max-width:1000px;margin:0 auto}
-.tab-panel{display:none}
-.tab-panel.active{display:block}
-
-/* section title */
-.section-tag{display:inline-flex;align-items:center;gap:6px;color:var(--kaz-green);font-size:.78rem;font-weight:600;letter-spacing:.2px;margin-bottom:10px}
-.section-tag svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.section-title{font-size:clamp(1.5rem,3vw,2rem);font-weight:800;color:var(--kaz-navy);letter-spacing:-.5px;margin-bottom:6px}
-.section-sub{font-size:.9rem;color:var(--kaz-muted);margin-bottom:32px}
-
-/* ─── PANELS GRID ─── */
-.panel-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}
-@media(max-width:760px){.panel-grid{grid-template-columns:1fr}}
-
-/* ─── CARDS ─── */
-.card{background:#fff;border:1px solid var(--kaz-border2);border-radius:var(--radius-lg);padding:28px;box-shadow:var(--shadow-md)}
-.card-title{font-size:.9rem;font-weight:700;color:var(--kaz-navy);margin-bottom:22px}
-.card-sticky{position:sticky;top:78px}
-
-/* ─── FORM ─── */
-.form-stack{display:flex;flex-direction:column;gap:18px}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-@media(max-width:480px){.form-grid{grid-template-columns:1fr}}
-.field-full{grid-column:1/-1}
-.field label{
-  display:flex;align-items:center;gap:6px;
-  font-size:.77rem;font-weight:600;color:var(--kaz-navy);
-  margin-bottom:7px;
+.quick-field{display:flex;flex-direction:column;gap:5px;min-width:130px}
+.quick-label{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.7);letter-spacing:.3px;text-transform:uppercase}
+.quick-input-wrap{position:relative;display:flex;align-items:center}
+.quick-input{
+  width:100%;padding:11px 38px 11px 13px;border-radius:10px;
+  border:1.5px solid rgba(255,255,255,.25);background:rgba(255,255,255,.14);
+  font-size:.92rem;font-weight:700;color:#fff;outline:none;transition:all .2s;
+  -moz-appearance:textfield;
 }
-.field label svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;color:var(--kaz-green)}
-.input-wrap{position:relative;display:flex;align-items:center}
+.quick-input::placeholder{color:rgba(255,255,255,.4);font-weight:400}
+.quick-input::-webkit-inner-spin-button,.quick-input::-webkit-outer-spin-button{-webkit-appearance:none}
+.quick-input:focus{border-color:rgba(255,255,255,.6);background:rgba(255,255,255,.2)}
+.quick-suf{position:absolute;right:11px;font-size:.76rem;font-weight:700;color:rgba(255,255,255,.55);pointer-events:none}
+.quick-btn{
+  padding:12px 24px;border-radius:10px 10px 0 0;border:none;cursor:pointer;
+  background:var(--kaz-gold);color:#fff;font-size:.88rem;font-weight:700;
+  transition:opacity .15s;white-space:nowrap;align-self:flex-end;
+}
+.quick-btn:hover{opacity:.9}
+
+/* ── QUICK RESULTS BAR ── */
+.quick-res{
+  background:#fff;border-radius:0 0 0 0;border-top:none;
+  max-width:900px;margin:0 auto;
+  display:grid;grid-template-columns:repeat(4,1fr);
+  border:1px solid var(--kaz-border);border-top:none;
+  border-radius:0 0 var(--r-lg) var(--r-lg);
+  overflow:hidden;box-shadow:var(--shadow-md);
+}
+.qr-item{padding:16px 20px;text-align:center;border-right:1px solid var(--kaz-border)}
+.qr-item:last-child{border-right:none}
+.qr-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--kaz-muted);margin-bottom:4px}
+.qr-val{font-size:1.45rem;font-weight:800;color:var(--kaz-navy)}
+.qr-sub{font-size:.68rem;color:var(--kaz-muted);margin-top:2px}
+.qr-val.green{color:var(--kaz-green)}
+.qr-val.teal{color:var(--kaz-teal)}
+.qr-val.pos{color:var(--kaz-green)}
+.qr-val.neg{color:#c0392b}
+
+/* ── MAIN LAYOUT ── */
+.main{max-width:1120px;margin:0 auto;padding:48px 24px 80px;display:grid;grid-template-columns:1fr 380px;gap:32px;align-items:start}
+@media(max-width:900px){.main{grid-template-columns:1fr}}
+
+/* ── ADVANCED FORM ── */
+.adv-toggle{display:flex;align-items:center;justify-content:center;margin:28px 0 0;gap:8px;font-size:.82rem;font-weight:600;color:rgba(255,255,255,.7);cursor:pointer;padding-bottom:20px}
+.adv-toggle svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .3s}
+.adv-toggle.open svg{transform:rotate(180deg)}
+.adv-toggle:hover{color:#fff}
+
+/* form card */
+.form-card{background:#fff;border:1px solid var(--kaz-border2);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow-md);margin-bottom:20px}
+.form-card-head{
+  display:flex;align-items:center;gap:10px;
+  padding:16px 22px;cursor:pointer;user-select:none;
+  border-bottom:1px solid var(--kaz-border2);background:var(--kaz-surface);
+}
+.form-card-head.open{border-bottom-color:var(--kaz-border)}
+.form-card-num{
+  width:28px;height:28px;border-radius:50%;
+  background:var(--kaz-green);color:#fff;
+  font-size:.75rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.form-card-title{font-size:.9rem;font-weight:700;color:var(--kaz-navy);flex:1}
+.form-card-sub{font-size:.75rem;color:var(--kaz-muted)}
+.fc-arrow{width:16px;height:16px;stroke:var(--kaz-muted);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .3s;flex-shrink:0}
+.form-card-head.open .fc-arrow{transform:rotate(180deg)}
+.form-card-body{padding:22px;display:none}
+.form-card-body.open{display:block}
+
+/* fields */
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.fg-3{grid-template-columns:1fr 1fr 1fr}
+.full{grid-column:1/-1}
+@media(max-width:560px){.fg,.fg-3{grid-template-columns:1fr}}
+.f{display:flex;flex-direction:column;gap:5px}
+.flabel{
+  display:flex;align-items:center;gap:5px;
+  font-size:.76rem;font-weight:600;color:var(--kaz-navy);
+}
+.flabel .tip{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:15px;height:15px;border-radius:50%;border:1px solid var(--kaz-muted);
+  font-size:.6rem;font-weight:700;color:var(--kaz-muted);cursor:help;flex-shrink:0;
+}
+.iw{position:relative;display:flex;align-items:center}
 .inp{
-  width:100%;padding:11px 42px 11px 14px;
-  border:1.5px solid var(--kaz-border);border-radius:var(--radius);
-  font-size:.88rem;font-weight:500;color:var(--kaz-text);background:#fff;
+  width:100%;padding:10px 40px 10px 13px;
+  border:1.5px solid var(--kaz-border);border-radius:var(--r);
+  font-size:.86rem;font-weight:600;color:var(--kaz-text);background:#fff;
   outline:none;transition:border-color .2s,box-shadow .2s;
   -moz-appearance:textfield;
 }
 .inp::-webkit-inner-spin-button,.inp::-webkit-outer-spin-button{-webkit-appearance:none}
-.inp:focus{border-color:var(--kaz-teal);box-shadow:0 0 0 3px rgba(77,206,160,.15)}
+.inp:focus{border-color:var(--kaz-teal);box-shadow:0 0 0 3px rgba(77,206,160,.14)}
 .inp::placeholder{color:#b8bfc7;font-weight:400}
-.inp-suffix{position:absolute;right:13px;font-size:.76rem;font-weight:700;color:var(--kaz-muted);pointer-events:none}
+.suf{position:absolute;right:12px;font-size:.73rem;font-weight:700;color:var(--kaz-muted);pointer-events:none}
 .sel{
-  width:100%;padding:11px 14px;
-  border:1.5px solid var(--kaz-border);border-radius:var(--radius);
-  font-size:.88rem;font-weight:500;color:var(--kaz-text);background:#fff;
+  width:100%;padding:10px 36px 10px 13px;
+  border:1.5px solid var(--kaz-border);border-radius:var(--r);
+  font-size:.86rem;font-weight:600;color:var(--kaz-text);background:#fff;
   outline:none;cursor:pointer;transition:border-color .2s;
   -webkit-appearance:none;appearance:none;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b6760' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
-  background-repeat:no-repeat;background-position:right 13px center;
-  padding-right:36px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%236b6760' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 12px center;
 }
-.sel:focus{border-color:var(--kaz-teal);box-shadow:0 0 0 3px rgba(77,206,160,.15)}
+.sel:focus{border-color:var(--kaz-teal);box-shadow:0 0 0 3px rgba(77,206,160,.14)}
+.fhint{font-size:.71rem;color:var(--kaz-muted);line-height:1.45}
 
-/* dur pills */
-.dur-row{display:flex;gap:8px;margin-top:7px}
-.dur-p{
-  flex:1;padding:9px 0;border-radius:9px;
-  border:1.5px solid var(--kaz-border);background:#fff;
-  font-size:.82rem;font-weight:600;color:var(--kaz-muted);
+/* pills */
+.pill-row{display:flex;gap:6px;flex-wrap:wrap}
+.pill{
+  padding:7px 14px;border-radius:8px;border:1.5px solid var(--kaz-border);
+  background:#fff;font-size:.8rem;font-weight:600;color:var(--kaz-muted);
   cursor:pointer;transition:all .2s;
 }
-.dur-p:hover{border-color:var(--kaz-teal);color:var(--kaz-green)}
-.dur-p.on{background:var(--kaz-green);border-color:var(--kaz-green);color:#fff;box-shadow:0 2px 8px rgba(26,107,74,.25)}
+.pill:hover{border-color:var(--kaz-teal);color:var(--kaz-green)}
+.pill.on{background:var(--kaz-green);border-color:var(--kaz-green);color:#fff}
 
-/* ─── RESULTS ─── */
-.res-empty{padding:44px 20px;text-align:center}
-.res-empty-icon{font-size:2rem;margin-bottom:12px;display:block}
-.res-empty p{font-size:.85rem;color:var(--kaz-muted);line-height:1.7;max-width:240px;margin:0 auto}
-.res-list{display:flex;flex-direction:column;gap:12px}
+/* sub divider */
+.fdiv{font-size:.71rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--kaz-muted);border-bottom:1px solid var(--kaz-border2);padding-bottom:6px;margin:18px 0 14px;grid-column:1/-1}
 
-/* result blocks */
-.rblock{border-radius:13px;padding:18px 20px}
-.rblock-white{background:#fff;border:1px solid var(--kaz-border2);box-shadow:var(--shadow-sm)}
-.rlabel{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--kaz-muted);margin-bottom:3px}
-.rval{font-size:1.9rem;font-weight:800;line-height:1.1;color:var(--kaz-navy)}
-.rsub{font-size:.73rem;color:var(--kaz-muted);margin-top:3px}
-.r2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-
-/* cf block */
-.cf-pos{background:linear-gradient(135deg,#0a4228,#1a6b4a)!important;border:none!important}
-.cf-neg{background:linear-gradient(135deg,#6b1a0d,#992012)!important;border:none!important}
-.cf-pos .rlabel,.cf-neg .rlabel{color:rgba(255,255,255,.55)}
-.cf-pos .rval,.cf-neg .rval{color:#fff}
-.cf-pos .rsub,.cf-neg .rsub{color:rgba(255,255,255,.45)}
-
-/* roi */
-.roi-block{background:linear-gradient(135deg,var(--kaz-navy),var(--kaz-navy-mid));border:none}
-.roi-block .rlabel{color:rgba(255,255,255,.5)}
-.roi-block .rval{color:#fff}
-.roi-block .rsub{color:rgba(255,255,255,.4)}
-
-/* capacity big */
-.cap-big{text-align:center;padding:24px 20px;background:rgba(77,206,160,.06);border:1px solid rgba(77,206,160,.2);border-radius:13px;margin-bottom:12px}
-.cap-big .rlabel{justify-content:center;display:flex;margin-bottom:6px}
-.cap-amount{font-size:2.6rem;font-weight:800;color:var(--kaz-green);line-height:1}
-
-/* debt bar */
-.debt-bar-wrap{background:#f0f0f0;border-radius:50px;height:8px;overflow:hidden;margin:8px 0 4px}
-.debt-bar{height:100%;border-radius:50px;transition:width .5s ease}
-.debt-ok{background:var(--kaz-green)}
-.debt-warn{background:#c8891a}
-.debt-bad{background:#c0392b}
-
-/* mode toggle (LD/Airbnb) */
-.mode-toggle{display:flex;background:var(--kaz-bg);border:1px solid var(--kaz-border2);border-radius:10px;padding:4px;gap:4px;margin-bottom:14px}
-.mode-btn{flex:1;padding:8px 0;border:none;background:transparent;border-radius:8px;font-size:.82rem;font-weight:600;color:var(--kaz-muted);cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:5px}
-.mode-btn.on{background:#fff;color:var(--kaz-navy);box-shadow:var(--shadow-sm)}
-
-/* ─── CTAs ─── */
-.cta-green{
-  display:flex;align-items:center;justify-content:center;gap:8px;
-  padding:13px 20px;border-radius:10px;font-size:.88rem;font-weight:700;
-  background:var(--kaz-green);color:#fff;text-decoration:none;
-  border:none;cursor:pointer;width:100%;transition:background .15s;
-  box-shadow:0 4px 14px rgba(26,107,74,.25);
+/* location mode toggle */
+.loc-toggle{display:flex;gap:0;border:1.5px solid var(--kaz-border);border-radius:var(--r);overflow:hidden}
+.loc-btn{
+  flex:1;padding:10px 0;text-align:center;font-size:.82rem;font-weight:600;
+  background:#fff;color:var(--kaz-muted);border:none;cursor:pointer;transition:all .2s;
 }
-.cta-green:hover{background:var(--kaz-green-mid)}
-.cta-green svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
-.cta-gold{
-  display:flex;align-items:center;justify-content:center;gap:8px;
-  padding:13px 20px;border-radius:10px;font-size:.88rem;font-weight:700;
-  background:var(--kaz-gold);color:#fff;text-decoration:none;
-  border:none;cursor:pointer;width:100%;transition:opacity .15s;
-  box-shadow:0 4px 14px rgba(200,137,26,.25);
-}
-.cta-gold:hover{opacity:.9}
-.cta-outline{
-  display:flex;align-items:center;justify-content:center;gap:8px;
-  padding:12px 20px;border-radius:10px;font-size:.88rem;font-weight:600;
-  background:#fff;color:var(--kaz-navy);text-decoration:none;
-  border:1.5px solid var(--kaz-border);cursor:pointer;width:100%;transition:all .15s;
-}
-.cta-outline:hover{border-color:var(--kaz-teal);color:var(--kaz-green)}
-.cta-note{font-size:.72rem;color:var(--kaz-muted);text-align:center;margin-top:6px}
+.loc-btn.on{background:var(--kaz-green);color:#fff}
 
-/* ce projet vous intéresse */
-.interest-box{background:var(--kaz-gold-light);border:1px solid rgba(200,137,26,.2);border-radius:13px;padding:18px 20px;margin-top:4px}
-.interest-title{font-size:.9rem;font-weight:700;color:var(--kaz-navy);margin-bottom:4px}
-.interest-sub{font-size:.78rem;color:var(--kaz-muted);margin-bottom:14px;line-height:1.5}
+/* ── RESULTS PANEL ── */
+.res-panel{position:sticky;top:78px;display:flex;flex-direction:column;gap:14px}
+.res-top-card{
+  background:#fff;border:1px solid var(--kaz-border2);border-radius:var(--r-lg);
+  padding:22px;box-shadow:var(--shadow-md);
+}
+.res-title{font-size:.82rem;font-weight:700;color:var(--kaz-navy);margin-bottom:18px;display:flex;align-items:center;gap:7px}
+.res-title::before{content:'';width:4px;height:18px;background:var(--kaz-teal);border-radius:2px;display:inline-block}
 
-/* ─── FOOTER ─── */
-footer{background:var(--kaz-navy);color:rgba(255,255,255,.45);text-align:center;padding:20px 24px;font-size:.75rem}
-footer a{color:rgba(255,255,255,.55);text-decoration:none}
+/* Yield main */
+.yield-main{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px}
+.ym{text-align:center;padding:14px 8px;border-radius:12px}
+.ym-brut{background:var(--kaz-teal-light);border:1px solid rgba(77,206,160,.2)}
+.ym-net{background:var(--kaz-green-light);border:1px solid rgba(26,107,74,.15)}
+.ym-nn{background:var(--kaz-gold-light);border:1px solid rgba(200,137,26,.2)}
+.ym-lbl{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px}
+.ym-lbl.teal{color:var(--kaz-teal)}
+.ym-lbl.green{color:var(--kaz-green)}
+.ym-lbl.gold{color:var(--kaz-gold)}
+.ym-val{font-size:1.65rem;font-weight:900;line-height:1}
+.ym-val.teal{color:var(--kaz-teal)}
+.ym-val.green{color:var(--kaz-green)}
+.ym-val.gold{color:var(--kaz-gold)}
+.ym-sub{font-size:.62rem;color:var(--kaz-muted);margin-top:3px}
+
+/* metric rows */
+.metric-row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--kaz-border2)}
+.metric-row:last-child{border-bottom:none}
+.mr-label{font-size:.78rem;color:var(--kaz-muted);display:flex;align-items:center;gap:5px}
+.mr-val{font-size:.9rem;font-weight:700;color:var(--kaz-navy)}
+.mr-val.pos{color:var(--kaz-green)}
+.mr-val.neg{color:#c0392b}
+.mr-val.neutral{color:var(--kaz-navy)}
+
+/* CF big block */
+.cf-block{
+  border-radius:13px;padding:16px 18px;margin-bottom:14px;
+}
+.cf-pos{background:linear-gradient(135deg,#083020,#1a6b4a)}
+.cf-neg{background:linear-gradient(135deg,#5c1208,#991b0d)}
+.cf-label{font-size:.69rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:rgba(255,255,255,.55);margin-bottom:3px}
+.cf-val{font-size:2rem;font-weight:900;color:#fff;line-height:1}
+.cf-sub{font-size:.72rem;color:rgba(255,255,255,.45);margin-top:3px}
+
+/* autofinancement bar */
+.af-wrap{background:var(--kaz-bg);border:1px solid var(--kaz-border2);border-radius:12px;padding:14px 16px;margin-bottom:14px}
+.af-head{display:flex;justify-content:space-between;margin-bottom:8px}
+.af-label{font-size:.75rem;font-weight:700;color:var(--kaz-navy)}
+.af-pct{font-size:.88rem;font-weight:800;color:var(--kaz-green)}
+.af-bar-wrap{height:7px;background:var(--kaz-border);border-radius:50px;overflow:hidden}
+.af-bar{height:100%;border-radius:50px;background:linear-gradient(90deg,var(--kaz-teal),var(--kaz-green));transition:width .5s ease}
+
+/* invest recap */
+.invest-recap{background:var(--kaz-bg);border:1px solid var(--kaz-border2);border-radius:12px;padding:14px 16px}
+.ir-title{font-size:.75rem;font-weight:700;color:var(--kaz-navy);margin-bottom:10px}
+.ir-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0}
+.ir-label{font-size:.75rem;color:var(--kaz-muted)}
+.ir-val{font-size:.78rem;font-weight:600;color:var(--kaz-text)}
+.ir-total{border-top:1px solid var(--kaz-border);padding-top:8px;margin-top:6px}
+.ir-total .ir-label{color:var(--kaz-navy);font-weight:700;font-size:.8rem}
+.ir-total .ir-val{color:var(--kaz-navy);font-weight:800;font-size:.88rem}
+
+/* CTAs */
+.cta-g{
+  display:flex;align-items:center;justify-content:center;gap:7px;
+  padding:13px 20px;border-radius:10px;font-size:.86rem;font-weight:700;
+  background:var(--kaz-green);color:#fff;border:none;cursor:pointer;width:100%;
+  transition:background .15s;box-shadow:0 4px 14px rgba(26,107,74,.2);
+}
+.cta-g:hover{background:var(--kaz-green-mid)}
+.cta-o{
+  display:flex;align-items:center;justify-content:center;gap:7px;
+  padding:12px 20px;border-radius:10px;font-size:.86rem;font-weight:600;
+  background:#fff;color:var(--kaz-navy);border:1.5px solid var(--kaz-border);
+  cursor:pointer;width:100%;transition:all .15s;
+}
+.cta-o:hover{border-color:var(--kaz-teal);color:var(--kaz-green)}
+
+/* fiscal badge */
+.fisc-badge{
+  display:flex;align-items:flex-start;gap:10px;
+  background:var(--kaz-gold-light);border:1px solid rgba(200,137,26,.22);
+  border-radius:12px;padding:14px 16px;
+}
+.fisc-badge svg{width:18px;height:18px;flex-shrink:0;margin-top:1px;stroke:var(--kaz-gold);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.fb-text{font-size:.75rem;color:var(--kaz-navy);line-height:1.55}
+.fb-text strong{font-weight:700;display:block;margin-bottom:2px;font-size:.78rem}
+
+/* ── EDITORIAL ── */
+.editorial{max-width:1120px;margin:0 auto;padding:0 24px 80px}
+.ed-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin-top:32px}
+@media(max-width:760px){.ed-grid{grid-template-columns:1fr}}
+.ed-card{background:#fff;border:1px solid var(--kaz-border2);border-radius:var(--r-lg);padding:24px;box-shadow:var(--shadow-sm)}
+.ed-icon{font-size:1.8rem;margin-bottom:12px;display:block}
+.ed-title{font-size:.95rem;font-weight:800;color:var(--kaz-navy);margin-bottom:8px}
+.ed-body{font-size:.82rem;color:var(--kaz-muted);line-height:1.7}
+.ed-body strong{color:var(--kaz-text);font-weight:600}
+.formula-box{
+  background:var(--kaz-bg);border:1px solid var(--kaz-border);border-radius:var(--r);
+  padding:12px 16px;margin:10px 0;font-family:monospace;font-size:.78rem;
+  color:var(--kaz-navy);line-height:1.6;
+}
+
+.section-sep{max-width:1120px;margin:0 auto 40px;padding:0 24px}
+.sep-title{font-size:clamp(1.3rem,2.5vw,1.7rem);font-weight:800;color:var(--kaz-navy);margin-bottom:8px;letter-spacing:-.4px}
+.sep-sub{font-size:.88rem;color:var(--kaz-muted);max-width:620px;line-height:1.7}
+
+/* antilles focus */
+.antilles-box{
+  background:linear-gradient(135deg,rgba(13,45,69,.04),rgba(77,206,160,.05));
+  border:1px solid rgba(77,206,160,.2);border-radius:var(--r-lg);
+  padding:28px 32px;margin:40px 0;
+}
+.ab-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin-top:20px}
+@media(max-width:700px){.ab-grid{grid-template-columns:1fr}}
+.ab-card{background:#fff;border:1px solid var(--kaz-border2);border-radius:var(--r);padding:18px 16px}
+.ab-flag{font-size:1.5rem;margin-bottom:8px}
+.ab-name{font-size:.88rem;font-weight:800;color:var(--kaz-navy);margin-bottom:6px}
+.ab-stats{display:flex;flex-direction:column;gap:4px}
+.ab-stat{display:flex;justify-content:space-between;font-size:.76rem}
+.ab-stat-l{color:var(--kaz-muted)}
+.ab-stat-v{font-weight:700;color:var(--kaz-green)}
+
+.fisc-dom-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+@media(max-width:620px){.fisc-dom-grid{grid-template-columns:1fr}}
+.fd-card{background:#fff;border:1px solid var(--kaz-border2);border-radius:var(--r);padding:16px 18px}
+.fd-name{font-size:.88rem;font-weight:800;color:var(--kaz-teal);margin-bottom:4px}
+.fd-desc{font-size:.78rem;color:var(--kaz-muted);line-height:1.55}
+.fd-highlight{font-size:.78rem;font-weight:700;color:var(--kaz-navy);margin-top:6px}
+
+/* ── FOOTER ── */
+footer{background:var(--kaz-navy);color:rgba(255,255,255,.4);text-align:center;padding:20px;font-size:.75rem}
+footer a{color:rgba(255,255,255,.55)}
 footer a:hover{color:#fff}
 </style>
 </head>
@@ -250,17 +363,17 @@ footer a:hover{color:#fff}
 
 <!-- NAV -->
 <nav class="topnav">
-  <div class="nav-left">
+  <div class="nav-l">
     <a href="index.html" class="nav-back">
       <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
       Accueil
     </a>
     <a href="index.html" class="nav-logo">Kaz<span>Immo</span></a>
-    <div class="breadcrumb">
-      <span class="bc-sep">›</span>
+    <div class="bc">
+      <span class="bc-s">›</span>
       <a href="index.html#fonctionnalites">Nos outils</a>
-      <span class="bc-sep">›</span>
-      <span class="bc-cur">Simulateurs</span>
+      <span class="bc-s">›</span>
+      <span class="bc-c">Simulateur de rendement</span>
     </div>
   </div>
   <a href="index.html#tarifs" class="nav-cta">Essai gratuit 7 jours →</a>
@@ -268,537 +381,771 @@ footer a:hover{color:#fff}
 
 <!-- HERO -->
 <div class="hero">
-  <h1>Simulateurs d'investissement</h1>
-  <p>Calculez votre capacité d'emprunt ou simulez un projet complet en quelques clics. Tous les calculs sont réalisés en temps réel.</p>
-  <div style="display:flex;justify-content:center">
-    <div class="tab-bar">
-      <button class="tab-btn active" id="tb-cap" onclick="switchTab('cap')">
-        <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
-        Capacité d'emprunt
-      </button>
-      <button class="tab-btn" id="tb-proj" onclick="switchTab('proj')">
-        <svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
-        Projet complet
-      </button>
+  <div class="hero-tag">⚡ Outil gratuit · Calculs certifiés</div>
+  <h1>Calculez le rendement locatif<br>de votre investissement <em>aux Antilles</em></h1>
+  <p>Rendement brut, net et net-net — intégrant la fiscalité DOM-TOM, les charges réelles et le cashflow mensuel. Adapté aux marchés de Martinique, Guadeloupe et Saint-Martin.</p>
+  <div class="hero-badges">
+    <span class="hero-badge"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Fiscalité DOM-TOM intégrée</span>
+    <span class="hero-badge"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Résultats en temps réel</span>
+    <span class="hero-badge"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Longue durée &amp; Airbnb</span>
+  </div>
+
+  <!-- QUICK CALCULATOR -->
+  <div style="display:flex;flex-direction:column;align-items:center">
+    <div class="quick-bar">
+      <div class="quick-field">
+        <div class="quick-label">Prix du bien</div>
+        <div class="quick-input-wrap">
+          <input id="q-price" type="number" class="quick-input" placeholder="180 000" min="0">
+          <span class="quick-suf">€</span>
+        </div>
+      </div>
+      <div class="quick-field">
+        <div class="quick-label">Travaux</div>
+        <div class="quick-input-wrap">
+          <input id="q-works" type="number" class="quick-input" placeholder="10 000" min="0">
+          <span class="quick-suf">€</span>
+        </div>
+      </div>
+      <div class="quick-field">
+        <div class="quick-label">Loyer / mois</div>
+        <div class="quick-input-wrap">
+          <input id="q-rent" type="number" class="quick-input" placeholder="900" min="0">
+          <span class="quick-suf">€</span>
+        </div>
+      </div>
+      <button class="quick-btn" onclick="quickCalc()">Calculer →</button>
+    </div>
+
+    <!-- Quick results -->
+    <div class="quick-res" id="quick-res" style="max-width:730px;display:none">
+      <div class="qr-item">
+        <div class="qr-label">Rendement brut</div>
+        <div class="qr-val teal" id="qr-gross">—</div>
+      </div>
+      <div class="qr-item">
+        <div class="qr-label">Rendement net*</div>
+        <div class="qr-val green" id="qr-net">—</div>
+        <div class="qr-sub">méthode Larcher (−25%)</div>
+      </div>
+      <div class="qr-item">
+        <div class="qr-label">Mensualité crédit</div>
+        <div class="qr-val" id="qr-monthly">—</div>
+        <div class="qr-sub">emprunt total · 20 ans · 3,5%</div>
+      </div>
+      <div class="qr-item">
+        <div class="qr-label">Cashflow mensuel</div>
+        <div class="qr-val" id="qr-cf">—</div>
+        <div class="qr-sub">loyer − mensualité</div>
+      </div>
+    </div>
+
+    <button class="adv-toggle" id="adv-toggle" onclick="toggleAdv()">
+      <svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+      Simulation avancée — charges, fiscalité DOM, financement
+    </button>
+  </div>
+</div>
+
+<!-- ADVANCED + RESULTS -->
+<div class="main" id="advanced-sim" style="display:none">
+
+  <!-- LEFT: FORM -->
+  <div>
+
+    <!-- CARD 1: Acquisition -->
+    <div class="form-card">
+      <div class="form-card-head open" onclick="toggleCard(this)">
+        <div class="form-card-num">1</div>
+        <div>
+          <div class="form-card-title">Votre acquisition</div>
+          <div class="form-card-sub">Prix, frais de notaire, travaux, agence</div>
+        </div>
+        <svg class="fc-arrow" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+      </div>
+      <div class="form-card-body open">
+        <div class="fg">
+          <div class="f">
+            <div class="flabel">Prix net vendeur
+              <span class="tip" title="Prix négocié hors frais d'agence">?</span>
+            </div>
+            <div class="iw"><input id="a-price" type="number" class="inp" placeholder="180 000" min="0"><span class="suf">€</span></div>
+          </div>
+          <div class="f">
+            <div class="flabel">Travaux prévus</div>
+            <div class="iw"><input id="a-works" type="number" class="inp" placeholder="15 000" min="0"><span class="suf">€</span></div>
+          </div>
+          <div class="f">
+            <div class="flabel">Frais de notaire
+              <span class="tip" title="En DOM : ~7,5% pour l'ancien, ~3% pour le neuf. Inférieurs à la métropole.">?</span>
+            </div>
+            <div class="iw"><input id="a-notaire" type="number" class="inp" value="7.5" step="0.1" min="0" max="15"><span class="suf">%</span></div>
+            <div class="fhint" style="margin-top:3px">DOM : ~7,5% ancien · ~3% neuf (vs 8,5% en métropole)</div>
+          </div>
+          <div class="f">
+            <div class="flabel">Frais d'agence
+              <span class="tip" title="Commission de l'agence immobilière à la vente (si applicable).">?</span>
+            </div>
+            <div class="iw"><input id="a-agency" type="number" class="inp" placeholder="0" min="0"><span class="suf">€</span></div>
+          </div>
+          <div class="f">
+            <div class="flabel">Frais bancaires / courtier</div>
+            <div class="iw"><input id="a-bank" type="number" class="inp" placeholder="1 500" min="0"><span class="suf">€</span></div>
+          </div>
+          <div class="f">
+            <div class="flabel">Meublé ou vide ?</div>
+            <select id="a-type" class="sel">
+              <option value="meuble">Meublé (LMNP)</option>
+              <option value="vide">Vide (nu)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 2: Revenus -->
+    <div class="form-card">
+      <div class="form-card-head open" onclick="toggleCard(this)">
+        <div class="form-card-num">2</div>
+        <div>
+          <div class="form-card-title">Vos revenus locatifs</div>
+          <div class="form-card-sub">Longue durée ou location saisonnière Airbnb</div>
+        </div>
+        <svg class="fc-arrow" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+      </div>
+      <div class="form-card-body open">
+        <div class="fg" style="margin-bottom:16px">
+          <div class="f full">
+            <div class="flabel">Mode de location</div>
+            <div class="loc-toggle">
+              <button class="loc-btn on" id="lb-ld" onclick="setLocMode('ld')">📋 Longue durée</button>
+              <button class="loc-btn" id="lb-air" onclick="setLocMode('air')">🌴 Saisonnier / Airbnb</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Longue durée -->
+        <div id="loc-ld">
+          <div class="fg">
+            <div class="f">
+              <div class="flabel">Loyer mensuel HC
+                <span class="tip" title="Loyer hors charges locataires">?</span>
+              </div>
+              <div class="iw"><input id="r-rent" type="number" class="inp" placeholder="900" min="0"><span class="suf">€</span></div>
+            </div>
+            <div class="f">
+              <div class="flabel">Vacance locative
+                <span class="tip" title="% du temps sans locataire. Aux Antilles : 5-8% en moyenne pour les T2/T3.">?</span>
+              </div>
+              <div class="iw"><input id="r-vacancy" type="number" class="inp" value="5" min="0" max="100"><span class="suf">%</span></div>
+              <div class="fhint" style="margin-top:3px">Martinique : ~5–7% · Guadeloupe : ~6–8% · Saint-Martin : ~10–15% (saisonnier)</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Airbnb -->
+        <div id="loc-air" style="display:none">
+          <div class="fg">
+            <div class="f">
+              <div class="flabel">Prix par nuit</div>
+              <div class="iw"><input id="r-night" type="number" class="inp" placeholder="90" min="0"><span class="suf">€</span></div>
+            </div>
+            <div class="f">
+              <div class="flabel">Taux d'occupation
+                <span class="tip" title="Martinique/Guadeloupe : 65-75% haute saison · Saint-Martin : 70-80%">?</span>
+              </div>
+              <div class="iw"><input id="r-occ" type="number" class="inp" value="65" min="0" max="100"><span class="suf">%</span></div>
+              <div class="fhint" style="margin-top:3px">Saint-Martin : 70–80% · Martinique : 60–70% · Guadeloupe : 65–75%</div>
+            </div>
+            <div class="f">
+              <div class="flabel">Frais de plateforme (Airbnb)</div>
+              <div class="iw"><input id="r-plat" type="number" class="inp" value="3" min="0" max="20"><span class="suf">%</span></div>
+            </div>
+            <div class="f">
+              <div class="flabel">Frais ménage / nuit</div>
+              <div class="iw"><input id="r-clean" type="number" class="inp" placeholder="35" min="0"><span class="suf">€</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 3: Charges -->
+    <div class="form-card">
+      <div class="form-card-head open" onclick="toggleCard(this)">
+        <div class="form-card-num">3</div>
+        <div>
+          <div class="form-card-title">Vos charges annuelles</div>
+          <div class="form-card-sub">Taxes, assurances, copropriété, gestion</div>
+        </div>
+        <svg class="fc-arrow" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+      </div>
+      <div class="form-card-body open">
+        <div class="fg">
+          <div class="f">
+            <div class="flabel">Taxe foncière
+              <span class="tip" title="Aux Antilles : généralement 30-50% moins élevée qu'en métropole grâce aux abattements DOM.">?</span>
+            </div>
+            <div class="iw"><input id="c-tf" type="number" class="inp" placeholder="600" min="0"><span class="suf">€/an</span></div>
+            <div class="fhint" style="margin-top:3px">DOM : −30 à −50% vs métropole grâce aux abattements</div>
+          </div>
+          <div class="f">
+            <div class="flabel">Assurance PNO
+              <span class="tip" title="Assurance propriétaire non occupant. Obligatoire.">?</span>
+            </div>
+            <div class="iw"><input id="c-pno" type="number" class="inp" placeholder="150" min="0"><span class="suf">€/an</span></div>
+          </div>
+          <div class="f">
+            <div class="flabel">Charges copropriété
+              <span class="tip" title="Quote-part propriétaire non récupérables sur le locataire.">?</span>
+            </div>
+            <div class="iw"><input id="c-copro" type="number" class="inp" placeholder="600" min="0"><span class="suf">€/an</span></div>
+          </div>
+          <div class="f">
+            <div class="flabel">Assurance loyers impayés (GLI)
+              <span class="tip" title="Garantie Loyers Impayés. Environ 2,5-4% du loyer annuel.">?</span>
+            </div>
+            <div class="iw"><input id="c-gli" type="number" class="inp" placeholder="0" min="0"><span class="suf">€/an</span></div>
+          </div>
+          <div class="f">
+            <div class="flabel">Frais de gestion locative
+              <span class="tip" title="Si vous passez par une agence. Généralement 7-10% du loyer en DOM.">?</span>
+            </div>
+            <div class="iw"><input id="c-mgmt" type="number" class="inp" placeholder="0" min="0"><span class="suf">% loyer</span></div>
+          </div>
+          <div class="f">
+            <div class="flabel">Provision travaux / entretien</div>
+            <div class="iw"><input id="c-prov" type="number" class="inp" placeholder="300" min="0"><span class="suf">€/an</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 4: Financement -->
+    <div class="form-card">
+      <div class="form-card-head open" onclick="toggleCard(this)">
+        <div class="form-card-num">4</div>
+        <div>
+          <div class="form-card-title">Votre financement</div>
+          <div class="form-card-sub">Apport, taux, assurance, durée</div>
+        </div>
+        <svg class="fc-arrow" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+      </div>
+      <div class="form-card-body open">
+        <div class="fg">
+          <div class="f">
+            <div class="flabel">Apport personnel</div>
+            <div class="iw"><input id="f-apport" type="number" class="inp" placeholder="20 000" min="0"><span class="suf">€</span></div>
+          </div>
+          <div class="f">
+            <div class="flabel">Taux d'intérêt</div>
+            <div class="iw"><input id="f-rate" type="number" class="inp" value="3.5" step="0.1" min="0" max="20"><span class="suf">%</span></div>
+          </div>
+          <div class="f">
+            <div class="flabel">Assurance emprunteur</div>
+            <div class="iw"><input id="f-ins" type="number" class="inp" value="0.3" step="0.05" min="0" max="5"><span class="suf">%</span></div>
+          </div>
+          <div class="f full">
+            <div class="flabel">Durée du prêt</div>
+            <div class="pill-row">
+              <button class="pill" onclick="setDur(this,15)">15 ans</button>
+              <button class="pill on" onclick="setDur(this,20)">20 ans</button>
+              <button class="pill" onclick="setDur(this,25)">25 ans</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 5: Fiscalité DOM -->
+    <div class="form-card">
+      <div class="form-card-head" onclick="toggleCard(this)">
+        <div class="form-card-num" style="background:var(--kaz-gold)">5</div>
+        <div>
+          <div class="form-card-title">Fiscalité DOM-TOM</div>
+          <div class="form-card-sub">Régime fiscal · Impact sur le rendement net-net</div>
+        </div>
+        <svg class="fc-arrow" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+      </div>
+      <div class="form-card-body">
+        <div class="fg">
+          <div class="f full">
+            <div class="flabel">Régime fiscal</div>
+            <select id="tax-regime" class="sel">
+              <option value="micro-bic">Micro-BIC · LMNP (abattement 50%)</option>
+              <option value="micro-bic-tourism">Micro-BIC · Meublé tourisme (abattement 71%)</option>
+              <option value="micro-foncier">Micro-foncier · Vide (abattement 30%)</option>
+              <option value="reel">Réel · Charges déductibles (amortissements)</option>
+              <option value="girardin">Loi Girardin IS · Réduction IS jusqu'à 110%</option>
+              <option value="lmnp-dom">LMNP DOM · Amortissements renforcés</option>
+            </select>
+          </div>
+          <div class="f">
+            <div class="flabel">Tranche marginale d'imposition (TMI)</div>
+            <select id="tax-tmi" class="sel">
+              <option value="0">0% (non imposable)</option>
+              <option value="11">11%</option>
+              <option value="30" selected>30%</option>
+              <option value="41">41%</option>
+              <option value="45">45%</option>
+            </select>
+          </div>
+          <div class="f">
+            <div class="flabel">Prélèvements sociaux</div>
+            <div class="iw"><input id="tax-ps" type="number" class="inp" value="17.2" step="0.1" min="0" max="25"><span class="suf">%</span></div>
+            <div class="fhint" style="margin-top:3px">Standard : 17,2% · Résidents DOM peuvent bénéficier d'exonérations</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /form col -->
+
+  <!-- RIGHT: RESULTS -->
+  <div class="res-panel">
+
+    <div class="res-top-card">
+      <div class="res-title">Rendement locatif</div>
+
+      <div class="yield-main">
+        <div class="ym ym-brut">
+          <div class="ym-lbl teal">Brut</div>
+          <div class="ym-val teal" id="r-gross">—</div>
+          <div class="ym-sub">avant charges</div>
+        </div>
+        <div class="ym ym-net">
+          <div class="ym-lbl green">Net</div>
+          <div class="ym-val green" id="r-net">—</div>
+          <div class="ym-sub">après charges</div>
+        </div>
+        <div class="ym ym-nn">
+          <div class="ym-lbl gold">Net-net</div>
+          <div class="ym-val gold" id="r-nn">—</div>
+          <div class="ym-sub">après impôts</div>
+        </div>
+      </div>
+
+      <!-- CF -->
+      <div class="cf-block cf-pos" id="r-cf-block">
+        <div class="cf-label" id="r-cf-label">Cash-flow mensuel</div>
+        <div class="cf-val" id="r-cf-val">—</div>
+        <div class="cf-sub" id="r-cf-sub">loyer − mensualité − charges</div>
+      </div>
+
+      <!-- Autofinancement -->
+      <div class="af-wrap" id="r-af-wrap" style="display:none">
+        <div class="af-head">
+          <span class="af-label">Taux d'autofinancement</span>
+          <span class="af-pct" id="r-af-pct">—</span>
+        </div>
+        <div class="af-bar-wrap">
+          <div class="af-bar" id="r-af-bar" style="width:0%"></div>
+        </div>
+      </div>
+
+      <!-- Metrics -->
+      <div>
+        <div class="metric-row">
+          <span class="mr-label">Mensualité crédit</span>
+          <span class="mr-val" id="r-monthly">—</span>
+        </div>
+        <div class="metric-row">
+          <span class="mr-label">Loyer net (vacance déduite)</span>
+          <span class="mr-val" id="r-rent-net">—</span>
+        </div>
+        <div class="metric-row">
+          <span class="mr-label">Charges annuelles totales</span>
+          <span class="mr-val" id="r-charges-total">—</span>
+        </div>
+        <div class="metric-row">
+          <span class="mr-label">ROI sur apport</span>
+          <span class="mr-val" id="r-roi">—</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Invest recap -->
+    <div class="invest-recap">
+      <div class="ir-title">Investissement total</div>
+      <div class="ir-row"><span class="ir-label">Prix du bien</span><span class="ir-val" id="ir-price">—</span></div>
+      <div class="ir-row"><span class="ir-label">Travaux</span><span class="ir-val" id="ir-works">—</span></div>
+      <div class="ir-row"><span class="ir-label">Frais de notaire</span><span class="ir-val" id="ir-notaire">—</span></div>
+      <div class="ir-row"><span class="ir-label">Frais d'agence</span><span class="ir-val" id="ir-agency">—</span></div>
+      <div class="ir-row"><span class="ir-label">Frais bancaires</span><span class="ir-val" id="ir-bank">—</span></div>
+      <div class="ir-row ir-total"><span class="ir-label">Total acquisition</span><span class="ir-val" id="ir-total">—</span></div>
+      <div class="ir-row"><span class="ir-label">Emprunt</span><span class="ir-val" id="ir-loan">—</span></div>
+      <div class="ir-row"><span class="ir-label">Apport</span><span class="ir-val" id="ir-apport">—</span></div>
+    </div>
+
+    <!-- Fiscal badge -->
+    <div class="fisc-badge">
+      <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      <div class="fb-text">
+        <strong>Fiscalité DOM certifiée</strong>
+        kazImmo intègre les dispositifs Girardin, LMNP DOM, déficit foncier et micro-BIC spécifiques aux Antilles. Économisez jusqu'à 30% d'impôts supplémentaires vs la métropole.
+      </div>
+    </div>
+
+    <a href="index.html#tarifs" class="cta-g" style="margin-top:4px">
+      <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      Analyser une vraie opportunité
+    </a>
+    <a href="index.html#tarifs" class="cta-o">Essai gratuit 7 jours · sans carte</a>
+  </div>
+
+</div><!-- /main -->
+
+<!-- EDITORIAL -->
+<div class="editorial">
+
+  <!-- Antilles focus -->
+  <div class="antilles-box">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+      <span style="font-size:1.4rem">🏝️</span>
+      <span style="font-size:1rem;font-weight:800;color:var(--kaz-navy)">Les Antilles : un marché aux rendements exceptionnels</span>
+    </div>
+    <p style="font-size:.85rem;color:var(--kaz-muted);max-width:700px;line-height:1.7">Les DOM-TOM offrent des rendements structurellement supérieurs à la métropole, portés par une forte tension locative, un tourisme en croissance et des dispositifs fiscaux exclusifs. En 2025, le rendement minimum pour atteindre l'autofinancement est estimé à <strong style="color:var(--kaz-navy)">6,5%</strong> aux Antilles (vs 7,5% en métropole grâce aux charges réduites).</p>
+    <div class="ab-grid">
+      <div class="ab-card">
+        <div class="ab-flag">🇲🇶</div>
+        <div class="ab-name">Martinique</div>
+        <div class="ab-stats">
+          <div class="ab-stat"><span class="ab-stat-l">Rendement brut</span><span class="ab-stat-v">7–9%</span></div>
+          <div class="ab-stat"><span class="ab-stat-l">Tension locative</span><span class="ab-stat-v">Forte (96%)</span></div>
+          <div class="ab-stat"><span class="ab-stat-l">Vacance moy.</span><span class="ab-stat-v">5–7%</span></div>
+          <div class="ab-stat"><span class="ab-stat-l">Prix/m² médian</span><span class="ab-stat-v">2 850 €</span></div>
+        </div>
+      </div>
+      <div class="ab-card">
+        <div class="ab-flag">🇬🇵</div>
+        <div class="ab-name">Guadeloupe</div>
+        <div class="ab-stats">
+          <div class="ab-stat"><span class="ab-stat-l">Rendement brut</span><span class="ab-stat-v">8–11%</span></div>
+          <div class="ab-stat"><span class="ab-stat-l">Tension locative</span><span class="ab-stat-v">Très forte</span></div>
+          <div class="ab-stat"><span class="ab-stat-l">Vacance moy.</span><span class="ab-stat-v">6–8%</span></div>
+          <div class="ab-stat"><span class="ab-stat-l">Prix/m² médian</span><span class="ab-stat-v">2 400 €</span></div>
+        </div>
+      </div>
+      <div class="ab-card">
+        <div class="ab-flag">🇸🇽</div>
+        <div class="ab-name">Saint-Martin</div>
+        <div class="ab-stats">
+          <div class="ab-stat"><span class="ab-stat-l">Rendement brut</span><span class="ab-stat-v">9–13%</span></div>
+          <div class="ab-stat"><span class="ab-stat-l">Marché</span><span class="ab-stat-v">Touristique</span></div>
+          <div class="ab-stat"><span class="ab-stat-l">Occ. Airbnb</span><span class="ab-stat-v">70–80%</span></div>
+          <div class="ab-stat"><span class="ab-stat-l">Prix/m² médian</span><span class="ab-stat-v">2 100 €</span></div>
+        </div>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- CONTENT -->
-<div class="sim-content">
-  <div class="sim-wrap">
-
-    <!-- ══ ONGLET 1 : CAPACITÉ D'EMPRUNT ══ -->
-    <div class="tab-panel active" id="panel-cap">
-      <div style="text-align:center;margin-bottom:32px">
-        <div class="section-tag">
-          <svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-          Outil gratuit
-        </div>
-        <div class="section-title">Simulateur de capacité d'emprunt</div>
-        <div class="section-sub">Découvrez votre budget immobilier en 30 secondes</div>
-      </div>
-
-      <div class="panel-grid">
-        <!-- Formulaire -->
-        <div class="card">
-          <div class="card-title">Vos informations financières</div>
-          <div class="form-stack">
-
-            <div class="field">
-              <label>
-                <svg viewBox="0 0 24 24"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
-                Revenus mensuels nets
-              </label>
-              <div class="input-wrap">
-                <input id="c-income" type="number" class="inp" placeholder="3 000" min="0">
-                <span class="inp-suffix">EUR</span>
-              </div>
-            </div>
-
-            <div class="field">
-              <label>
-                <svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
-                Charges mensuelles
-              </label>
-              <div class="input-wrap">
-                <input id="c-charges" type="number" class="inp" placeholder="500" min="0">
-                <span class="inp-suffix">EUR</span>
-              </div>
-            </div>
-
-            <div class="field">
-              <label>
-                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><line x1="12" y1="6" x2="12" y2="8"/><line x1="12" y1="16" x2="12" y2="18"/></svg>
-                Apport personnel
-              </label>
-              <div class="input-wrap">
-                <input id="c-apport" type="number" class="inp" placeholder="20 000" min="0">
-                <span class="inp-suffix">EUR</span>
-              </div>
-            </div>
-
-            <div class="field">
-              <label>
-                <svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                Situation professionnelle
-              </label>
-              <select id="c-status" class="sel">
-                <option value="cdi">CDI</option>
-                <option value="cdd">CDD</option>
-                <option value="independant">Indépendant</option>
-                <option value="fonctionnaire">Fonctionnaire</option>
-              </select>
-            </div>
-
-            <div class="field">
-              <label>
-                <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                Taux d'intérêt estimé
-              </label>
-              <div class="input-wrap">
-                <input id="c-rate" type="number" class="inp" value="3.5" step="0.1" min="0" max="20">
-                <span class="inp-suffix">%</span>
-              </div>
-            </div>
-
-            <div class="field">
-              <label>
-                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                Durée du prêt
-              </label>
-              <select id="c-dur" class="sel">
-                <option value="15">15 ans</option>
-                <option value="20" selected>20 ans</option>
-                <option value="25">25 ans</option>
-              </select>
-            </div>
-
-          </div>
-        </div>
-
-        <!-- Résultats capacité -->
-        <div class="card card-sticky">
-          <div class="card-title">Vos résultats</div>
-
-          <div id="cap-empty" class="res-empty">
-            <span class="res-empty-icon">📈</span>
-            <p>Renseignez vos revenus pour voir apparaître votre capacité d'emprunt en temps réel.</p>
-          </div>
-
-          <div id="cap-res" style="display:none">
-            <!-- Capacité principale -->
-            <div class="cap-big">
-              <div class="rlabel">Capacité d'emprunt</div>
-              <div class="cap-amount" id="r-cap"></div>
-            </div>
-
-            <!-- Mensualité + budget -->
-            <div class="r2" style="margin-bottom:12px">
-              <div class="rblock rblock-white">
-                <div class="rlabel">Mensualité maximale</div>
-                <div class="rval" id="r-monthly-cap" style="font-size:1.35rem"></div>
-                <div class="rsub">/ mois</div>
-              </div>
-              <div class="rblock rblock-white">
-                <div class="rlabel">Budget total</div>
-                <div class="rval" id="r-budget" style="font-size:1.35rem;color:var(--kaz-green)"></div>
-                <div class="rsub">emprunt + apport</div>
-              </div>
-            </div>
-
-            <!-- Taux d'endettement -->
-            <div class="rblock rblock-white" style="margin-bottom:14px">
-              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-                <div class="rlabel" style="margin:0">Taux d'endettement</div>
-                <span id="r-debt-pct" style="font-size:.88rem;font-weight:700"></span>
-              </div>
-              <div class="debt-bar-wrap">
-                <div class="debt-bar" id="r-debt-bar" style="width:0%"></div>
-              </div>
-              <div style="display:flex;justify-content:space-between">
-                <span style="font-size:.68rem;color:var(--kaz-muted)">0%</span>
-                <span id="r-debt-status" style="font-size:.72rem;font-weight:600"></span>
-              </div>
-            </div>
-
-            <!-- CTA -->
-            <a href="index.html#tarifs" class="cta-gold" style="margin-bottom:6px">
-              <svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-              Obtenir mon financement
-              <svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-            </a>
-            <div class="cta-note">Étude gratuite et sans engagement</div>
-          </div>
-        </div>
-      </div>
-    </div><!-- /panel-cap -->
-
-
-    <!-- ══ ONGLET 2 : PROJET COMPLET ══ -->
-    <div class="tab-panel" id="panel-proj">
-      <div style="text-align:center;margin-bottom:32px">
-        <div class="section-tag">
-          <svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><rect x="7" y="10" width="3" height="8"/><rect x="12" y="6" width="3" height="12"/><rect x="17" y="13" width="3" height="5"/></svg>
-          Analyse complète
-        </div>
-        <div class="section-title">Simulateur de projet complet</div>
-        <div class="section-sub">Analysez la rentabilité de votre investissement immobilier</div>
-      </div>
-
-      <div class="panel-grid">
-        <!-- Formulaire projet -->
-        <div class="card">
-          <div class="card-title">Paramètres du projet</div>
-          <div class="form-grid">
-
-            <div class="field">
-              <label>
-                <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-                Prix du bien
-              </label>
-              <div class="input-wrap">
-                <input id="p-price" type="number" class="inp" placeholder="180 000" min="0">
-                <span class="inp-suffix">EUR</span>
-              </div>
-            </div>
-
-            <div class="field">
-              <label>
-                <svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
-                Montant des travaux
-              </label>
-              <div class="input-wrap">
-                <input id="p-works" type="number" class="inp" placeholder="15 000" min="0">
-                <span class="inp-suffix">EUR</span>
-              </div>
-            </div>
-
-            <div class="field">
-              <label>
-                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><line x1="12" y1="6" x2="12" y2="8"/><line x1="12" y1="16" x2="12" y2="18"/></svg>
-                Apport personnel
-              </label>
-              <div class="input-wrap">
-                <input id="p-apport" type="number" class="inp" placeholder="20 000" min="0">
-                <span class="inp-suffix">EUR</span>
-              </div>
-            </div>
-
-            <div class="field">
-              <label>
-                <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                Taux d'intérêt
-              </label>
-              <div class="input-wrap">
-                <input id="p-rate" type="number" class="inp" value="3.5" step="0.1" min="0" max="20">
-                <span class="inp-suffix">%</span>
-              </div>
-            </div>
-
-            <div class="field field-full">
-              <label>
-                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                Durée du prêt
-              </label>
-              <div class="dur-row">
-                <button class="dur-p" onclick="setPDur(this,15)">15 ans</button>
-                <button class="dur-p on" onclick="setPDur(this,20)">20 ans</button>
-                <button class="dur-p" onclick="setPDur(this,25)">25 ans</button>
-              </div>
-            </div>
-
-            <div class="field">
-              <label>
-                <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-                Loyer mensuel (longue durée)
-              </label>
-              <div class="input-wrap">
-                <input id="p-rent" type="number" class="inp" placeholder="800" min="0">
-                <span class="inp-suffix">EUR</span>
-              </div>
-            </div>
-
-            <div class="field">
-              <label>
-                <svg viewBox="0 0 24 24"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/><line x1="6" y1="2" x2="6" y2="4"/><line x1="10" y1="2" x2="10" y2="4"/><line x1="14" y1="2" x2="14" y2="4"/></svg>
-                Loyer Airbnb (par nuit)
-              </label>
-              <div class="input-wrap">
-                <input id="p-airbnb" type="number" class="inp" placeholder="80" min="0">
-                <span class="inp-suffix">EUR</span>
-              </div>
-            </div>
-
-            <div class="field">
-              <label>
-                <svg viewBox="0 0 24 24"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/><line x1="6" y1="2" x2="6" y2="4"/><line x1="10" y1="2" x2="10" y2="4"/><line x1="14" y1="2" x2="14" y2="4"/></svg>
-                Taux d'occupation Airbnb
-              </label>
-              <div class="input-wrap">
-                <input id="p-occ" type="number" class="inp" value="65" min="0" max="100">
-                <span class="inp-suffix">%</span>
-              </div>
-            </div>
-
-            <div class="field">
-              <label>
-                <svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
-                Charges mensuelles
-              </label>
-              <div class="input-wrap">
-                <input id="p-charges" type="number" class="inp" value="200" min="0">
-                <span class="inp-suffix">EUR</span>
-              </div>
-            </div>
-
-            <div class="field">
-              <label>
-                <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                Mode de gestion
-              </label>
-              <select id="p-mgmt" class="sel">
-                <option value="0">Gestion directe</option>
-                <option value="7">Agence (7%)</option>
-                <option value="10">Agence (10%)</option>
-              </select>
-            </div>
-
-          </div>
-        </div>
-
-        <!-- Résultats projet -->
-        <div class="card card-sticky">
-          <div class="card-title">Résultats</div>
-
-          <div id="proj-empty" class="res-empty">
-            <span class="res-empty-icon">📊</span>
-            <p>Renseignez le prix du bien pour voir l'analyse complète apparaître ici.</p>
-          </div>
-
-          <div id="proj-res" style="display:none;flex-direction:column;gap:12px">
-
-            <!-- Toggle LD / Airbnb -->
-            <div class="mode-toggle">
-              <button class="mode-btn on" id="mb-ld" onclick="setMode('ld')">
-                <svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-                Longue durée
-              </button>
-              <button class="mode-btn" id="mb-air" onclick="setMode('air')">
-                <svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/><line x1="6" y1="2" x2="6" y2="4"/><line x1="10" y1="2" x2="10" y2="4"/><line x1="14" y1="2" x2="14" y2="4"/></svg>
-                Airbnb
-              </button>
-            </div>
-
-            <!-- Mensualité -->
-            <div class="rblock rblock-white">
-              <div class="rlabel">Mensualité du crédit</div>
-              <div class="rval" id="r-monthly-p" style="color:var(--kaz-navy)"></div>
-              <div class="rsub">/ mois · <span id="r-loan-p"></span> emprunté</div>
-            </div>
-
-            <!-- Cash-flow -->
-            <div class="rblock" id="r-cf-block">
-              <div class="rlabel" id="r-cf-lbl">Cash-flow mensuel (longue durée)</div>
-              <div class="rval" id="r-cf-val"></div>
-              <div class="rsub">/ mois après crédit + charges</div>
-            </div>
-
-            <!-- Rendements -->
-            <div class="r2">
-              <div class="rblock rblock-white">
-                <div class="rlabel">Rendement brut</div>
-                <div class="rval" id="r-gross" style="font-size:1.55rem;color:var(--kaz-teal)"></div>
-              </div>
-              <div class="rblock rblock-white">
-                <div class="rlabel">Rendement net</div>
-                <div class="rval" id="r-net" style="font-size:1.55rem;color:var(--kaz-navy)"></div>
-              </div>
-            </div>
-
-            <!-- ROI -->
-            <div class="rblock roi-block" id="r-roi-block" style="display:none">
-              <div class="rlabel">ROI annuel sur apport</div>
-              <div class="rval" id="r-roi"></div>
-              <div class="rsub">Retour sur capital investi</div>
-            </div>
-
-            <!-- Ce projet vous intéresse ? -->
-            <div class="interest-box">
-              <div class="interest-title">Ce projet vous intéresse ?</div>
-              <div class="interest-sub">Faites-vous accompagner par des experts locaux</div>
-              <a href="index.html#tarifs" class="cta-gold" style="margin-bottom:10px">
-                <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                Parler à un courtier
-                <svg viewBox="0 0 24 24" style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-              </a>
-              <a href="index.html#tarifs" class="cta-outline">
-                <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
-                Obtenir une estimation gratuite
-              </a>
-            </div>
-
-          </div>
-        </div>
-      </div>
-    </div><!-- /panel-proj -->
-
+  <!-- Explication des 3 rendements -->
+  <div class="section-sep">
+    <div class="sep-title">Comment est calculé le rendement locatif ?</div>
+    <div class="sep-sub">Trois indicateurs complémentaires pour évaluer la vraie performance de votre investissement. Ne confondez pas le brut et le net — la différence peut dépasser 3 points de rendement.</div>
   </div>
-</div>
 
-<!-- FOOTER -->
+  <div class="ed-grid">
+    <div class="ed-card">
+      <span class="ed-icon">📊</span>
+      <div class="ed-title">Rendement brut</div>
+      <div class="ed-body">
+        Le plus simple. Il mesure uniquement le rapport entre les loyers annuels et le prix d'acquisition total. <strong>Bon premier filtre pour comparer rapidement deux biens</strong>, mais insuffisant pour décider.
+        <div class="formula-box">loyer × 12<br>─────────────────────────────── × 100<br>prix + frais notaire + travaux</div>
+        <strong>Cible aux Antilles : 7–13%</strong> selon territoire. En dessous de 6% : autofinancement difficile.
+      </div>
+    </div>
+    <div class="ed-card">
+      <span class="ed-icon">⚖️</span>
+      <div class="ed-title">Rendement net</div>
+      <div class="ed-body">
+        Le plus fiable au quotidien. Il déduit toutes les charges propriétaire : taxe foncière, assurance PNO, copropriété, gestion, GLI, provision travaux et vacance locative.
+        <div class="formula-box">(loyer annuel − charges totales)<br>────────────────────────────────── × 100<br>prix total acquisition</div>
+        <strong>Méthode Larcher (rapide)</strong> : appliquer 75% du loyer annuel pour estimer le net sans détailler les charges.
+      </div>
+    </div>
+    <div class="ed-card">
+      <span class="ed-icon">🏛️</span>
+      <div class="ed-title">Rendement net-net (après impôts)</div>
+      <div class="ed-body">
+        Le plus précis. Intègre en plus la fiscalité sur les revenus locatifs. <strong>Varie fortement selon le régime choisi</strong> — c'est ici que les dispositifs DOM font toute la différence.
+        <div class="formula-box">(loyer annuel − charges − impôts)<br>────────────────────────────────── × 100<br>prix total acquisition</div>
+        <strong>Attention :</strong> le crédit immobilier n'impacte jamais le rendement — uniquement le cashflow.
+      </div>
+    </div>
+  </div>
+
+  <!-- Fiscalité DOM -->
+  <div class="antilles-box" style="margin-top:40px">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+      <span style="font-size:1.4rem">⚖️</span>
+      <span style="font-size:1rem;font-weight:800;color:var(--kaz-navy)">Dispositifs fiscaux exclusifs aux DOM-TOM</span>
+    </div>
+    <p style="font-size:.85rem;color:var(--kaz-muted);max-width:700px;line-height:1.7;margin-bottom:4px">Les Antilles bénéficient de régimes fiscaux inaccessibles en métropole. Bien choisi, votre régime peut faire passer un rendement net de 6% à plus de 9%.</p>
+    <div class="fisc-dom-grid">
+      <div class="fd-card">
+        <div class="fd-name">Loi Girardin IS/IR</div>
+        <div class="fd-desc">Réduction d'impôt pouvant aller jusqu'à 110% du montant investi. Accessible à partir de 50 000€ et réservé aux biens neufs ou réhabilités dans les DOM.</div>
+        <div class="fd-highlight">→ Économie fiscale : jusqu'à −110% IS</div>
+      </div>
+      <div class="fd-card">
+        <div class="fd-name">LMNP DOM renforcé</div>
+        <div class="fd-desc">Amortissements du bien et du mobilier déductibles, charges réelles, déficit reportable. Régime optimal pour les locations meublées longue durée aux Antilles.</div>
+        <div class="fd-highlight">→ Revenus locatifs souvent non imposés 10–15 ans</div>
+      </div>
+      <div class="fd-card">
+        <div class="fd-name">Déficit foncier DOM</div>
+        <div class="fd-desc">Plafond majoré pour les DOM-TOM. Déduisez vos travaux de rénovation de votre revenu global imposable, avec des plafonds supérieurs à la métropole.</div>
+        <div class="fd-highlight">→ Plafond majoré : jusqu'à 21 400€/an</div>
+      </div>
+      <div class="fd-card">
+        <div class="fd-name">Micro-BIC meublé tourisme</div>
+        <div class="fd-desc">Abattement forfaitaire de 71% sur les recettes brutes. Idéal pour les locations Airbnb à Saint-Martin ou dans les zones touristiques de Martinique/Guadeloupe.</div>
+        <div class="fd-highlight">→ Seulement 29% des recettes imposées</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quel rendement viser -->
+  <div class="section-sep" style="margin-top:40px">
+    <div class="sep-title">Quel rendement viser aux Antilles en 2025 ?</div>
+    <div class="sep-sub">Les rendements varient selon le territoire, le type de bien et la stratégie locative. Voici les repères pour investir sereinement.</div>
+  </div>
+
+  <div class="ed-grid">
+    <div class="ed-card" style="border-left:3px solid var(--kaz-teal)">
+      <span class="ed-icon">🎯</span>
+      <div class="ed-title">Rendement minimum : 6,5%</div>
+      <div class="ed-body">En dessous de <strong>6,5% brut aux Antilles</strong>, il est difficile d'atteindre l'autofinancement avec un crédit sur 20 ans à taux actuel. Ce seuil est plus favorable qu'en métropole (7,5%) grâce à la taxe foncière réduite.</div>
+    </div>
+    <div class="ed-card" style="border-left:3px solid var(--kaz-green)">
+      <span class="ed-icon">✅</span>
+      <div class="ed-title">Rendement cible : 8–10%</div>
+      <div class="ed-body">Un rendement brut entre <strong>8% et 10%</strong> permet un cashflow positif, couvre les vacances locatives et laisse une marge pour la fiscalité. C'est la zone de confort pour un investisseur sérieux aux Antilles.</div>
+    </div>
+    <div class="ed-card" style="border-left:3px solid var(--kaz-gold)">
+      <span class="ed-icon">🚀</span>
+      <div class="ed-title">Rendement exceptionnel : +11%</div>
+      <div class="ed-body">Atteignable sur des stratégies <strong>Airbnb à Saint-Martin</strong>, colocation à Fort-de-France, ou immeubles de rapport en Guadeloupe. Risque plus élevé (vacance, gestion). À analyser avec la fiscalité net-net.</div>
+    </div>
+  </div>
+
+</div><!-- /editorial -->
+
 <footer>
-  <p>© 2025 kazImmo · <a href="index.html">Retour à l'accueil</a> · <a href="index.html#tarifs">Nos forfaits</a></p>
+  © 2025 kazImmo · <a href="index.html">Accueil</a> · <a href="index.html#tarifs">Nos forfaits</a> · Les simulations sont fournies à titre indicatif.
 </footer>
 
 <script>
 (function(){
-  /* ── state ── */
-  var pDur  = 20;
-  var pMode = 'ld';
+  /* ── STATE ── */
+  var dur = 20;
+  var locMode = 'ld';
 
-  /* ── utils ── */
+  /* ── UTILS ── */
   function v(id){ return parseFloat(document.getElementById(id).value)||0; }
-  function fmt(n){
-    return new Intl.NumberFormat('fr-FR',{style:'currency',currency:'EUR',minimumFractionDigits:0,maximumFractionDigits:0}).format(n);
-  }
-  function pct(n,dec){
-    dec = dec===undefined?1:dec;
-    return new Intl.NumberFormat('fr-FR',{minimumFractionDigits:dec,maximumFractionDigits:dec}).format(n)+'%';
-  }
-  function monthly(loan,rate,years){
+  function fmt(n){ return new Intl.NumberFormat('fr-FR',{style:'currency',currency:'EUR',minimumFractionDigits:0,maximumFractionDigits:0}).format(n); }
+  function pct(n,d){ d=d===undefined?1:d; return new Intl.NumberFormat('fr-FR',{minimumFractionDigits:d,maximumFractionDigits:d}).format(n)+'%'; }
+  function calcMonthly(loan,rate,ins,years){
     if(loan<=0||years<=0) return 0;
-    if(rate<=0) return Math.round(loan/(12*years)*100)/100;
-    var r=rate/100/12, n=12*years;
+    var totalRate = rate + ins;
+    if(totalRate<=0) return Math.round(loan/(12*years)*100)/100;
+    var r = totalRate/100/12, n = 12*years;
     return Math.round(loan*r*Math.pow(1+r,n)/(Math.pow(1+r,n)-1)*100)/100;
   }
+  function set(id,txt){ var e=document.getElementById(id); if(e) e.textContent=txt; }
+  function setC(id,cls){ var e=document.getElementById(id); if(e){ e.className=e.className.replace(/\bpos\b|\bneg\b|\bneutral\b/g,'').trim(); e.classList.add(cls); } }
 
-  /* ── TAB SWITCH ── */
-  window.switchTab = function(tab){
-    document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
-    document.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.remove('active'); });
-    document.getElementById('tb-'+tab).classList.add('active');
-    document.getElementById('panel-'+tab).classList.add('active');
+  /* ── QUICK CALC ── */
+  function quickCalc(){
+    var price = v('q-price'), works = v('q-works'), rent = v('q-rent');
+    if(price<=0) return;
+    var notaire = price * 0.075;
+    var total = price + works + notaire;
+    var loan = total; // emprunt total
+    var monthly = calcMonthly(loan, 3.5, 0.4, 20);
+    var grossYield = total>0 ? (rent*12/total)*100 : 0;
+    var netYield = total>0 ? (rent*12*0.75/total)*100 : 0; // Larcher method
+    var cf = rent - monthly;
+    document.getElementById('quick-res').style.display='grid';
+    set('qr-gross', pct(grossYield));
+    set('qr-net', pct(netYield));
+    set('qr-monthly', fmt(monthly));
+    var cfEl = document.getElementById('qr-cf');
+    cfEl.textContent = (cf>=0?'+':'')+fmt(cf);
+    cfEl.className = 'qr-val '+(cf>=0?'pos':'neg');
+  }
+  window.quickCalc = quickCalc;
+  ['q-price','q-works','q-rent'].forEach(function(id){ document.getElementById(id).addEventListener('input', quickCalc); });
+
+  /* ── ADV TOGGLE ── */
+  window.toggleAdv = function(){
+    var sim = document.getElementById('advanced-sim');
+    var tog = document.getElementById('adv-toggle');
+    var open = sim.style.display !== 'none';
+    sim.style.display = open ? 'none' : 'grid';
+    tog.classList.toggle('open', !open);
+    if(!open) sim.scrollIntoView({behavior:'smooth',block:'start'});
   };
 
-  /* ── CAPACITÉ D'EMPRUNT ── */
-  function updateCap(){
-    var income  = v('c-income');
-    var charges = v('c-charges');
-    var apport  = v('c-apport');
-    var rate    = v('c-rate');
-    var years   = parseFloat(document.getElementById('c-dur').value)||20;
+  /* ── CARD TOGGLE ── */
+  window.toggleCard = function(head){
+    head.classList.toggle('open');
+    var body = head.nextElementSibling;
+    body.classList.toggle('open');
+  };
 
-    var show = income > 0;
-    document.getElementById('cap-empty').style.display = show ? 'none' : 'block';
-    document.getElementById('cap-res').style.display   = show ? 'block' : 'none';
-    if(!show) return;
+  /* ── DUR PILLS ── */
+  window.setDur = function(btn,d){
+    dur=d;
+    document.querySelectorAll('.pill').forEach(function(b){ b.classList.remove('on'); });
+    btn.classList.add('on');
+    updateAdv();
+  };
 
-    var maxM    = Math.max(0, 0.35 * income - charges);
-    var cap     = (function(){
-      if(maxM<=0||years<=0) return 0;
-      if(rate<=0) return Math.round(maxM*years*12);
-      var r=rate/100/12, n=12*years;
-      return Math.round(maxM*(Math.pow(1+r,n)-1)/(r*Math.pow(1+r,n)));
-    })();
-    var budget  = cap + apport;
-    var debt    = income>0 ? (maxM/income*100) : 0;
+  /* ── LOCATION MODE ── */
+  window.setLocMode = function(m){
+    locMode = m;
+    document.getElementById('lb-ld').classList.toggle('on', m==='ld');
+    document.getElementById('lb-air').classList.toggle('on', m==='air');
+    document.getElementById('loc-ld').style.display  = m==='ld'  ? '' : 'none';
+    document.getElementById('loc-air').style.display = m==='air' ? '' : 'none';
+    updateAdv();
+  };
 
-    document.getElementById('r-cap').textContent        = fmt(cap);
-    document.getElementById('r-monthly-cap').textContent = fmt(maxM);
-    document.getElementById('r-budget').textContent     = fmt(budget);
-    document.getElementById('r-debt-pct').textContent   = pct(debt);
+  /* ── ADVANCED CALC ── */
+  function updateAdv(){
+    var price   = v('a-price');
+    var works   = v('a-works');
+    var notPct  = v('a-notaire');
+    var agency  = v('a-agency');
+    var bank    = v('a-bank');
+    var apport  = v('f-apport');
+    var rate    = v('f-rate');
+    var ins     = v('f-ins');
+    var tmi     = v('tax-tmi');
+    var ps      = v('tax-ps');
+    var regime  = document.getElementById('tax-regime').value;
 
-    var bar   = document.getElementById('r-debt-bar');
-    var status= document.getElementById('r-debt-status');
-    var debtCls, debtTxt;
-    if(debt < 33){      debtCls='debt-ok';   debtTxt='Excellent'; }
-    else if(debt<=35){  debtCls='debt-warn'; debtTxt='Acceptable'; }
-    else{               debtCls='debt-bad';  debtTxt='Trop élevé'; }
-    bar.className = 'debt-bar '+debtCls;
-    bar.style.width = Math.min(debt*2,100)+'%';
-    status.textContent = debtTxt;
-    status.style.color = debtCls==='debt-ok'?'var(--kaz-green)':debtCls==='debt-warn'?'var(--kaz-gold)':'#c0392b';
-  }
+    if(price<=0) return;
 
-  ['c-income','c-charges','c-apport','c-rate','c-dur'].forEach(function(id){
-    document.getElementById(id).addEventListener('input', updateCap);
-  });
+    // Acquisition
+    var notaire = price * (notPct/100);
+    var totalAcq = price + works + notaire + agency + bank;
+    var loan = Math.max(0, totalAcq - apport);
+    var monthly = calcMonthly(loan, rate, ins, dur);
 
-  /* ── PROJET COMPLET ── */
-  function updateProj(){
-    var price    = v('p-price');
-    var works    = v('p-works');
-    var apport   = v('p-apport');
-    var rate     = v('p-rate');
-    var rent     = v('p-rent');
-    var airNight = v('p-airbnb');
-    var occ      = v('p-occ');
-    var charges  = v('p-charges');
-    var mgmt     = parseFloat(document.getElementById('p-mgmt').value)||0;
+    // Revenue
+    var rent, vacancy, annualRent;
+    if(locMode === 'ld'){
+      rent    = v('r-rent');
+      vacancy = v('r-vacancy');
+      annualRent = rent * 12 * (1 - vacancy/100);
+    } else {
+      var night = v('r-night');
+      var occ   = v('r-occ');
+      var plat  = v('r-plat');
+      var clean = v('r-clean');
+      var nights = 30 * 12 * (occ/100);
+      annualRent = night * nights * (1 - plat/100) - clean * nights;
+      rent = annualRent / 12;
+      vacancy = 0;
+    }
+    var monthlyRent = annualRent / 12;
 
-    var invest   = price + works;
-    var loan     = Math.max(0, invest - apport);
-    var m        = monthly(loan, rate, pDur);
-    var airM     = Math.round(30 * airNight * (occ/100));
-    var chLD     = charges + mgmt/100 * rent;
-    var chAir    = charges + mgmt/100 * airM;
-    var cfLD     = rent   - m - chLD;
-    var cfAir    = airM   - m - chAir;
-    var gLD      = invest>0 ? (12*rent/invest)*100  : 0;
-    var nLD      = invest>0 ? ((12*rent-12*chLD)/invest)*100 : 0;
-    var gAir     = invest>0 ? (12*airM/invest)*100 : 0;
-    var nAir     = invest>0 ? ((12*airM-12*chAir)/invest)*100 : 0;
-    var roiLD    = apport>0 ? (12*cfLD/apport)*100  : 0;
-    var roiAir   = apport>0 ? (12*cfAir/apport)*100 : 0;
+    // Charges
+    var tf    = v('c-tf');
+    var pno   = v('c-pno');
+    var copro = v('c-copro');
+    var gli   = v('c-gli');
+    var mgmt  = v('c-mgmt');
+    var prov  = v('c-prov');
+    var mgmtAmt = annualRent * (mgmt/100);
+    var totalCharges = tf + pno + copro + gli + mgmtAmt + prov;
 
-    var show = price > 0;
-    document.getElementById('proj-empty').style.display = show ? 'none' : 'block';
-    document.getElementById('proj-res').style.display   = show ? 'flex'  : 'none';
-    if(!show) return;
+    // Yields
+    var grossYield = totalAcq>0 ? (annualRent/totalAcq)*100 : 0;
+    var netYield   = totalAcq>0 ? ((annualRent-totalCharges)/totalAcq)*100 : 0;
 
-    document.getElementById('r-monthly-p').textContent = fmt(m);
-    document.getElementById('r-loan-p').textContent    = fmt(loan);
+    // Net-net (fiscal)
+    var taxableIncome = 0;
+    var tax = 0;
+    if(regime==='micro-bic'){
+      taxableIncome = annualRent * 0.5;
+      tax = taxableIncome * (tmi/100 + ps/100);
+    } else if(regime==='micro-bic-tourism'){
+      taxableIncome = annualRent * 0.29;
+      tax = taxableIncome * (tmi/100 + ps/100);
+    } else if(regime==='micro-foncier'){
+      taxableIncome = annualRent * 0.7;
+      tax = taxableIncome * (tmi/100 + ps/100);
+    } else if(regime==='reel' || regime==='lmnp-dom'){
+      // Simplified: charges + amortissement ~2% prix / an
+      var amort = regime==='lmnp-dom' ? price*0.04 : price*0.025;
+      taxableIncome = Math.max(0, annualRent - totalCharges - amort);
+      tax = taxableIncome * (tmi/100 + ps/100);
+    } else if(regime==='girardin'){
+      // Girardin: ~110% IS réduction → approximate 0 tax for first years
+      tax = 0;
+    }
+    var netNetYield = totalAcq>0 ? ((annualRent - totalCharges - tax)/totalAcq)*100 : 0;
 
-    var cf    = pMode==='ld' ? cfLD  : cfAir;
-    var gross = pMode==='ld' ? gLD   : gAir;
-    var net   = pMode==='ld' ? nLD   : nAir;
-    var roi   = pMode==='ld' ? roiLD : roiAir;
-    var isPos = cf >= 0;
+    // Cashflow
+    var cf = monthlyRent - monthly - totalCharges/12;
+    var cfMonthly = cf;
+
+    // ROI sur apport
+    var roi = apport>0 ? (cfMonthly*12/apport)*100 : 0;
+
+    // Autofinancement
+    var afPct = monthly>0 ? Math.min((monthlyRent/monthly)*100, 150) : 0;
+
+    /* ── UPDATE DOM ── */
+    set('r-gross', pct(grossYield));
+    set('r-net', pct(netYield));
+    set('r-nn', pct(netNetYield));
 
     var cfBlock = document.getElementById('r-cf-block');
-    cfBlock.className = 'rblock ' + (isPos ? 'cf-pos' : 'cf-neg');
-    document.getElementById('r-cf-lbl').textContent = 'Cash-flow mensuel (' + (pMode==='ld'?'longue durée':'Airbnb') + ')';
-    document.getElementById('r-cf-val').textContent = (isPos?'+':'')+fmt(cf);
+    cfBlock.className = 'cf-block '+(cfMonthly>=0?'cf-pos':'cf-neg');
+    set('r-cf-label', 'Cash-flow mensuel ('+(locMode==='ld'?'longue durée':'Airbnb')+')');
+    set('r-cf-val', (cfMonthly>=0?'+':'')+fmt(cfMonthly));
+    set('r-cf-sub', 'loyer net − mensualité − charges');
 
-    document.getElementById('r-gross').textContent = pct(gross);
-    document.getElementById('r-net').textContent   = pct(net);
+    // Autofinancement bar
+    var afWrap = document.getElementById('r-af-wrap');
+    if(monthly>0){
+      afWrap.style.display='';
+      set('r-af-pct', pct(afPct,0));
+      document.getElementById('r-af-bar').style.width = Math.min(afPct,100)+'%';
+    } else { afWrap.style.display='none'; }
 
-    var roiBlock = document.getElementById('r-roi-block');
-    if(apport > 0){
-      document.getElementById('r-roi').textContent = (roi>=0?'+':'')+pct(roi);
-      roiBlock.style.display = '';
-    } else {
-      roiBlock.style.display = 'none';
-    }
+    set('r-monthly', fmt(monthly));
+    set('r-rent-net', fmt(monthlyRent)+' /mois');
+    set('r-charges-total', fmt(totalCharges)+' /an');
+    set('r-roi', apport>0 ? (roi>=0?'+':'')+pct(roi)+' /an' : '—');
+
+    // Invest recap
+    set('ir-price',   fmt(price));
+    set('ir-works',   fmt(works));
+    set('ir-notaire', fmt(notaire));
+    set('ir-agency',  fmt(agency));
+    set('ir-bank',    fmt(bank));
+    set('ir-total',   fmt(totalAcq));
+    set('ir-loan',    fmt(loan));
+    set('ir-apport',  fmt(apport));
   }
 
-  window.setPDur = function(btn, d){
-    pDur = d;
-    document.querySelectorAll('.dur-p').forEach(function(b){ b.classList.remove('on'); });
-    btn.classList.add('on');
-    updateProj();
-  };
-
-  window.setMode = function(m){
-    pMode = m;
-    document.getElementById('mb-ld').classList.toggle('on',  m==='ld');
-    document.getElementById('mb-air').classList.toggle('on', m==='air');
-    updateProj();
-  };
-
-  ['p-price','p-works','p-apport','p-rate','p-rent','p-airbnb','p-occ','p-charges','p-mgmt'].forEach(function(id){
-    document.getElementById(id).addEventListener('input', updateProj);
+  // Watch all advanced inputs
+  var advIds = [
+    'a-price','a-works','a-notaire','a-agency','a-bank','a-type',
+    'r-rent','r-vacancy','r-night','r-occ','r-plat','r-clean',
+    'c-tf','c-pno','c-copro','c-gli','c-mgmt','c-prov',
+    'f-apport','f-rate','f-ins',
+    'tax-regime','tax-tmi','tax-ps'
+  ];
+  advIds.forEach(function(id){
+    var el = document.getElementById(id);
+    if(el) el.addEventListener('input', updateAdv);
   });
 
 })();

@@ -263,19 +263,19 @@ a{text-decoration:none}
 
 /* Yield main */
 .yield-main{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px}
-.ym{text-align:center;padding:14px 8px;border-radius:12px}
-.ym-brut{background:var(--kaz-teal-light);border:1px solid rgba(77,206,160,.2)}
-.ym-net{background:var(--kaz-green-light);border:1px solid rgba(26,107,74,.15)}
-.ym-nn{background:var(--kaz-gold-light);border:1px solid rgba(200,137,26,.2)}
-.ym-lbl{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px}
+.ym{text-align:center;padding:16px 10px 14px;border-radius:14px}
+.ym-brut{background:var(--kaz-teal-light);border:1.5px solid rgba(77,206,160,.3)}
+.ym-net{background:var(--kaz-green-light);border:1.5px solid rgba(26,107,74,.22)}
+.ym-nn{background:var(--kaz-gold-light);border:1.5px solid rgba(200,137,26,.25)}
+.ym-lbl{font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;line-height:1.3}
 .ym-lbl.teal{color:var(--kaz-teal)}
 .ym-lbl.green{color:var(--kaz-green)}
 .ym-lbl.gold{color:var(--kaz-gold)}
-.ym-val{font-size:1.65rem;font-weight:900;line-height:1}
+.ym-val{font-size:1.8rem;font-weight:900;line-height:1}
 .ym-val.teal{color:var(--kaz-teal)}
 .ym-val.green{color:var(--kaz-green)}
 .ym-val.gold{color:var(--kaz-gold)}
-.ym-sub{font-size:.62rem;color:var(--kaz-muted);margin-top:3px}
+.ym-sub{font-size:.6rem;color:var(--kaz-muted);margin-top:4px;font-weight:500}
 
 /* metric rows */
 .metric-row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--kaz-border2)}
@@ -741,17 +741,17 @@ footer a:hover{color:#fff}
 
       <div class="yield-main">
         <div class="ym ym-brut">
-          <div class="ym-lbl teal">Brut</div>
+          <div class="ym-lbl teal">Rendement<br>brut</div>
           <div class="ym-val teal" id="r-gross">—</div>
           <div class="ym-sub">avant charges</div>
         </div>
         <div class="ym ym-net">
-          <div class="ym-lbl green">Net</div>
+          <div class="ym-lbl green">Rendement<br>net</div>
           <div class="ym-val green" id="r-net">—</div>
           <div class="ym-sub">après charges</div>
         </div>
         <div class="ym ym-nn">
-          <div class="ym-lbl gold">Net-net</div>
+          <div class="ym-lbl gold">Rendement<br>net-net</div>
           <div class="ym-val gold" id="r-nn">—</div>
           <div class="ym-sub">après impôts</div>
         </div>

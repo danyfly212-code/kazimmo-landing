@@ -148,15 +148,24 @@ a{text-decoration:none}
   border:1px solid var(--kaz-border);
   overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.12);
 }
-.qr-item{padding:16px 18px;text-align:center;border-right:1px solid var(--kaz-border);position:relative}
+.qr-item{padding:18px 18px 16px;text-align:center;border-right:1px solid var(--kaz-border);position:relative}
 .qr-item:last-child{border-right:none}
-.qr-item:first-child::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--kaz-teal)}
-.qr-item:nth-child(2)::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--kaz-green)}
-.qr-item:nth-child(3)::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--kaz-gold)}
-.qr-item:last-child::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--kaz-fire)}
-.qr-label{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--kaz-muted);margin-bottom:5px;margin-top:4px}
-.qr-val{font-size:1.5rem;font-weight:900;color:var(--kaz-navy);letter-spacing:-.5px}
-.qr-sub{font-size:.65rem;color:var(--kaz-muted);margin-top:3px;line-height:1.3}
+.qr-item:first-child{background:rgba(77,206,160,.05)}
+.qr-item:nth-child(2){background:rgba(26,107,74,.05)}
+.qr-item:nth-child(3){background:rgba(200,137,26,.04)}
+.qr-item:last-child{background:rgba(212,74,26,.04)}
+.qr-item::before{content:'';position:absolute;top:0;left:0;right:0;height:4px}
+.qr-item:first-child::before{background:var(--kaz-teal)}
+.qr-item:nth-child(2)::before{background:var(--kaz-green)}
+.qr-item:nth-child(3)::before{background:var(--kaz-gold)}
+.qr-item:last-child::before{background:var(--kaz-fire)}
+.qr-label{font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.55px;margin-bottom:6px;margin-top:4px;line-height:1.25}
+.qr-item:first-child .qr-label{color:var(--kaz-teal)}
+.qr-item:nth-child(2) .qr-label{color:var(--kaz-green)}
+.qr-item:nth-child(3) .qr-label{color:var(--kaz-gold)}
+.qr-item:last-child .qr-label{color:var(--kaz-fire)}
+.qr-val{font-size:1.7rem;font-weight:900;color:var(--kaz-navy);letter-spacing:-.6px;line-height:1}
+.qr-sub{font-size:.62rem;color:var(--kaz-muted);margin-top:4px;line-height:1.3}
 .qr-val.green{color:var(--kaz-green)}
 .qr-val.teal{color:var(--kaz-teal)}
 .qr-val.pos{color:var(--kaz-green)}

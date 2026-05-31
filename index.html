@@ -288,9 +288,19 @@ nav {
 .pc-tag.tag-cashflow{background:linear-gradient(90deg,#FF6B4A,#FFB13B);color:#fff;border:1px solid transparent;box-shadow:0 0 0 0 rgba(255,107,74,.65);animation:cashBlink 1.4s ease-in-out infinite}
 @keyframes cashBlink{0%,100%{box-shadow:0 0 0 0 rgba(255,107,74,.7);transform:scale(1)}50%{box-shadow:0 0 0 8px rgba(255,107,74,0);transform:scale(1.04)}}
 
-.pc-foot{display:flex;justify-content:space-between;align-items:center;padding-top:14px;border-top:1px solid var(--kaz-border)}
-.pc-price-lbl{font-size:.7rem;color:var(--kaz-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
-.pc-price{font-size:1.5rem;font-weight:800;color:var(--kaz-blue);letter-spacing:-.5px}
+.pc-foot{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:15px 22px 20px;margin:8px -22px -22px;
+  background:linear-gradient(135deg,rgba(26,107,74,.06) 0%,rgba(0,168,150,.04) 100%);
+  border-top:1.5px solid rgba(26,107,74,.2);
+  border-radius:0 0 22px 22px;
+}
+.pc-foot>div:first-child{
+  border-left:3px solid #1a6b4a;
+  padding-left:10px;
+}
+.pc-price-lbl{font-size:.63rem;color:#1a6b4a;text-transform:uppercase;letter-spacing:.7px;margin-bottom:3px;font-weight:700}
+.pc-price{font-size:1.9rem;font-weight:900;color:#1a6b4a;letter-spacing:-.8px;line-height:1}
 .pc-cta{
   background:var(--kaz-teal);color:#fff;font-weight:700;font-size:.86rem;
   padding:11px 18px;border-radius:50px;text-decoration:none;
